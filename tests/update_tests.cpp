@@ -71,11 +71,21 @@ private:
     QByteArray feed(const QJsonArray &items){return QJsonDocument(items).toJson();}
 private slots:
     void versionOrder() {
+        QVERIFY(UpdateController::compareVersions("1.0.0","0.4.2-beta.1")>0);
+        QVERIFY(UpdateController::compareVersions("1.0.0","1.0.0-rc.9")>0);
+        QVERIFY(UpdateController::compareVersions("1.0.1","1.0.0")>0);
         QVERIFY(UpdateController::compareVersions("0.4.2-beta.10","0.4.2-beta.2")>0);
         QVERIFY(UpdateController::compareVersions("0.4.2","0.4.2-rc.9")>0);
         QVERIFY(UpdateController::compareVersions("0.4.2-rc.1","0.4.2-beta.10")>0);
         QVERIFY(UpdateController::compareVersions("0.4.10","0.4.2")>0);
         QCOMPARE(UpdateController::compareVersions("broken","0.4.2"),0);
+    }
+    void stableOneDoesNotDowngradeOrSelectBeta() {
+        ProbeNetwork network;UpdateController stable("1.0.0",&network);
+        network.responses<<feed({release("0.4.2-beta.1"),release("1.0.1-beta.1"),release("1.0.0",false)});
+        stable.check(true);QTRY_VERIFY(!stable.busy());QVERIFY(!stable.updateAvailable());QVERIFY(!stable.canDownload());
+        network.responses<<feed({release("1.0.1-beta.1"),release("1.0.1",false)});
+        stable.check(true);QTRY_VERIFY(!stable.busy());QVERIFY(stable.updateAvailable());QCOMPARE(stable.latestVersion(),QString("1.0.1"));
     }
     void channelsAndIgnore() {
         ProbeNetwork network;UpdateController checker("0.4.2-beta.1",&network);

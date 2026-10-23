@@ -32,10 +32,10 @@ private slots:
         QVERIFY(batch.contains("put \"C:/a b.bin\" \"/tmp/a b.bin.part\""));
         QVERIFY(batch.contains("rename \"/tmp/a b.bin.part\" \"/tmp/a b.bin\""));
         QVERIFY(FileTransfer::sftpCommands(1,"C:/read[1].bin","/tmp/x",config,&arguments,&batch,&error));
-        QVERIFY(batch.contains("read\\\\[1\\\\].bin"));
+        QVERIFY(batch.contains("\"C:/read[1].bin\""));
         auto special=config;special["remote"]="/tmp/a[1]*?.bin";
         QVERIFY(FileTransfer::sftpCommands(2,"C:/target","C:/temp",special,&arguments,&batch,&error));
-        QVERIFY(batch.contains("a\\\\[1\\\\]\\\\*\\\\?.bin"));
+        QVERIFY(batch.contains("\"/tmp/a[1]*?.bin\""));
         auto bad=config;bad["remote"]="/tmp/a\nrm x";
         QVERIFY(!FileTransfer::sftpCommands(1,"C:/a", "/tmp/x",bad,&arguments,&batch,&error));
         bad=config;bad["overwrite"]=false;

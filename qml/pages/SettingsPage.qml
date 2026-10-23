@@ -8,6 +8,9 @@ ScrollView {
     required property var backend
     property var updater: null
     property string appVersion: ""
+    property var settings: null
+    property bool detailed: false
+    signal themeToggleRequested()
     clip: true
     contentWidth: availableWidth
     ColumnLayout {
@@ -38,14 +41,14 @@ ScrollView {
                 anchors.fill: parent; anchors.margins: 24; spacing: 18
                 ColumnLayout {
                     Text { text: "外观与偏好"; color: C.Theme.text; font.pixelSize: 18; font.weight: Font.DemiBold }
-                    Text { text: "主题和上次成功连接的参数自动保存；启动时保持断开。"; color: C.Theme.muted; font.pixelSize: 12; wrapMode: Text.Wrap; Layout.fillWidth: true }
+                    Text { text: "表单、草稿、快捷内容和显示偏好自动保存；启动时保持断开。"; color: C.Theme.muted; font.pixelSize: 12; wrapMode: Text.Wrap; Layout.fillWidth: true }
                 }
                 Item { Layout.fillWidth: true }
-                C.ActionButton { text: C.Theme.dark ? "切换浅色主题" : "切换深色主题"; onClicked: { C.Theme.dark = !C.Theme.dark; root.backend.savePreference("dark", C.Theme.dark) } }
+                C.ActionButton { text: C.Theme.dark ? "切换浅色主题" : "切换深色主题"; onClicked: root.themeToggleRequested() }
             }
         }
         C.Panel {
-            Layout.fillWidth: true; implicitHeight: 270
+            visible:root.detailed;Layout.fillWidth: true; implicitHeight: 270
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 24; spacing: 14
                 Text { text: "扩展与协议接入"; color: C.Theme.text; font.pixelSize: 18; font.weight: Font.DemiBold }
@@ -65,7 +68,7 @@ ScrollView {
                 Text { text: "运行与数据说明"; color: C.Theme.text; font.pixelSize: 18; font.weight: Font.DemiBold }
                 Text {
                     Layout.fillWidth: true; wrapMode: Text.Wrap; lineHeight: 1.8
-                    text: "• 串口与网络在独立工作线程运行，界面每 100 ms 批量刷新。\n• 终端保留 1000 条、报文保留 500 条；单条字节显示最多 4096 字节。\n• 保存日志导出当前保留的终端记录（JSONL），不是全程无损采集。\n• 51、STM32、RK3588 的串口按设备实际参数连接，高波特率需硬件验证。\n• Linux 板端外设需设备节点和权限；SSH 完整交互在系统终端窗口中运行。"
+                    text: "• 串口与网络在独立工作线程运行；Qt 交互终端通过 ConPTY / VT 屏幕运行。\n• 终端保留 1000 条、报文保留 500 条；单条字节显示最多 4096 字节。\n• 快捷内容不设条数限制；日志与终端滚动历史有内存上限。\n• 51、STM32、RK3588 的实际波特率由设备与驱动决定。\n• 配置目录："+(root.settings?root.settings.directory:"未启用")
                     color: C.Theme.muted; font.pixelSize: 12
                 }
                 Item { Layout.fillHeight: true }

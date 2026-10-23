@@ -8,10 +8,18 @@
 #include <QDir>
 #include <QTimer>
 #include <QFile>
+#include <QTemporaryDir>
 #include "session.h"
 #include "boardcontroller.h"
 #include "filetransfer.h"
 #include "updatecontroller.h"
+#include "settingsstore.h"
+#include "quickcommands.h"
+#include "devicediscovery.h"
+#include "terminalview.h"
+#include "webdebugger.h"
+#include "mqttclient.h"
+#include "remotefiles.h"
 
 int main(int argc, char *argv[])
 {
@@ -28,18 +36,33 @@ int main(int argc, char *argv[])
     cli.addHelpOption();
     cli.addOptions({{QStringLiteral("smoke-test"), QStringLiteral("无设备启动检查并退出")},
                     {QStringLiteral("capture"), QStringLiteral("保存界面截图并退出"), "path"},
-                    {QStringLiteral("page"), QStringLiteral("页面编号 0–5"), "index", "0"},
+                    {QStringLiteral("page"), QStringLiteral("页面编号 0–7"), "index", "0"},
                     {QStringLiteral("demo"), QStringLiteral("载入明确标记的离线演示")},
                     {QStringLiteral("light"), QStringLiteral("使用浅色主题")},
                     {QStringLiteral("assistant"), QStringLiteral("打开指令辅助用于界面检查")},
                     {QStringLiteral("terminal-mode"), QStringLiteral("终端系统编号 0–3，用于界面检查"), "index", "0"},
                     {QStringLiteral("compact"), QStringLiteral("按最小窗口尺寸检查界面")}});
+    cli.addOption({QStringLiteral("config-dir"),QStringLiteral("指定独立配置目录"),"path"});
     cli.process(app);
     QQuickStyle::setStyle(QStringLiteral("Basic"));
-    Session session(nullptr, !cli.isSet("smoke-test") && !cli.isSet("capture"));
+    qmlRegisterType<TerminalView>("SerialStudio.Terminal",1,0,"TerminalView");
+    QTemporaryDir previewConfig;
+    const bool preview=cli.isSet("smoke-test")||cli.isSet("capture");
+    SettingsStore settings(cli.isSet("config-dir")?cli.value("config-dir"):preview?previewConfig.path():QString());
+    QuickCommands quickCommands(&settings);
+    Session session(nullptr, !preview&&!cli.isSet("config-dir"));
     Session network(nullptr, false);
     BoardController board(&session, &network);
+    DeviceDiscovery discovery(nullptr,!preview);
+    const bool persistLegacy=!preview && !cli.isSet("config-dir");
+    board.terminal()->adb()->setPersistenceEnabled(persistLegacy);
+    discovery.adb()->setPersistenceEnabled(persistLegacy);
+    discovery.setSavedDevices(settings.value("devices/saved",QVariantList()).toList());
+    WebDebugger web;
+    MqttClient mqtt;
     FileTransfer transfer;
+    RemoteFiles files;
+    files.adb()->setPersistenceEnabled(false);
     UpdateController updater(QCoreApplication::applicationVersion());
     QObject::connect(&updater,&UpdateController::exitRequested,&app,&QCoreApplication::quit);
     if(!cli.isSet("smoke-test")&&!cli.isSet("capture"))QTimer::singleShot(2500,&updater,[&updater]{updater.check(false);});
@@ -48,9 +71,15 @@ int main(int argc, char *argv[])
                                  {"networkBackend", QVariant::fromValue(&network)},
                                  {"board", QVariant::fromValue(&board)},
                                  {"transfer", QVariant::fromValue(&transfer)},
+                                 {"files", QVariant::fromValue(&files)},
                                  {"updater", QVariant::fromValue(&updater)},
+                                 {"settings", QVariant::fromValue(&settings)},
+                                 {"quickCommands", QVariant::fromValue(&quickCommands)},
+                                 {"discovery", QVariant::fromValue(&discovery)},
+                                 {"web", QVariant::fromValue(&web)},
+                                 {"mqtt", QVariant::fromValue(&mqtt)},
                                  {"appVersion", QCoreApplication::applicationVersion()},
-                                 {"pageIndex", qBound(0, cli.value("page").toInt(), 5)},
+                                 {"pageIndex", qBound(0, cli.value("page").toInt(), 7)},
                                  {"lightMode", cli.isSet("light")}});
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
                      &app, [] { QCoreApplication::exit(1); }, Qt::QueuedConnection);
@@ -74,14 +103,18 @@ int main(int argc, char *argv[])
     if (cli.isSet("capture")) {
         const auto path = cli.value("capture");
         const bool captureAssistant=cli.isSet("assistant");
-        QTimer::singleShot(1600, &app, [&engine, path,captureAssistant] {
+        QTimer::singleShot(1600, &app, [&engine, &settings, path,captureAssistant] {
             auto *window = engine.rootObjects().isEmpty() ? nullptr : qobject_cast<QQuickWindow *>(engine.rootObjects().first());
             if(window&&captureAssistant)window=window->findChild<QQuickWindow *>("commandAssistantWindow");
             if (!window) { QCoreApplication::exit(2); return; }
             QDir().mkpath(QFileInfo(path).absolutePath());
             const bool ok = window->grabWindow().save(path);
+            if(!settings.error().isEmpty()){qCritical().noquote()<<settings.error();QCoreApplication::exit(4);return;}
             QCoreApplication::exit(ok ? 0 : 3);
         });
-    } else if (cli.isSet("smoke-test")) QTimer::singleShot(1800, &app, &QCoreApplication::quit);
+    } else if (cli.isSet("smoke-test")) QTimer::singleShot(1800, &app, [&settings]{
+        if(!settings.error().isEmpty()){qCritical().noquote()<<settings.error();QCoreApplication::exit(4);}
+        else QCoreApplication::quit();
+    });
     return app.exec();
 }

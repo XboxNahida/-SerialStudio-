@@ -17,7 +17,7 @@
 
 namespace {
 const QStringList systems={"linux","powershell","cmd","android"};
-const QStringList keys={"enter","tab","escape","up","down","left","right","backspace","ctrlC","ctrlD"};
+const QStringList keys={"enter","tab","escape","up","down","left","right","backspace","ctrlC","ctrlD","ctrlO","ctrlX"};
 QString executable(const QString &relative,const QString &fallback)
 {
     const auto path=QDir(qEnvironmentVariable("SystemRoot","C:/Windows")).filePath(relative);
@@ -48,6 +48,16 @@ TerminalController::TerminalController(QObject *parent):QObject(parent)
     Q_INIT_RESOURCE(terminal_catalog);
     QFile catalog(":/terminal/data/terminal_commands.json");
     if(catalog.open(QIODevice::ReadOnly))m_commands=QJsonDocument::fromJson(catalog.readAll()).array().toVariantList();
+    connect(&m_pty,&PseudoTerminal::received,&m_screen,&TerminalScreen::feed);
+    connect(&m_screen,&TerminalScreen::output,this,[this](const QByteArray &bytes){
+        if(m_embedded&&!m_pty.write(bytes)){
+            m_writeRejected=true;
+            fail(QStringLiteral("终端输入未完整送达：会话已关闭或输入队列已满。请检查终端当前内容，必要时关闭会话。"));
+        }
+    });
+    connect(&m_screen,&TerminalScreen::sizeChanged,&m_pty,&PseudoTerminal::resize);
+    connect(&m_pty,&PseudoTerminal::fault,this,[this](const QString &error){fail(error);});
+    connect(&m_pty,&PseudoTerminal::finished,this,[this](int code){m_status=QStringLiteral("Qt 终端已退出（%1）").arg(code);emit changed();});
     m_poll.setInterval(250);
     connect(&m_poll,&QTimer::timeout,this,&TerminalController::refresh);
     m_timeout.setSingleShot(true);m_timeout.setInterval(3000);
@@ -72,6 +82,7 @@ TerminalController::~TerminalController()
 }
 bool TerminalController::active() const
 {
+    if(m_embedded)return m_pty.running();
 #ifdef Q_OS_WIN
     return m_handle&&WaitForSingleObject(static_cast<HANDLE>(m_handle),0)==WAIT_TIMEOUT;
 #else
@@ -128,11 +139,18 @@ bool TerminalController::open(int mode,const QVariantMap &config)
     if(inputBusy())return fail(QStringLiteral("输入投递中，请稍候"));
     QString program,error;QStringList arguments;
     if(!launchSpec(mode,config,&program,&arguments,&error))return fail(error);
+    m_embedded=config.value("presentation","computer").toString()=="qt";
+    if(m_embedded){
+        m_screen.reset();
+        if(!m_pty.start(program,arguments,m_screen.columns(),m_screen.rows()))return fail(m_pty.error());
+        m_mode=mode;m_status=QStringLiteral("Qt 交互终端已打开；辅助指令默认只填入");emit changed();return true;
+    }
 #ifdef Q_OS_WIN
     // 显式创建专用控制台；避免启动器继承无控制台测试环境中的标准句柄。
     QString command=quoteArgument(QDir::toNativeSeparators(program));
     for(const auto &argument:arguments)command+=' '+quoteArgument(argument);
     auto native=command.toStdWString();STARTUPINFOW startup{};startup.cb=sizeof(startup);PROCESS_INFORMATION info{};
+    if(config.value("hidden",false).toBool()){startup.dwFlags|=STARTF_USESHOWWINDOW;startup.wShowWindow=SW_HIDE;}
     if(!CreateProcessW(reinterpret_cast<LPCWSTR>(program.utf16()),native.data(),nullptr,nullptr,FALSE,CREATE_NEW_CONSOLE,nullptr,nullptr,&startup,&info))
         return fail(QStringLiteral("无法打开交互终端：Windows 错误 %1").arg(GetLastError()));
     CloseHandle(info.hThread);
@@ -147,6 +165,32 @@ bool TerminalController::validText(const QString &text)
     if(text.trimmed().isEmpty()||text.size()>4096)return false;
     for(const QChar c:text)if(c.category()==QChar::Other_Control||c.category()==QChar::Separator_Line||c.category()==QChar::Separator_Paragraph)return false;
     return true;
+}
+void TerminalController::close()
+{
+    if(m_embedded)m_pty.close();
+    // 电脑终端由用户关闭窗口；此入口仅解除助手的控制。
+#ifdef Q_OS_WIN
+    if(m_handle){CloseHandle(static_cast<HANDLE>(m_handle));m_handle=nullptr;}
+#endif
+    m_poll.stop();m_pid=0;m_started=0;m_mode=-1;
+    m_status=QStringLiteral("终端会话已关闭");emit changed();
+}
+bool TerminalController::applyCommand(const QVariantMap &command)
+{
+    if(command.value("interaction").toString()!="editor-key")return fill(command.value("example",command.value("text")).toString());
+    const auto key=command.value("key").toString();
+    if(key=="Esc")return sendKey("escape");
+    if(key=="Ctrl+O")return sendKey("ctrlO");
+    if(key=="Ctrl+X")return sendKey("ctrlX");
+    if(key==":wq"||key==":q!"){
+        if(!m_embedded)return fail(QStringLiteral("编辑器组合输入请在 Qt 终端使用，或按提示在电脑终端手动输入"));
+        if(!active())return fail(QStringLiteral("请先打开交互终端"));
+        m_screen.key(Qt::Key_Escape,0,QString());
+        for(const auto character:key)m_screen.key(0,0,QString(character));
+        m_status=QStringLiteral("已送 Esc 并填入编辑器命令，确认后回车");emit changed();return true;
+    }
+    return fail(QStringLiteral("未知编辑器操作"));
 }
 bool TerminalController::fill(const QString &text)
 {
@@ -163,6 +207,18 @@ bool TerminalController::dispatch(const QString &kind,const QString &value)
     refresh();
     if(!active())return fail(QStringLiteral("请先打开对应的交互终端"));
     if(inputBusy())return fail(QStringLiteral("输入投递中，请稍候"));
+    if(m_embedded){
+        m_writeRejected=false;
+        if(kind=="text")m_screen.paste(value);
+        else {
+            const QHash<QString,int> special={{"enter",Qt::Key_Return},{"tab",Qt::Key_Tab},{"escape",Qt::Key_Escape},
+                {"up",Qt::Key_Up},{"down",Qt::Key_Down},{"left",Qt::Key_Left},{"right",Qt::Key_Right},{"backspace",Qt::Key_Backspace},
+                {"ctrlC",Qt::Key_C},{"ctrlD",Qt::Key_D},{"ctrlO",Qt::Key_O},{"ctrlX",Qt::Key_X}};
+            m_screen.key(special.value(value),value.startsWith("ctrl")?int(Qt::ControlModifier):0,QString());
+        }
+        if(m_writeRejected)return false;
+        m_status=kind=="text"?QStringLiteral("已填入 Qt 终端，未自动回车"):QStringLiteral("按键已加入 Qt 终端输入队列");emit changed();return true;
+    }
     const auto request=QJsonDocument(QJsonObject{{"pid",double(m_pid)},{"started",QString::number(m_started)},{"kind",kind},{"value",value}}).toJson(QJsonDocument::Compact);
     m_input.start(QCoreApplication::applicationFilePath(),{"--terminal-input"});
     m_input.write(request);m_input.closeWriteChannel();m_timeout.start();
@@ -228,6 +284,8 @@ int TerminalController::inputHelper(const QByteArray &request)
     else if(value=="backspace")append(L'\b',VK_BACK,0);
     else if(value=="ctrlD")append(4,'D',LEFT_CTRL_PRESSED);
     else if(value=="ctrlC")append(3,'C',LEFT_CTRL_PRESSED);
+    else if(value=="ctrlO")append(15,'O',LEFT_CTRL_PRESSED);
+    else if(value=="ctrlX")append(24,'X',LEFT_CTRL_PRESSED);
     else append(0,value=="up"?VK_UP:value=="down"?VK_DOWN:value=="left"?VK_LEFT:VK_RIGHT,ENHANCED_KEY);
     DWORD written=0;const DWORD count=DWORD(events.size());
     const bool ok=WriteConsoleInputW(console,events.constData(),count,&written)&&written==count;

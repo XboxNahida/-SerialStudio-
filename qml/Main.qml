@@ -11,12 +11,27 @@ ApplicationWindow {
     property var networkBackend: backend
     property var board: null
     property var transfer: null
+    property var files: null
     property var updater: null
+    property var settings: null
+    property var quickCommands: null
+    property var discovery: null
+    property var web: null
+    property var mqtt: null
+    property bool detailed: false
     property string appVersion: ""
     property int parserSource: 0
     readonly property var activeBackend: pageIndex === 3 || (pageIndex === 1 && parserSource === 1) ? networkBackend : backend
     property int pageIndex: 0
+    onPageIndexChanged: if(pageIndex===6)pageIndex=0
     property bool lightMode: false
+    C.PersistentForm {
+        settings:root.settings;scope:"window"
+        onRestored: if(root.settings && Number(root.settings.value("window/page",0))===6)root.settings.setValue("window/page",0)
+        fields:[{key:"width",object:root,property:"width"},{key:"height",object:root,property:"height"},
+            {key:"page",object:root,property:"pageIndex"},{key:"parserSource",object:root,property:"parserSource"},
+            {key:"lightMode",object:root,property:"lightMode"},{key:"detailed",object:root,property:"detailed"}]
+    }
     visible: true
     width: 1200
     height: 800
@@ -74,7 +89,8 @@ ApplicationWindow {
                 Repeater {
                     model: [{page:0,label:"串口终端",icon:">_",sub:"TERMINAL"},{page:3,label:"网络调试",icon:"↔",sub:"NETWORK"},
                             {page:1,label:"协议解析",icon:"{}",sub:"PROTOCOL"},{page:4,label:"开发板总线",icon:"⌘",sub:"BOARD / SSH"},
-                            {page:5,label:"文件传输",icon:"⇄",sub:"FILES / SFTP"},{page:2,label:"设置与扩展",icon:"≡",sub:"SETTINGS"}]
+                            {page:5,label:"文件传输",icon:"⇄",sub:"FILES / SFTP"},
+                            {page:7,label:"HTTP / MQTT",icon:"☁",sub:"INTERNET"},{page:2,label:"设置与扩展",icon:"≡",sub:"SETTINGS"}]
                     delegate: Rectangle {
                         id: nav
                         objectName: "nav" + modelData.page
@@ -115,7 +131,7 @@ ApplicationWindow {
                     objectName: "themeButton"
                     Layout.fillWidth: true; Layout.topMargin: 10
                     text: C.Theme.dark ? "☼   浅色外观" : "☾   深色外观"
-                    onClicked: { C.Theme.dark = !C.Theme.dark; root.backend.savePreference("dark", C.Theme.dark) }
+                    onClicked: { root.lightMode=C.Theme.dark; C.Theme.dark=!root.lightMode; root.backend.savePreference("dark", C.Theme.dark) }
                 }
                 Text { text: "v" + root.appVersion + " / WINDOWS"; color: C.Theme.subtle; font.family: "Consolas"; font.pixelSize: 9; Layout.topMargin: 12; Layout.bottomMargin: 4; Layout.leftMargin: 5 }
             }
@@ -126,10 +142,11 @@ ApplicationWindow {
                 Layout.fillWidth: true; Layout.preferredHeight: 40
                 Column {
                     spacing: 5
-                    Text { text: ["串口工作台","协议解析","设置与扩展","网络调试","开发板总线","文件传输"][root.pageIndex]; color: C.Theme.text; font.pixelSize: 24; font.weight: Font.DemiBold }
-                    Text { text: ["连接设备，观察每一个字节。","分帧、解释数据，输出文字、图表和媒体。","为下一次调试，准备更顺手的工具。","TCP / UDP，自由选择数据来源。","多系统终端、指令辅助与 I²C、SPI、USB 操作。","USB 磁盘复制 / SFTP 网络上传与下载。"][root.pageIndex]; color: C.Theme.muted; font.pixelSize: 11 }
+                    Text { text: ["串口工作台","协议解析","设置与扩展","网络调试","开发板总线","文件传输","","HTTP / MQTT"][root.pageIndex]; color: C.Theme.text; font.pixelSize: 24; font.weight: Font.DemiBold }
+                    Text { text: ["连接设备，观察每一个字节。","分帧、解释数据，输出文字、图表和媒体。","为下一次调试，准备更顺手的工具。","网线直连 / 无线局域网 · TCP / UDP。","多系统终端、指令辅助与 I²C、SPI、USB 操作。","USB / ADB / MTP / SFTP 文件浏览与传输。","","HTTP 请求与 MQTT 发布订阅调试。"][root.pageIndex]; color: C.Theme.muted; font.pixelSize: 11 }
                 }
                 Item { Layout.fillWidth: true }
+                C.ActionButton {objectName:"displayStyleButton";text:root.detailed?"详细显示":"简约显示";implicitHeight:32;onClicked:root.detailed=!root.detailed}
                 C.SelectBox {
                     visible: root.pageIndex === 1; objectName: "parserSource"; implicitWidth: 130
                     model: ["串口来源", "网络来源"]; currentIndex: root.parserSource
@@ -165,7 +182,7 @@ ApplicationWindow {
                 }
             }
             RowLayout {
-                visible: root.pageIndex === 0 || root.pageIndex === 3 || (root.pageIndex===1 && !protocolPage.showData)
+                visible: root.detailed && (root.pageIndex === 0 || root.pageIndex === 3 || (root.pageIndex===1 && !protocolPage.showData))
                 Layout.fillWidth: true; spacing: 12
                 C.Metric { Layout.fillWidth: true; caption: "接收数据"; value: root.formatBytes(root.activeBackend.rxBytes); unit: "B" }
                 C.Metric { Layout.fillWidth: true; caption: "发送数据"; value: root.formatBytes(root.activeBackend.txBytes); unit: "B"; tint: C.Theme.blue }
@@ -174,16 +191,18 @@ ApplicationWindow {
             }
             StackLayout {
                 Layout.fillWidth: true; Layout.fillHeight: true; currentIndex: root.pageIndex
-                Pages.TerminalPage { backend: root.backend; onSaveRequested: saveDialog.open() }
-                Pages.ProtocolPage { id: protocolPage; backend: root.activeBackend }
-                Pages.SettingsPage { backend: root.backend; updater: root.updater; appVersion: root.appVersion }
-                Pages.TerminalPage { backend: root.networkBackend; networkMode: true; onSaveRequested: saveDialog.open() }
-                Pages.BoardPage { controller: root.board; serialBackend: root.backend; networkBackend: root.networkBackend }
-                Pages.TransferPage { controller: root.transfer }
+                Pages.TerminalPage { id:serialPage;backend: root.backend; settings:root.settings;quickCommands:root.quickCommands;discovery:root.discovery;detailed:root.detailed;onSaveRequested: saveDialog.open() }
+                Pages.ProtocolPage { id: protocolPage; backend: root.activeBackend;settings:root.settings;detailed:root.detailed;scope:root.parserSource===1?"network":"serial" }
+                Pages.SettingsPage { backend: root.backend; updater: root.updater;settings:root.settings;detailed:root.detailed; appVersion: root.appVersion;onThemeToggleRequested:{root.lightMode=C.Theme.dark;C.Theme.dark=!root.lightMode;root.backend.savePreference("dark",C.Theme.dark)} }
+                Pages.TerminalPage {id:networkPage; backend: root.networkBackend; settings:root.settings;quickCommands:root.quickCommands;discovery:root.discovery;detailed:root.detailed;networkMode: true; onSaveRequested: saveDialog.open() }
+                Pages.BoardPage {id:boardPage; controller: root.board;discovery:root.discovery;settings:root.settings;quickCommands:root.quickCommands;detailed:root.detailed; serialBackend: root.backend; networkBackend: root.networkBackend }
+                Pages.TransferPage { id:transferPage;controller: root.transfer;files:root.files;settings:root.settings;detailed:root.detailed }
+                Item {}
+                Pages.InternetPage {web:root.web;mqtt:root.mqtt;settings:root.settings;quickCommands:root.quickCommands;detailed:root.detailed}
             }
             RowLayout {
                 Layout.fillWidth: true; Layout.preferredHeight: 14
-                Text { text: root.activeBackend.lastError ? root.activeBackend.lastError : root.activeBackend.status; color: root.activeBackend.lastError ? C.Theme.red : C.Theme.subtle; font.pixelSize: 10; elide: Text.ElideRight; Layout.fillWidth: true }
+                Text { text: root.settings && root.settings.error ? root.settings.error : root.activeBackend.lastError ? root.activeBackend.lastError : root.activeBackend.status; color: root.settings && root.settings.error || root.activeBackend.lastError ? C.Theme.red : C.Theme.subtle; font.pixelSize: 10; elide: Text.ElideRight; Layout.fillWidth: true }
                 Text { text: "UTF-8  ·  ASYNC I/O"; color: C.Theme.subtle; font.family: "Consolas"; font.pixelSize: 9 }
                 C.ActionButton { text: "重置统计"; implicitHeight: 24; implicitWidth: 68; font.pixelSize: 10; onClicked: root.activeBackend.resetStats() }
             }

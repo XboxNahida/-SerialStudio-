@@ -69,9 +69,9 @@ QString quoted(QString path)
 {path.replace('\\',"\\\\");path.replace('"',"\\\"");return '"'+path+'"';}
 QString globSource(const QString &path)
 {
-    QString literal;
-    for(auto c:path){if(QStringLiteral("\\[]*?").contains(c))literal+='\\';literal+=c;}
-    return quoted(literal);
+    // sftp 的双引号参数会自行保护 glob 元字符；再转义会改变真实文件名。
+    // Windows 还会先把反斜杠改为斜杠，因此只交给客户端做一次引用。
+    return quoted(path);
 }
 }
 FileTransfer::FileTransfer(QObject *parent):QObject(parent),m_copy(new CopyWorker)
@@ -119,7 +119,13 @@ bool FileTransfer::sftpCommands(int mode,const QString &local,const QString &tem
     *arguments={"-b","-","-P",QString::number(port),"-o","BatchMode=yes","-o","StrictHostKeyChecking=yes","-o","ConnectTimeout=10"};
     if(!key.isEmpty())*arguments<<"-i"<<QDir::toNativeSeparators(key);
     *arguments<<"--"<<user+"@"+host;
-    if(mode==1)*batch=("put "+globSource(local)+' '+quoted(temporary)+"\nrename "+quoted(temporary)+' '+quoted(remote)+"\n").toUtf8();
+    if(mode==1) {
+        // 剪贴板提交以硬链接原子拒绝同名；不支持扩展的服务端报错并保留源文件。
+        const auto commit=o.value("noClobber").toBool()
+            ?"ln "+quoted(temporary)+' '+quoted(remote)+"\nrm "+quoted(temporary)+"\n"
+            :"rename "+quoted(temporary)+' '+quoted(remote)+"\n";
+        *batch=("put "+globSource(local)+' '+quoted(temporary)+"\n"+commit).toUtf8();
+    }
     else *batch=("get "+globSource(remote)+' '+quoted(temporary)+"\n").toUtf8();
     return true;
 }

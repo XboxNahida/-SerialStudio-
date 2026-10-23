@@ -11,6 +11,21 @@
 class TerminalTests : public QObject {
     Q_OBJECT
 private slots:
+    void embeddedSession()
+    {
+        TerminalController terminal;
+        QVERIFY(terminal.open(2,{{"presentation","qt"}}));
+        QVERIFY(terminal.property("embedded").toBool());
+        auto *screen=terminal.property("screen").value<QObject*>();QVERIFY(screen);
+        QTemporaryDir dir;const auto marker=dir.filePath("explicit.txt");
+        QTest::qWait(400);
+        QVERIFY(terminal.fill("echo explicit>\""+QDir::toNativeSeparators(marker)+"\""));
+        QTest::qWait(150);QVERIFY(!QFileInfo::exists(marker));
+        QVERIFY(terminal.sendKey("enter"));QTRY_VERIFY(QFileInfo::exists(marker));
+        QVERIFY(terminal.sendKey("ctrlC"));
+        QVERIFY(QMetaObject::invokeMethod(&terminal,"close"));
+        QVERIFY(!terminal.active());QVERIFY(!terminal.fill("echo rejected"));
+    }
     void adbSdkFallback()
     {
         QTemporaryDir sdk;QVERIFY(sdk.isValid());QVERIFY(QDir().mkpath(sdk.filePath("platform-tools")));
@@ -90,7 +105,7 @@ private slots:
 #ifdef Q_OS_WIN
         QTemporaryDir dir;QVERIFY(dir.isValid());const auto path=dir.filePath("raw.bin");
         qputenv("SERIALSTUDIO_CONSOLE_PROBE",path.toUtf8());TerminalController terminal;
-        const bool opened=terminal.open(3,{{"adb",QCoreApplication::applicationFilePath()}});
+        const bool opened=terminal.open(3,{{"adb",QCoreApplication::applicationFilePath()},{"hidden",true}});
         qunsetenv("SERIALSTUDIO_CONSOLE_PROBE");QVERIFY(opened);
         const auto handle=OpenProcess(PROCESS_TERMINATE|SYNCHRONIZE,FALSE,DWORD(terminal.processId()));QVERIFY(handle);
         struct Cleanup {HANDLE h;~Cleanup(){if(WaitForSingleObject(h,0)==WAIT_TIMEOUT)TerminateProcess(h,0);CloseHandle(h);}} cleanup{handle};
@@ -111,7 +126,7 @@ private slots:
 #ifdef Q_OS_WIN
         QFETCH(int,mode);
         QTemporaryDir dir;QVERIFY(dir.isValid());const auto path=dir.filePath("结果.txt");
-        TerminalController terminal;QVERIFY(terminal.open(mode,{}));
+        TerminalController terminal;QVERIFY(terminal.open(mode,{{"hidden",true}}));
         const auto handle=OpenProcess(PROCESS_TERMINATE|SYNCHRONIZE,FALSE,DWORD(terminal.processId()));QVERIFY(handle);
         struct Cleanup {HANDLE h;~Cleanup(){if(WaitForSingleObject(h,0)==WAIT_TIMEOUT)TerminateProcess(h,0);CloseHandle(h);}} cleanup{handle};
         QTest::qWait(400);

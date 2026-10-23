@@ -49,10 +49,11 @@ TestCase {
         property string lastSend: ""
         property int demoCount: 0
         property int applyCount: 0
+        property int refreshCount: 0
         property ListModel terminal: ListModel { property int dropped: 0 }
         property ListModel frames: ListModel { property int dropped: 0 }
         signal notify(string message)
-        function refreshPorts() {}
+        function refreshPorts() {refreshCount++}
         function openPort(config) { lastConfig = config; connected = true; return true }
         function openNetwork(config) { lastConfig = config; connected = true; return true }
         function closePort() { connected = false }
@@ -69,6 +70,26 @@ TestCase {
     }
     Stub { id: stub }
     Stub { id: networkStub }
+    QtObject {
+        id: migrationSettings
+        property var values: ({})
+        property string error: ""
+        function value(key,fallback){return values[key]===undefined ? fallback : values[key]}
+        function setValue(key,value){const next=Object.assign({},values);next[key]=value;values=next;return true}
+        function secret(key){return ""}
+        function setSecret(key,value){return true}
+    }
+    QtObject {
+        id: inlineDiscovery
+        property var devices: [{type:"network",address:"192.168.8.7:2222",name:"广播板卡",state:"available",config:{host:"192.168.8.7",port:2222}}]
+        property var interfaces: []
+        property bool scanning: false
+        property string status: "广播发现"
+        function refresh() {}
+        function setSavedDevices(value) {}
+        function scanSubnet(cidr,ports) {scanning=true;return true}
+        function cancelScan() {scanning=false}
+    }
     QtObject {
         id: boardStub
         property QtObject terminal: QtObject {
@@ -146,7 +167,7 @@ TestCase {
         function openRelease() {}
         function uninstall() {}
     }
-    Component { id: windowComponent; App.Main { backend: stub; networkBackend: networkStub; board: boardStub; transfer: transferStub; updater: updaterStub; appVersion: "0.4.2-beta.1" } }
+    Component { id: windowComponent; App.Main { backend: stub; networkBackend: networkStub; board: boardStub; transfer: transferStub; updater: updaterStub; appVersion: "1.0.0" } }
     function initTestCase() {
         appWindow = windowComponent.createObject(null)
         verify(appWindow !== null)
@@ -159,6 +180,8 @@ TestCase {
     function cleanupTestCase() { appWindow.destroy() }
     function init() {
         appWindow.pageIndex = 0; appWindow.parserSource = 0
+        appWindow.discovery=null
+        appWindow.settings=null
         stub.connected = false; stub.demoCount = 0; stub.applyCount = 0
         networkStub.connected = false; networkStub.applyCount = 0
         wait(30)
@@ -179,6 +202,59 @@ TestCase {
         compare(stub.applyCount, 1)
         mouseClick(visualChild(appWindow.contentItem, "nav2"))
         compare(appWindow.pageIndex, 2)
+    }
+    function test_removedDevicesNavigationAndMigration() {
+        compare(visualChild(appWindow.contentItem,"nav6"),null)
+        appWindow.pageIndex=6
+        compare(appWindow.pageIndex,0)
+        migrationSettings.values=({"window/page":6})
+        appWindow.settings=migrationSettings
+        tryVerify(function(){return migrationSettings.values["window/page"]===0})
+        compare(appWindow.pageIndex,0)
+    }
+    function test_serialRefreshAndStableSelection() {
+        const box=findChild(appWindow,"serialPort")
+        verify(box!==null)
+        const page=findChild(appWindow,"terminalPage")
+        const original=stub.ports
+        page.selectedPort="TEST";page.restorePort()
+        stub.ports=[{name:"OTHER",label:"其他板"}]
+        wait(10)
+        compare(page.selectedPort,"TEST")
+        compare(box.currentIndex,-1)
+        verify(!findChild(appWindow,"connectButton").enabled)
+        stub.ports=[{name:"OTHER",label:"其他板"},original[0]]
+        wait(10);compare(box.currentIndex,1)
+        const before=stub.refreshCount
+        box.popup.open();wait(20);box.popup.close()
+        verify(stub.refreshCount>before)
+        compare(stub.connected,false)
+        const polling=stub.refreshCount
+        wait(3100);verify(stub.refreshCount>polling)
+        appWindow.pageIndex=2
+        const hidden=stub.refreshCount
+        wait(3100);compare(stub.refreshCount,hidden)
+        stub.ports=original;page.selectedPort="TEST";page.restorePort()
+    }
+    function test_inlineTargetsFillNetworkAndSshWithoutConnecting() {
+        appWindow.discovery=inlineDiscovery
+        appWindow.pageIndex=3;wait(30)
+        const network=findChild(appWindow,"networkTerminalPage")
+        const target=findChild(network,"networkTarget")
+        verify(target!==null);compare(target.count,1)
+        target.activated(0)
+        compare(findChild(appWindow,"networkHost").text,"192.168.8.7")
+        compare(findChild(appWindow,"networkPort").text,"2222")
+        compare(networkStub.connected,false)
+        appWindow.pageIndex=4;boardStub.terminal.active=false
+        findChild(appWindow,"terminalMode").currentIndex=0;wait(30)
+        const host=findChild(appWindow,"sshHost")
+        const sshPicker=findChild(host.parent.parent,"networkTarget")
+        verify(sshPicker!==null)
+        const count=boardStub.terminalCount
+        sshPicker.activated(0)
+        compare(host.text,"192.168.8.7");compare(boardStub.terminalCount,count)
+        compare(boardStub.terminal.active,false)
     }
     function test_updateActions() {
         appWindow.pageIndex=2
@@ -225,6 +301,16 @@ TestCase {
         compare(stub.demoCount, 0)
         mouseClick(findChild(appWindow, "demoButton"))
         compare(stub.demoCount, 1)
+    }
+    function test_discoveredTcpResetsOldMode() {
+        appWindow.pageIndex=3;wait(50)
+        const mode=findChild(appWindow,"networkMode")
+        mode.currentIndex=2
+        findChild(appWindow,"networkTerminalPage").useDevice({type:"network",address:"192.0.2.50:8765",config:{host:"192.0.2.50",port:8765,mode:0}})
+        compare(mode.currentIndex,0)
+        compare(findChild(appWindow,"networkHost").text,"192.0.2.50")
+        compare(findChild(appWindow,"networkPort").text,"8765")
+        compare(networkStub.connected,false)
     }
     function test_networkAndParserSource() {
         mouseClick(visualChild(appWindow.contentItem, "nav3"))
@@ -303,6 +389,9 @@ TestCase {
         const devices=findChild(appWindow,"adbDevices")
         verify(devices!==null,"Android 页缺少设备选择列表")
         compare(devices.currentIndex,0)
+        const initialRefreshes=boardStub.terminal.adb.refreshCount
+        devices.popup.open();wait(20);devices.popup.close()
+        compare(boardStub.terminal.adb.refreshCount,initialRefreshes+1)
         const refresh=findChild(appWindow,"adbRefreshButton")
         const before=adb.refreshCount;mouseClick(refresh);compare(adb.refreshCount,before+1)
         const open=findChild(appWindow,"sshTerminalButton")
@@ -339,6 +428,10 @@ TestCase {
         search.text="";tryCompare(assistant,"entryCount",1)
         assistant.close()
         wait(80)
+        mouseClick(findChild(appWindow,"boardAdvancedButton"));wait(100)
+        const terminalScroll=findChild(appWindow,"boardTerminalScroll")
+        terminalScroll.contentItem.contentY=Math.max(0,terminalScroll.contentItem.contentHeight-terminalScroll.availableHeight)
+        wait(50)
         mouseClick(visualChild(appWindow.contentItem,"terminalKey_enter"))
         compare(boardStub.terminal.lastKey,"enter")
         boardStub.terminal.lastKey=""
@@ -373,6 +466,7 @@ TestCase {
         findChild(appWindow,"dataFormat").currentIndex=3
         findChild(appWindow,"dataSchema").text='[{"name":"x","offset":0,"type":"u16"}]'
         verify(waitForPolish(appWindow.contentItem));wait(100)
+        findChild(appWindow,"dataRulesToggle").checked=true;wait(50)
         mouseClick(findChild(appWindow,"applyDataButton"))
         compare(stub.analysis.format,"binary")
         compare(JSON.parse(stub.analysis.schema)[0].name,"x")

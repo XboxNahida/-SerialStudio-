@@ -50,7 +50,7 @@ void AdbDiscovery::setExecutablePath(const QString &path)
 {
     const QUrl url(path);const auto local=url.isLocalFile()?url.toLocalFile():path.trimmed();
     if(local==m_path)return;
-    m_path=local;QSettings().setValue("terminal/adbPath",m_path);
+    m_path=local;if(m_persistenceEnabled)QSettings().setValue("terminal/adbPath",m_path);
     m_devices.clear();m_selected.clear();m_resolved.clear();
     if(m_scanning){m_restart=true;m_process.kill();}
     else if(m_enabled)refresh();
@@ -58,8 +58,18 @@ void AdbDiscovery::setExecutablePath(const QString &path)
 }
 void AdbDiscovery::setSelectedSerial(const QString &serial)
 {
-    if(serial==m_selected)return;
-    for(const auto &entry:m_devices)if(entry.toMap().value("serial")==serial){m_selected=serial;emit changed();return;}
+    static const QRegularExpression pattern("^[A-Za-z0-9][A-Za-z0-9_.:-]{0,255}$");
+    if(!serial.isEmpty()&&!pattern.match(serial).hasMatch())return;
+    if(serial==m_selected&&serial==m_pendingSerial)return;
+    // 显式目标在首次枚举前暂存，断线时也保留，避免自动切到另一块板。
+    m_pendingSerial=serial;m_selected.clear();
+    for(const auto &entry:m_devices)if(entry.toMap().value("serial")==serial){m_selected=serial;break;}
+    emit changed();
+}
+void AdbDiscovery::setPersistenceEnabled(bool enabled)
+{
+    if(enabled==m_persistenceEnabled)return;
+    m_persistenceEnabled=enabled;emit changed();
 }
 void AdbDiscovery::setEnabled(bool enabled)
 {
@@ -115,10 +125,19 @@ void AdbDiscovery::complete(int code,QProcess::ExitStatus exit)
         if(state=="device"){++online;onlyOnline=serial;if(serial==m_selected)keep=true;}
         unauthorized|=state=="unauthorized";offline|=state=="offline";
     }
-    if(!keep)m_selected=online==1?onlyOnline:QString();
+    if(!m_pendingSerial.isEmpty()){
+        m_selected.clear();
+        for(const auto &entry:m_devices){
+            const auto item=entry.toMap();
+            if(item.value("serial")==m_pendingSerial&&item.value("state")=="device"){
+                m_selected=m_pendingSerial;break;
+            }
+        }
+    }else if(!keep)m_selected=online==1?onlyOnline:QString();
     m_status=m_devices.isEmpty()?QStringLiteral("未检测到 ADB 设备，请检查 USB 数据线、板端 USB 调试和驱动"):
         QStringLiteral("检测到 %1 台设备，%2 台可连接").arg(m_devices.size()).arg(online);
     if(online>1&&m_selected.isEmpty())m_status+=QStringLiteral("；请选择目标设备");
+    if(!m_pendingSerial.isEmpty()&&m_selected.isEmpty())m_status+=QStringLiteral("；等待所选设备 %1").arg(m_pendingSerial);
     if(unauthorized)m_status+=QStringLiteral("；请在开发板屏幕确认 USB 调试授权");
     if(offline)m_status+=QStringLiteral("；离线设备请检查连接或重新插拔");
     emit changed();

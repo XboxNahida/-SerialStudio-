@@ -2,7 +2,8 @@
     [string]$QtRoot = 'C:\Qt\6.11.1\mingw_64',
     [string]$QtTools = 'C:\Qt\Tools',
     [switch]$SkipTests,
-    [switch]$SkipDeploy
+    [switch]$SkipDeploy,
+    [string]$OutputDirectory = 'release'
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = $PSScriptRoot
@@ -14,7 +15,8 @@ $depRoot = Join-Path $projectRoot 'deps'
 $localQt = Join-Path $depRoot 'qt'
 $source = Join-Path $depRoot 'qtserialport-6.11.1'
 $build = Join-Path $projectRoot 'build'
-$release = Join-Path $projectRoot 'release'
+$release = [IO.Path]::GetFullPath((Join-Path $projectRoot $OutputDirectory))
+if (!$release.StartsWith($projectRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '部署目录必须在本工程内' }
 $originalPath = $env:PATH
 foreach ($required in @($cmake, $ctest, (Join-Path $mingw 'g++.exe'), (Join-Path $QtRoot 'bin\qmake.exe'))) {
     if (!(Test-Path -LiteralPath $required)) { throw "缺少工具：$required" }
@@ -41,6 +43,13 @@ try {
         Invoke-Checked $cmake @('--build',$depBuild,'--parallel','6')
         Invoke-Checked $cmake @('--install',$depBuild)
     }
+    $vtermArchive = Join-Path $depRoot 'libvterm-0.3.3.tar.gz'
+    $vtermSource = Join-Path $depRoot 'libvterm-0.3.3'
+    if (!(Test-Path -LiteralPath $vtermArchive)) {
+        Invoke-Checked 'curl.exe' @('-fL','--max-time','120','https://www.leonerd.org.uk/code/libvterm/libvterm-0.3.3.tar.gz','-o',$vtermArchive)
+    }
+    if ((Get-FileHash -LiteralPath $vtermArchive -Algorithm SHA256).Hash -ne '09156F43DD2128BD347CBEEBE50D9A571D32C64E0CF18D211197946AFF7226E0') { throw 'libvterm SHA256 不匹配' }
+    if (!(Test-Path -LiteralPath (Join-Path $vtermSource 'src\vterm.c'))) { Invoke-Checked 'tar.exe' @('-xzf',$vtermArchive,'-C',$depRoot) }
     Invoke-Checked $cmake @('-S',$projectRoot,'-B',$build,'-G','Ninja',"-DCMAKE_PREFIX_PATH=$QtRoot", "-DQt6SerialPort_DIR=$localQt/lib/cmake/Qt6SerialPort",'-DCMAKE_BUILD_TYPE=Release')
     Invoke-Checked $cmake @('--build',$build,'--parallel','6')
     if (!$SkipTests) { Invoke-Checked $ctest @('--test-dir',$build,'--output-on-failure') }
@@ -71,6 +80,9 @@ try {
         Copy-Item -LiteralPath (Join-Path $projectRoot '桥接协议说明.md') -Destination $release -Force
         Copy-Item -LiteralPath (Join-Path $projectRoot '数据解析与文件传输说明.md') -Destination $release -Force
         Copy-Item -LiteralPath (Join-Path $projectRoot '终端指令辅助说明.md') -Destination $release -Force
+        foreach ($document in @('正式版验收清单.md','指令任务覆盖矩阵.md')) {
+            if (Test-Path -LiteralPath (Join-Path $projectRoot $document)) { Copy-Item -LiteralPath (Join-Path $projectRoot $document) -Destination $release -Force }
+        }
         $boardOutput = Join-Path $release 'board'
         New-Item -ItemType Directory -Force -Path $boardOutput | Out-Null
         Copy-Item -LiteralPath (Join-Path $projectRoot 'board\board_agent.py') -Destination $boardOutput -Force
@@ -78,6 +90,7 @@ try {
         $licenseOutput = Join-Path $release 'licenses'
         New-Item -ItemType Directory -Force -Path $licenseOutput | Out-Null
         Copy-Item -Path (Join-Path $source 'LICENSES\*.txt') -Destination $licenseOutput -Force
+        Copy-Item -LiteralPath (Join-Path $vtermSource 'LICENSE') -Destination (Join-Path $licenseOutput 'libvterm-MIT.txt') -Force
         Copy-Item -Path (Join-Path $QtRoot '..\..\Licenses\*') -Destination $licenseOutput -Force
         Write-Host "独立运行程序：$release\SerialStudio.exe"
     }

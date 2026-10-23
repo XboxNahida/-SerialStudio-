@@ -25,7 +25,7 @@ function Invoke-Setup {
     $flags = @('/S')
     if ($Shortcuts -ne '') { $flags += "/SHORTCUTS=$Shortcuts" }
     if (!$TestPackage) { $flags += "/D=$install" } # NSIS 的 /D 必须为最后一个参数，不加引号。
-    $process = Start-Process -FilePath $setup -ArgumentList $flags -PassThru -Wait
+    $process = Start-Process -FilePath $setup -ArgumentList $flags -WindowStyle Hidden -PassThru -Wait
     if ($process.ExitCode -ne 0) { throw "安装退出码：$($process.ExitCode)" }
 }
 function Check-Installed {
@@ -72,11 +72,11 @@ Write-Output '通过：同目录覆盖安装、取消已有快捷方式、保留
 $originalPath = $env:PATH
 try {
     $env:PATH="$install;C:\Windows\System32;C:\Windows"
-    $process = Start-Process -FilePath (Join-Path $install 'SerialStudio.exe') -ArgumentList '--smoke-test' -Wait -PassThru -RedirectStandardError (Join-Path $testRoot '启动.err')
+    $process = Start-Process -FilePath (Join-Path $install 'SerialStudio.exe') -ArgumentList '--smoke-test' -WindowStyle Hidden -Wait -PassThru -RedirectStandardError (Join-Path $testRoot '启动.err')
     if ($process.ExitCode -ne 0 -or (Get-Item -LiteralPath (Join-Path $testRoot '启动.err')).Length -ne 0) { throw '安装后程序启动失败或 stderr 非空' }
 } finally { $env:PATH=$originalPath }
 Write-Output '通过：仅安装目录与 Windows 系统 PATH 的原生程序启动'
-$process = Start-Process -FilePath (Join-Path $install '卸载.exe') -ArgumentList '/S' -Wait -PassThru
+$process = Start-Process -FilePath (Join-Path $install '卸载.exe') -ArgumentList '/S' -WindowStyle Hidden -Wait -PassThru
 if ($process.ExitCode -ne 0) { throw "卸载失败：$($process.ExitCode)" }
 $deadline = [DateTime]::UtcNow.AddSeconds(10)
 while ((Test-Path -LiteralPath (Join-Path $install '卸载.exe')) -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 100 }

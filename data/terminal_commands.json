@@ -5,7 +5,13 @@
     "title": "列出目录",
     "syntax": "ls [-alh] [目录]",
     "example": "ls -alh /tmp",
-    "description": "查看文件、权限、大小与隐藏项目。"
+    "description": "查看文件、权限、大小与隐藏项目。",
+    "id": "linux-legacy-01",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "linux",
@@ -13,7 +19,13 @@
     "title": "当前目录",
     "syntax": "pwd",
     "example": "pwd",
-    "description": "显示当前工作目录。"
+    "description": "显示当前工作目录。",
+    "id": "linux-legacy-02",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "linux",
@@ -21,7 +33,13 @@
     "title": "切换目录",
     "syntax": "cd [目录]",
     "example": "cd /tmp",
-    "description": "路径有空格时使用引号。"
+    "description": "路径有空格时使用引号。",
+    "id": "linux-legacy-03",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "linux",
@@ -29,7 +47,13 @@
     "title": "读取文本",
     "syntax": "cat [文件]",
     "example": "cat /etc/os-release",
-    "description": "适合小型文本文件；大文件可用 less。"
+    "description": "适合小型文本文件；大文件可用 less。",
+    "id": "linux-legacy-04",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "linux",
@@ -37,7 +61,13 @@
     "title": "搜索内容",
     "syntax": "grep -n [关键词] [文件]",
     "example": "grep -n 'root' /etc/passwd",
-    "description": "显示匹配文本及行号。"
+    "description": "显示匹配文本及行号。",
+    "id": "linux-legacy-05",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "linux",
@@ -45,7 +75,13 @@
     "title": "查找文件",
     "syntax": "find [目录] -name [名称]",
     "example": "find /tmp -name '*.log'",
-    "description": "通配符加引号，避免提前展开。"
+    "description": "通配符加引号，避免提前展开。",
+    "id": "linux-legacy-06",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "linux",
@@ -53,7 +89,13 @@
     "title": "跟踪日志",
     "syntax": "tail -n [行数] -f [文件]",
     "example": "tail -n 50 -f /var/log/syslog",
-    "description": "持续跟踪，Ctrl+C 结束；文件路径按发行版调整。"
+    "description": "持续跟踪，Ctrl+C 结束；文件路径按发行版调整。",
+    "id": "linux-legacy-07",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "linux",
@@ -61,7 +103,13 @@
     "title": "新建目录",
     "syntax": "mkdir -p [目录]",
     "example": "mkdir -p /tmp/serialstudio",
-    "description": "会创建目录，请按需修改。"
+    "description": "会创建目录，请按需修改。",
+    "id": "linux-legacy-08",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "linux",
@@ -69,7 +117,13 @@
     "title": "权限格式",
     "syntax": "chmod [权限] [文件]",
     "example": "chmod u+x /tmp/script.sh",
-    "description": "修改指定文件权限，先检查路径。"
+    "description": "修改指定文件权限，先检查路径。",
+    "id": "linux-legacy-09",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "linux",
@@ -77,7 +131,13 @@
     "title": "系统版本",
     "syntax": "uname [-a]",
     "example": "uname -a",
-    "description": "查看内核和架构。"
+    "description": "查看内核和架构。",
+    "id": "linux-legacy-10",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "linux",
@@ -85,7 +145,13 @@
     "title": "系统负载",
     "syntax": "top",
     "example": "top",
-    "description": "交互查看进程，按 q 退出。"
+    "description": "交互查看进程，按 q 退出。",
+    "id": "linux-legacy-11",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "linux",
@@ -93,7 +159,13 @@
     "title": "进程列表",
     "syntax": "ps [选项]",
     "example": "ps aux",
-    "description": "查看进程、PID 与资源使用。"
+    "description": "查看进程、PID 与资源使用。",
+    "id": "linux-legacy-12",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "linux",
@@ -101,7 +173,13 @@
     "title": "内存",
     "syntax": "free -h",
     "example": "free -h",
-    "description": "查看内存与交换区。"
+    "description": "查看内存与交换区。",
+    "id": "linux-legacy-13",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "linux",
@@ -109,7 +187,13 @@
     "title": "磁盘空间",
     "syntax": "df -h [路径]",
     "example": "df -h /",
-    "description": "查看文件系统容量。"
+    "description": "查看文件系统容量。",
+    "id": "linux-legacy-14",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "linux",
@@ -117,7 +201,13 @@
     "title": "网卡地址",
     "syntax": "ip address show [设备]",
     "example": "ip address show",
-    "description": "查看网卡与 IP 地址。"
+    "description": "查看网卡与 IP 地址。",
+    "id": "linux-legacy-15",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "linux",
@@ -125,7 +215,13 @@
     "title": "路由表",
     "syntax": "ip route show",
     "example": "ip route show",
-    "description": "查看默认网关及路由。"
+    "description": "查看默认网关及路由。",
+    "id": "linux-legacy-16",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "linux",
@@ -133,7 +229,13 @@
     "title": "监听端口",
     "syntax": "ss -lntup",
     "example": "ss -lntup",
-    "description": "查看 TCP/UDP 监听，进程详情可能需权限。"
+    "description": "查看 TCP/UDP 监听，进程详情可能需权限。",
+    "id": "linux-legacy-17",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "linux",
@@ -141,7 +243,13 @@
     "title": "连通测试",
     "syntax": "ping -c [次数] [地址]",
     "example": "ping -c 4 127.0.0.1",
-    "description": "发送有限次探测包。"
+    "description": "发送有限次探测包。",
+    "id": "linux-legacy-18",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "linux",
@@ -149,7 +257,13 @@
     "title": "内核日志",
     "syntax": "dmesg [选项]",
     "example": "dmesg | tail -n 50",
-    "description": "查看驱动日志，部分系统需 root。"
+    "description": "查看驱动日志，部分系统需 root。",
+    "id": "linux-legacy-19",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "日志"
+    ]
   },
   {
     "system": "linux",
@@ -157,7 +271,13 @@
     "title": "服务日志",
     "syntax": "journalctl -u [服务] -n [行数]",
     "example": "journalctl -u ssh -n 50 --no-pager",
-    "description": "systemd 系统适用；服务名按系统调整。"
+    "description": "systemd 系统适用；服务名按系统调整。",
+    "id": "linux-legacy-20",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "日志"
+    ]
   },
   {
     "system": "linux",
@@ -165,7 +285,13 @@
     "title": "设备节点",
     "syntax": "ls -l [设备路径]",
     "example": "ls -l /dev/i2c-* /dev/spidev* /dev/tty*",
-    "description": "只列出设备，不访问总线。"
+    "description": "只列出设备，不访问总线。",
+    "id": "linux-legacy-21",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "开发板"
+    ]
   },
   {
     "system": "linux",
@@ -173,7 +299,13 @@
     "title": "设备树型号",
     "syntax": "cat [sysfs 路径]",
     "example": "cat /proc/device-tree/model",
-    "description": "查看设备树板卡型号。"
+    "description": "查看设备树板卡型号。",
+    "id": "linux-legacy-22",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "开发板"
+    ]
   },
   {
     "system": "linux",
@@ -181,7 +313,13 @@
     "title": "USB 拓扑",
     "syntax": "lsusb [-t]",
     "example": "lsusb -t",
-    "description": "需要安装 usbutils。"
+    "description": "需要安装 usbutils。",
+    "id": "linux-legacy-23",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "开发板"
+    ]
   },
   {
     "system": "linux",
@@ -189,7 +327,13 @@
     "title": "温度",
     "syntax": "cat /sys/class/thermal/thermal_zoneN/temp",
     "example": "cat /sys/class/thermal/thermal_zone0/temp",
-    "description": "常见单位为毫摄氏度，节点依板卡而定。"
+    "description": "常见单位为毫摄氏度，节点依板卡而定。",
+    "id": "linux-legacy-24",
+    "requires": "Linux Shell；相关工具须已安装，权限及发行版可能不同。",
+    "interaction": "shell",
+    "tags": [
+      "开发板"
+    ]
   },
   {
     "system": "powershell",
@@ -197,7 +341,13 @@
     "title": "列出目录",
     "syntax": "Get-ChildItem [-Path 路径] [-Force]",
     "example": "Get-ChildItem -Path $env:TEMP -Force",
-    "description": "包括隐藏文件。"
+    "description": "包括隐藏文件。",
+    "id": "powershell-legacy-01",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "powershell",
@@ -205,7 +355,13 @@
     "title": "当前目录",
     "syntax": "Get-Location",
     "example": "Get-Location",
-    "description": "显示当前路径。"
+    "description": "显示当前路径。",
+    "id": "powershell-legacy-02",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "powershell",
@@ -213,7 +369,13 @@
     "title": "切换目录",
     "syntax": "Set-Location -LiteralPath 路径",
     "example": "Set-Location -LiteralPath $env:TEMP",
-    "description": "支持带空格的路径。"
+    "description": "支持带空格的路径。",
+    "id": "powershell-legacy-03",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "powershell",
@@ -221,7 +383,13 @@
     "title": "读取 UTF-8 文本",
     "syntax": "Get-Content -LiteralPath 文件 -Encoding UTF8",
     "example": "Get-Content -LiteralPath '.\\日志.txt' -Encoding UTF8",
-    "description": "按 UTF-8 解码文本。"
+    "description": "按 UTF-8 解码文本。",
+    "id": "powershell-legacy-04",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "powershell",
@@ -229,7 +397,13 @@
     "title": "搜索文本",
     "syntax": "Select-String -Path 文件 -Pattern 关键词",
     "example": "Select-String -Path '.\\*.log' -Pattern 'error'",
-    "description": "输出匹配行。"
+    "description": "输出匹配行。",
+    "id": "powershell-legacy-05",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "powershell",
@@ -237,7 +411,13 @@
     "title": "递归查找",
     "syntax": "Get-ChildItem -Path 目录 -Filter 模式 -Recurse",
     "example": "Get-ChildItem -Path $env:TEMP -Filter '*.log' -Recurse",
-    "description": "目录较大时可能耗时。"
+    "description": "目录较大时可能耗时。",
+    "id": "powershell-legacy-06",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "powershell",
@@ -245,7 +425,13 @@
     "title": "文件哈希",
     "syntax": "Get-FileHash -LiteralPath 文件 -Algorithm SHA256",
     "example": "Get-FileHash -LiteralPath '.\\data.bin' -Algorithm SHA256",
-    "description": "校验文件完整性。"
+    "description": "校验文件完整性。",
+    "id": "powershell-legacy-07",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "powershell",
@@ -253,7 +439,13 @@
     "title": "查看末尾",
     "syntax": "Get-Content -LiteralPath 文件 -Tail 行数",
     "example": "Get-Content -LiteralPath '.\\app.log' -Tail 50",
-    "description": "适合日志末尾。"
+    "description": "适合日志末尾。",
+    "id": "powershell-legacy-08",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "powershell",
@@ -261,7 +453,13 @@
     "title": "进程列表",
     "syntax": "Get-Process [名称]",
     "example": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10",
-    "description": "查看累计 CPU 时间较高的进程。"
+    "description": "查看累计 CPU 时间较高的进程。",
+    "id": "powershell-legacy-09",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "powershell",
@@ -269,7 +467,13 @@
     "title": "服务列表",
     "syntax": "Get-Service [名称]",
     "example": "Get-Service | Where-Object Status -eq 'Running'",
-    "description": "只查询，不修改服务。"
+    "description": "只查询，不修改服务。",
+    "id": "powershell-legacy-10",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "powershell",
@@ -277,7 +481,13 @@
     "title": "系统信息",
     "syntax": "Get-ComputerInfo",
     "example": "Get-ComputerInfo | Select-Object WindowsProductName,OsArchitecture",
-    "description": "查询 Windows 与架构信息。"
+    "description": "查询 Windows 与架构信息。",
+    "id": "powershell-legacy-11",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "powershell",
@@ -285,7 +495,13 @@
     "title": "命令帮助",
     "syntax": "Get-Help 名称 [-Examples]",
     "example": "Get-Help Get-ChildItem -Examples",
-    "description": "查询本机帮助示例。"
+    "description": "查询本机帮助示例。",
+    "id": "powershell-legacy-12",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "powershell",
@@ -293,7 +509,13 @@
     "title": "定位程序",
     "syntax": "Get-Command 程序",
     "example": "Get-Command ssh.exe",
-    "description": "查看程序可用性与路径。"
+    "description": "查看程序可用性与路径。",
+    "id": "powershell-legacy-13",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "powershell",
@@ -301,7 +523,13 @@
     "title": "环境变量",
     "syntax": "Get-ChildItem Env:",
     "example": "Get-ChildItem Env:",
-    "description": "本机环境变量可能含敏感值，分享前检查。"
+    "description": "本机环境变量可能含敏感值，分享前检查。",
+    "id": "powershell-legacy-14",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "powershell",
@@ -309,7 +537,13 @@
     "title": "IP 配置",
     "syntax": "Get-NetIPConfiguration",
     "example": "Get-NetIPConfiguration",
-    "description": "查看网卡 IP 与网关。"
+    "description": "查看网卡 IP 与网关。",
+    "id": "powershell-legacy-15",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "powershell",
@@ -317,7 +551,13 @@
     "title": "端口探测",
     "syntax": "Test-NetConnection 主机 -Port 端口",
     "example": "Test-NetConnection 127.0.0.1 -Port 22",
-    "description": "测试指定 TCP 端口。"
+    "description": "测试指定 TCP 端口。",
+    "id": "powershell-legacy-16",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "powershell",
@@ -325,7 +565,13 @@
     "title": "连通测试",
     "syntax": "Test-Connection 主机 -Count 次数",
     "example": "Test-Connection 127.0.0.1 -Count 4",
-    "description": "发送有限次探测包。"
+    "description": "发送有限次探测包。",
+    "id": "powershell-legacy-17",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "powershell",
@@ -333,7 +579,13 @@
     "title": "TCP 连接",
     "syntax": "Get-NetTCPConnection [-State 状态]",
     "example": "Get-NetTCPConnection -State Listen",
-    "description": "查看本机监听端口。"
+    "description": "查看本机监听端口。",
+    "id": "powershell-legacy-18",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "powershell",
@@ -341,7 +593,13 @@
     "title": "DNS 查询",
     "syntax": "Resolve-DnsName 域名",
     "example": "Resolve-DnsName localhost",
-    "description": "查询名称解析。"
+    "description": "查询名称解析。",
+    "id": "powershell-legacy-19",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "powershell",
@@ -349,7 +607,13 @@
     "title": "串口枚举",
     "syntax": "Get-CimInstance Win32_SerialPort",
     "example": "Get-CimInstance Win32_SerialPort | Select-Object DeviceID,Name",
-    "description": "查询串口，不打开设备。"
+    "description": "查询串口，不打开设备。",
+    "id": "powershell-legacy-20",
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；Windows 模块依版本而定。",
+    "interaction": "shell",
+    "tags": [
+      "开发板"
+    ]
   },
   {
     "system": "cmd",
@@ -357,7 +621,13 @@
     "title": "列出目录",
     "syntax": "dir [路径] [/a]",
     "example": "dir /a \"%TEMP%\"",
-    "description": "列出包括隐藏项目的目录。"
+    "description": "列出包括隐藏项目的目录。",
+    "id": "cmd-legacy-01",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "cmd",
@@ -365,7 +635,13 @@
     "title": "切换目录",
     "syntax": "cd /d [目录]",
     "example": "cd /d \"%TEMP%\"",
-    "description": "/d 支持同时切换盘符。"
+    "description": "/d 支持同时切换盘符。",
+    "id": "cmd-legacy-02",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "cmd",
@@ -373,7 +649,13 @@
     "title": "当前目录",
     "syntax": "cd",
     "example": "cd",
-    "description": "显示当前路径。"
+    "description": "显示当前路径。",
+    "id": "cmd-legacy-03",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "cmd",
@@ -381,7 +663,13 @@
     "title": "读取文本",
     "syntax": "type [文件]",
     "example": "type \".\\app.log\"",
-    "description": "解码受控制台代码页与文件编码影响。"
+    "description": "解码受控制台代码页与文件编码影响。",
+    "id": "cmd-legacy-04",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "cmd",
@@ -389,7 +677,13 @@
     "title": "搜索文本",
     "syntax": "findstr /n /i 关键词 文件",
     "example": "findstr /n /i \"error\" \".\\app.log\"",
-    "description": "显示行号并忽略大小写。"
+    "description": "显示行号并忽略大小写。",
+    "id": "cmd-legacy-05",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "cmd",
@@ -397,7 +691,13 @@
     "title": "递归查找",
     "syntax": "dir /s /b [路径模式]",
     "example": "dir /s /b \"%TEMP%\\*.log\"",
-    "description": "查找匹配文件。"
+    "description": "查找匹配文件。",
+    "id": "cmd-legacy-06",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "cmd",
@@ -405,7 +705,13 @@
     "title": "文件哈希",
     "syntax": "certutil -hashfile 文件 SHA256",
     "example": "certutil -hashfile \".\\data.bin\" SHA256",
-    "description": "校验文件完整性。"
+    "description": "校验文件完整性。",
+    "id": "cmd-legacy-07",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "cmd",
@@ -413,7 +719,13 @@
     "title": "进程列表",
     "syntax": "tasklist [/fi 过滤条件]",
     "example": "tasklist",
-    "description": "列出进程与 PID。"
+    "description": "列出进程与 PID。",
+    "id": "cmd-legacy-08",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "cmd",
@@ -421,7 +733,13 @@
     "title": "系统信息",
     "syntax": "systeminfo",
     "example": "systeminfo",
-    "description": "查询 Windows 配置信息。"
+    "description": "查询 Windows 配置信息。",
+    "id": "cmd-legacy-09",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "cmd",
@@ -429,7 +747,13 @@
     "title": "定位程序",
     "syntax": "where [程序]",
     "example": "where ssh.exe",
-    "description": "查找 PATH 中的程序。"
+    "description": "查找 PATH 中的程序。",
+    "id": "cmd-legacy-10",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "cmd",
@@ -437,7 +761,13 @@
     "title": "查看帮助",
     "syntax": "help [命令]",
     "example": "help dir",
-    "description": "查询 CMD 内置命令帮助。"
+    "description": "查询 CMD 内置命令帮助。",
+    "id": "cmd-legacy-11",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "cmd",
@@ -445,7 +775,13 @@
     "title": "控制台编码",
     "syntax": "chcp [代码页]",
     "example": "chcp 65001",
-    "description": "切换到 UTF-8 代码页，旧程序可能有兼容差异。"
+    "description": "切换到 UTF-8 代码页，旧程序可能有兼容差异。",
+    "id": "cmd-legacy-12",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "cmd",
@@ -453,7 +789,13 @@
     "title": "清屏",
     "syntax": "cls",
     "example": "cls",
-    "description": "清除当前屏幕。"
+    "description": "清除当前屏幕。",
+    "id": "cmd-legacy-13",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "cmd",
@@ -461,7 +803,13 @@
     "title": "时间查询",
     "syntax": "time /t",
     "example": "time /t",
-    "description": "只显示当前时间。"
+    "description": "只显示当前时间。",
+    "id": "cmd-legacy-14",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "cmd",
@@ -469,7 +817,13 @@
     "title": "IP 配置",
     "syntax": "ipconfig [/all]",
     "example": "ipconfig /all",
-    "description": "显示网卡与 DNS 信息。"
+    "description": "显示网卡与 DNS 信息。",
+    "id": "cmd-legacy-15",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "cmd",
@@ -477,7 +831,13 @@
     "title": "连通测试",
     "syntax": "ping -n 次数 地址",
     "example": "ping -n 4 127.0.0.1",
-    "description": "有限次连通测试。"
+    "description": "有限次连通测试。",
+    "id": "cmd-legacy-16",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "cmd",
@@ -485,7 +845,13 @@
     "title": "端口列表",
     "syntax": "netstat -ano",
     "example": "netstat -ano",
-    "description": "显示端口及关联 PID。"
+    "description": "显示端口及关联 PID。",
+    "id": "cmd-legacy-17",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "cmd",
@@ -493,7 +859,13 @@
     "title": "路由表",
     "syntax": "route print",
     "example": "route print",
-    "description": "只查看路由，不修改。"
+    "description": "只查看路由，不修改。",
+    "id": "cmd-legacy-18",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "cmd",
@@ -501,7 +873,13 @@
     "title": "DNS 查询",
     "syntax": "nslookup [域名]",
     "example": "nslookup localhost",
-    "description": "查询 DNS。"
+    "description": "查询 DNS。",
+    "id": "cmd-legacy-19",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "cmd",
@@ -509,7 +887,13 @@
     "title": "邻居缓存",
     "syntax": "arp -a",
     "example": "arp -a",
-    "description": "查看 IPv4 邻居表。"
+    "description": "查看 IPv4 邻居表。",
+    "id": "cmd-legacy-20",
+    "requires": "Windows CMD 交互提示符；外部工具须已安装。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "android",
@@ -517,7 +901,13 @@
     "title": "系统版本",
     "syntax": "getprop [属性]",
     "example": "getprop ro.build.version.release",
-    "description": "以下指令均在设备 ADB Shell 中运行。"
+    "description": "以下指令均在设备 ADB Shell 中运行。",
+    "id": "android-legacy-01",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "android",
@@ -525,7 +915,13 @@
     "title": "设备型号",
     "syntax": "getprop ro.product.model",
     "example": "getprop ro.product.model",
-    "description": "查询型号。"
+    "description": "查询型号。",
+    "id": "android-legacy-02",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "android",
@@ -533,7 +929,13 @@
     "title": "CPU 架构",
     "syntax": "getprop ro.product.cpu.abi",
     "example": "getprop ro.product.cpu.abi",
-    "description": "查询设备 ABI。"
+    "description": "查询设备 ABI。",
+    "id": "android-legacy-03",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "android",
@@ -541,7 +943,13 @@
     "title": "内核版本",
     "syntax": "uname -a",
     "example": "uname -a",
-    "description": "查看 Linux 内核信息。"
+    "description": "查看 Linux 内核信息。",
+    "id": "android-legacy-04",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "android",
@@ -549,7 +957,13 @@
     "title": "进程列表",
     "syntax": "ps -A",
     "example": "ps -A",
-    "description": "列出设备进程。"
+    "description": "列出设备进程。",
+    "id": "android-legacy-05",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "android",
@@ -557,7 +971,13 @@
     "title": "内存状态",
     "syntax": "dumpsys meminfo [包名]",
     "example": "dumpsys meminfo",
-    "description": "查询系统或指定应用内存。"
+    "description": "查询系统或指定应用内存。",
+    "id": "android-legacy-06",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "android",
@@ -565,7 +985,13 @@
     "title": "列出目录",
     "syntax": "ls -al [目录]",
     "example": "ls -al /sdcard",
-    "description": "只查看设备目录；私有数据受权限限制。"
+    "description": "只查看设备目录；私有数据受权限限制。",
+    "id": "android-legacy-07",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "android",
@@ -573,7 +999,13 @@
     "title": "当前目录",
     "syntax": "pwd",
     "example": "pwd",
-    "description": "查看当前工作目录。"
+    "description": "查看当前工作目录。",
+    "id": "android-legacy-08",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "android",
@@ -581,7 +1013,13 @@
     "title": "切换目录",
     "syntax": "cd [目录]",
     "example": "cd /sdcard",
-    "description": "进入设备共享存储。"
+    "description": "进入设备共享存储。",
+    "id": "android-legacy-09",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "android",
@@ -589,7 +1027,13 @@
     "title": "磁盘空间",
     "syntax": "df -h [路径]",
     "example": "df -h /data",
-    "description": "查看分区空间。"
+    "description": "查看分区空间。",
+    "id": "android-legacy-10",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "文件"
+    ]
   },
   {
     "system": "android",
@@ -597,7 +1041,13 @@
     "title": "最近日志",
     "syntax": "logcat -d -t 行数",
     "example": "logcat -d -t 100",
-    "description": "导出有限行后返回，不清日志。"
+    "description": "导出有限行后返回，不清日志。",
+    "id": "android-legacy-11",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "日志"
+    ]
   },
   {
     "system": "android",
@@ -605,7 +1055,13 @@
     "title": "标签过滤",
     "syntax": "logcat -s 标签:级别",
     "example": "logcat -s ActivityManager:I",
-    "description": "持续查看，Ctrl+C 结束。"
+    "description": "持续查看，Ctrl+C 结束。",
+    "id": "android-legacy-12",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "日志"
+    ]
   },
   {
     "system": "android",
@@ -613,7 +1069,13 @@
     "title": "应用包列表",
     "syntax": "pm list packages [过滤词]",
     "example": "pm list packages -3",
-    "description": "查看第三方应用包名。"
+    "description": "查看第三方应用包名。",
+    "id": "android-legacy-13",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "应用"
+    ]
   },
   {
     "system": "android",
@@ -621,7 +1083,13 @@
     "title": "应用详情",
     "syntax": "dumpsys package 包名",
     "example": "dumpsys package com.android.settings",
-    "description": "只查询应用信息。"
+    "description": "只查询应用信息。",
+    "id": "android-legacy-14",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "应用"
+    ]
   },
   {
     "system": "android",
@@ -629,7 +1097,13 @@
     "title": "打开设置",
     "syntax": "am start -a 动作",
     "example": "am start -a android.settings.SETTINGS",
-    "description": "会切换设备前台界面。"
+    "description": "会切换设备前台界面。",
+    "id": "android-legacy-15",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "应用"
+    ]
   },
   {
     "system": "android",
@@ -637,7 +1111,13 @@
     "title": "点击屏幕",
     "syntax": "input tap x y",
     "example": "input tap 300 500",
-    "description": "坐标以设备实际分辨率为准，会触发点击。"
+    "description": "坐标以设备实际分辨率为准，会触发点击。",
+    "id": "android-legacy-16",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "交互"
+    ]
   },
   {
     "system": "android",
@@ -645,7 +1125,13 @@
     "title": "滑动屏幕",
     "syntax": "input swipe x1 y1 x2 y2 时长毫秒",
     "example": "input swipe 500 1500 500 500 300",
-    "description": "会触发滑动，先检查目标界面。"
+    "description": "会触发滑动，先检查目标界面。",
+    "id": "android-legacy-17",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "交互"
+    ]
   },
   {
     "system": "android",
@@ -653,7 +1139,13 @@
     "title": "输入文字",
     "syntax": "input text 文字",
     "example": "input text 'hello%sworld'",
-    "description": "Android input 常用 %s 表示空格；非 ASCII 支持依系统而定。"
+    "description": "Android input 常用 %s 表示空格；非 ASCII 支持依系统而定。",
+    "id": "android-legacy-18",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "交互"
+    ]
   },
   {
     "system": "android",
@@ -661,7 +1153,13 @@
     "title": "按键事件",
     "syntax": "input keyevent 键码",
     "example": "input keyevent KEYCODE_HOME",
-    "description": "示例返回桌面；BACK、ENTER 等按需替换。"
+    "description": "示例返回桌面；BACK、ENTER 等按需替换。",
+    "id": "android-legacy-19",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "交互"
+    ]
   },
   {
     "system": "android",
@@ -669,7 +1167,13 @@
     "title": "屏幕尺寸",
     "syntax": "wm size",
     "example": "wm size",
-    "description": "只查询，不更改分辨率。"
+    "description": "只查询，不更改分辨率。",
+    "id": "android-legacy-20",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "交互"
+    ]
   },
   {
     "system": "android",
@@ -677,7 +1181,13 @@
     "title": "屏幕密度",
     "syntax": "wm density",
     "example": "wm density",
-    "description": "只查询当前密度。"
+    "description": "只查询当前密度。",
+    "id": "android-legacy-21",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "交互"
+    ]
   },
   {
     "system": "android",
@@ -685,7 +1195,13 @@
     "title": "设置查询",
     "syntax": "settings get 命名空间 键名",
     "example": "settings get system screen_brightness",
-    "description": "只读取设置值。"
+    "description": "只读取设置值。",
+    "id": "android-legacy-22",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "系统"
+    ]
   },
   {
     "system": "android",
@@ -693,7 +1209,13 @@
     "title": "IP 地址",
     "syntax": "ip address show",
     "example": "ip address show",
-    "description": "网络信息受系统权限限制。"
+    "description": "网络信息受系统权限限制。",
+    "id": "android-legacy-23",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
   },
   {
     "system": "android",
@@ -701,6 +1223,4439 @@
     "title": "路由表",
     "syntax": "ip route show",
     "example": "ip route show",
-    "description": "部分 Android 版本限制访问。"
+    "description": "部分 Android 版本限制访问。",
+    "id": "android-legacy-24",
+    "requires": "Android 设备 Shell；不是宿主 adb；工具和权限依版本与厂商而定。",
+    "interaction": "shell",
+    "tags": [
+      "网络"
+    ]
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "复制文件并保留属性",
+    "syntax": "cp -a /tmp/app.conf /tmp/app.conf.bak",
+    "example": "cp -a /tmp/app.conf /tmp/app.conf.bak",
+    "description": "复制前检查同名目标，可能被覆盖。",
+    "id": "linux-copy",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "移动或重命名文件",
+    "syntax": "mv -i /tmp/app.log /tmp/app-old.log",
+    "example": "mv -i /tmp/app.log /tmp/app-old.log",
+    "description": "覆盖前询问，执行后源路径改变。",
+    "id": "linux-move",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "交互删除单个文件",
+    "syntax": "rm -i /tmp/serialstudio/test.txt",
+    "example": "rm -i /tmp/serialstudio/test.txt",
+    "description": "确认目标后删除，不可回收。",
+    "id": "linux-remove",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "创建空文件或更新时间",
+    "syntax": "touch /tmp/serialstudio/test.txt",
+    "example": "touch /tmp/serialstudio/test.txt",
+    "description": "已有文件不会清空。",
+    "id": "linux-empty-file",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "创建符号链接",
+    "syntax": "ln -s /opt/app/current /tmp/app-current",
+    "example": "ln -s /opt/app/current /tmp/app-current",
+    "description": "链接路径必须尚不存在。",
+    "id": "linux-link",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "识别文件类型",
+    "syntax": "file /bin/sh",
+    "example": "file /bin/sh",
+    "description": "按内容识别。",
+    "id": "linux-file-type",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需安装 file。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "文件元数据",
+    "syntax": "stat /etc/os-release",
+    "example": "stat /etc/os-release",
+    "description": "查看大小、时间及权限。",
+    "id": "linux-file-stat",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "目录占用大小",
+    "syntax": "du -sh /var/log",
+    "example": "du -sh /var/log",
+    "description": "读取权限不足时可能漏项。",
+    "id": "linux-file-size",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "比较文本差异",
+    "syntax": "diff -u /tmp/app.conf /tmp/app.conf.bak",
+    "example": "diff -u /tmp/app.conf /tmp/app.conf.bak",
+    "description": "差异存在时退出码为 1。",
+    "id": "linux-file-compare",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "SHA256 校验",
+    "syntax": "sha256sum /tmp/firmware.bin",
+    "example": "sha256sum /tmp/firmware.bin",
+    "description": "与可信清单比较。",
+    "id": "linux-file-hash",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "查找大文件",
+    "syntax": "find /var/log -type f -size +10M",
+    "example": "find /var/log -type f -size +10M",
+    "description": "不删除文件。",
+    "id": "linux-find-size",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "查找一天内修改文件",
+    "syntax": "find /tmp -type f -mtime -1",
+    "example": "find /tmp -type f -mtime -1",
+    "description": "按修改时间筛选。",
+    "id": "linux-find-time",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "定位可执行程序",
+    "syntax": "command -v ssh",
+    "example": "command -v ssh",
+    "description": "查询 PATH。",
+    "id": "linux-find-command",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "压缩",
+    "title": "创建 tar.gz 归档",
+    "syntax": "tar -czf /tmp/app-backup.tar.gz -C /opt app",
+    "example": "tar -czf /tmp/app-backup.tar.gz -C /opt app",
+    "description": "检查目标空间和覆盖风险。",
+    "id": "linux-archive-create",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "压缩",
+    "title": "查看归档内容",
+    "syntax": "tar -tzf /tmp/app-backup.tar.gz",
+    "example": "tar -tzf /tmp/app-backup.tar.gz",
+    "description": "不解压。",
+    "id": "linux-archive-list",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "压缩",
+    "title": "解压到指定目录",
+    "syntax": "tar -xzf /tmp/app-backup.tar.gz -C /tmp/restore",
+    "example": "tar -xzf /tmp/app-backup.tar.gz -C /tmp/restore",
+    "description": "先创建目标目录，可能覆盖文件。",
+    "id": "linux-archive-extract",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "压缩",
+    "title": "查看 ZIP 目录",
+    "syntax": "unzip -l /tmp/update.zip",
+    "example": "unzip -l /tmp/update.zip",
+    "description": "不解压。",
+    "id": "linux-zip-list",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "需安装 unzip。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "权限",
+    "title": "修改文件属主",
+    "syntax": "sudo chown appuser:appuser /opt/app/config.ini",
+    "example": "sudo chown appuser:appuser /opt/app/config.ini",
+    "description": "确认账户和路径。",
+    "id": "linux-owner",
+    "tags": [
+      "权限"
+    ],
+    "requires": "需 sudo 授权；目标账户存在。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "权限",
+    "title": "只允许属主读写",
+    "syntax": "chmod u=rw,go= /tmp/private.conf",
+    "example": "chmod u=rw,go= /tmp/private.conf",
+    "description": "撤销其他用户权限。",
+    "id": "linux-permission-symbolic",
+    "tags": [
+      "权限"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "权限",
+    "title": "查看新文件权限掩码",
+    "syntax": "umask",
+    "example": "umask",
+    "description": "只查询当前 Shell 掩码。",
+    "id": "linux-umask",
+    "tags": [
+      "权限"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "权限",
+    "title": "查看访问控制列表",
+    "syntax": "getfacl /opt/app",
+    "example": "getfacl /opt/app",
+    "description": "ACL 与模式位共同生效。",
+    "id": "linux-acl",
+    "tags": [
+      "权限"
+    ],
+    "requires": "需安装 acl。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文本",
+    "title": "查看文本开头",
+    "syntax": "head -n 30 /var/log/syslog",
+    "example": "head -n 30 /var/log/syslog",
+    "description": "日志路径依发行版不同。",
+    "id": "linux-head",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文本",
+    "title": "查看指定行段",
+    "syntax": "sed -n '20,40p' /tmp/app.log",
+    "example": "sed -n '20,40p' /tmp/app.log",
+    "description": "不修改文件。",
+    "id": "linux-line-range",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文本",
+    "title": "预览文本替换",
+    "syntax": "sed 's/DEBUG/INFO/g' /tmp/app.log",
+    "example": "sed 's/DEBUG/INFO/g' /tmp/app.log",
+    "description": "仅输出替换结果。",
+    "id": "linux-sed-preview",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文本",
+    "title": "提取空白分隔字段",
+    "syntax": "awk '{print $1, $3}' /tmp/metrics.txt",
+    "example": "awk '{print $1, $3}' /tmp/metrics.txt",
+    "description": "字段号从 1 开始。",
+    "id": "linux-awk",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文本",
+    "title": "递归搜索文本",
+    "syntax": "grep -RIn -- 'timeout' /etc/systemd/system",
+    "example": "grep -RIn -- 'timeout' /etc/systemd/system",
+    "description": "目录读取受权限限制。",
+    "id": "linux-recursive-grep",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文本",
+    "title": "统计文本行数",
+    "syntax": "wc -l /tmp/app.log",
+    "example": "wc -l /tmp/app.log",
+    "description": "按换行符计数。",
+    "id": "linux-word-count",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文本",
+    "title": "排序并去重",
+    "syntax": "sort -u /tmp/names.txt",
+    "example": "sort -u /tmp/names.txt",
+    "description": "输出到终端。",
+    "id": "linux-sort",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文本",
+    "title": "提取冒号分隔字段",
+    "syntax": "cut -d: -f1 /etc/passwd",
+    "example": "cut -d: -f1 /etc/passwd",
+    "description": "查看账户名。",
+    "id": "linux-cut",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "文本",
+    "title": "分页查看日志",
+    "syntax": "less /var/log/syslog",
+    "example": "less /var/log/syslog",
+    "description": "按 q 退出。",
+    "id": "linux-less",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需 less 与完整交互终端。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "编辑",
+    "title": "使用 vi 编辑文件",
+    "syntax": "vi /tmp/app.conf",
+    "example": "vi /tmp/app.conf",
+    "description": "进入后由编辑器解释按键。",
+    "id": "linux-vi",
+    "tags": [
+      "编辑"
+    ],
+    "requires": "需 vi 与完整交互终端。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "编辑",
+    "title": "使用 vim 只读查看",
+    "syntax": "vim -R /tmp/app.conf",
+    "example": "vim -R /tmp/app.conf",
+    "description": "只读模式仍能强制写入，保存前核对。",
+    "id": "linux-vim",
+    "tags": [
+      "编辑"
+    ],
+    "requires": "需 vim 与完整交互终端。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "编辑",
+    "title": "使用 nano 编辑文件",
+    "syntax": "nano /tmp/app.conf",
+    "example": "nano /tmp/app.conf",
+    "description": "Ctrl+O 保存，Ctrl+X 退出。",
+    "id": "linux-nano",
+    "tags": [
+      "编辑"
+    ],
+    "requires": "需 nano 与完整交互终端。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "进程",
+    "title": "进程树",
+    "syntax": "ps -ef --forest",
+    "example": "ps -ef --forest",
+    "description": "GNU procps 语法。",
+    "id": "linux-process-tree",
+    "tags": [
+      "进程"
+    ],
+    "requires": "需 procps 的 ps。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "进程",
+    "title": "按进程名查 PID",
+    "syntax": "pgrep -a sshd",
+    "example": "pgrep -a sshd",
+    "description": "查不到可能返回 1。",
+    "id": "linux-process-find",
+    "tags": [
+      "进程"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "进程",
+    "title": "请求进程正常终止",
+    "syntax": "kill -TERM 1234",
+    "example": "kill -TERM 1234",
+    "description": "先用 ps 核对 PID，可能影响业务。",
+    "id": "linux-process-kill",
+    "tags": [
+      "进程"
+    ],
+    "requires": "仅可终止自己或有权限的进程。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "进程",
+    "title": "一次性进程采样",
+    "syntax": "top -b -n 1",
+    "example": "top -b -n 1",
+    "description": "输出后返回。",
+    "id": "linux-process-top",
+    "tags": [
+      "进程"
+    ],
+    "requires": "需支持 -b 的 procps top。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "进程",
+    "title": "低优先级运行任务",
+    "syntax": "nice -n 10 sha256sum /tmp/firmware.bin",
+    "example": "nice -n 10 sha256sum /tmp/firmware.bin",
+    "description": "降低 CPU 调度优先级。",
+    "id": "linux-process-priority",
+    "tags": [
+      "进程"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "进程",
+    "title": "查看进程打开文件",
+    "syntax": "lsof -p 1234",
+    "example": "lsof -p 1234",
+    "description": "先核对 PID。",
+    "id": "linux-process-fds",
+    "tags": [
+      "进程"
+    ],
+    "requires": "需 lsof；其他账户进程可能需 root。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "服务",
+    "title": "systemd 服务状态",
+    "syntax": "systemctl status ssh.service --no-pager",
+    "example": "systemctl status ssh.service --no-pager",
+    "description": "部分发行版名为 sshd。",
+    "id": "linux-service-status",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需 systemd 为 PID 1。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "服务",
+    "title": "启动 systemd 服务",
+    "syntax": "sudo systemctl start ssh.service",
+    "example": "sudo systemctl start ssh.service",
+    "description": "改变服务运行状态。",
+    "id": "linux-service-start",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需 systemd 与 sudo 授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "服务",
+    "title": "停止 systemd 服务",
+    "syntax": "sudo systemctl stop app.service",
+    "example": "sudo systemctl stop app.service",
+    "description": "会中断服务。",
+    "id": "linux-service-stop",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需 systemd 与 sudo 授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "服务",
+    "title": "重启 systemd 服务",
+    "syntax": "sudo systemctl restart app.service",
+    "example": "sudo systemctl restart app.service",
+    "description": "可能中断连接。",
+    "id": "linux-service-restart",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需 systemd 与 sudo 授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "服务",
+    "title": "查询开机自启状态",
+    "syntax": "systemctl is-enabled app.service",
+    "example": "systemctl is-enabled app.service",
+    "description": "未启用可能返回非零。",
+    "id": "linux-service-enabled",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需 systemd。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "服务",
+    "title": "列出 systemd 服务",
+    "syntax": "systemctl list-units --type=service --all --no-pager",
+    "example": "systemctl list-units --type=service --all --no-pager",
+    "description": "包括未运行的已加载服务。",
+    "id": "linux-service-list",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需 systemd。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "服务",
+    "title": "SysV 服务状态",
+    "syntax": "service ssh status",
+    "example": "service ssh status",
+    "description": "脚本名随发行版变化。",
+    "id": "linux-service-init",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需 SysV 兼容 service；部分查询需 root。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "日志",
+    "title": "本次启动日志",
+    "syntax": "journalctl -b -n 100 --no-pager",
+    "example": "journalctl -b -n 100 --no-pager",
+    "description": "权限决定可见范围。",
+    "id": "linux-journal-boot",
+    "tags": [
+      "日志"
+    ],
+    "requires": "需 systemd journal。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "日志",
+    "title": "持续跟踪服务日志",
+    "syntax": "journalctl -fu app.service",
+    "example": "journalctl -fu app.service",
+    "description": "Ctrl+C 停止。",
+    "id": "linux-journal-follow",
+    "tags": [
+      "日志"
+    ],
+    "requires": "需 systemd journal 与读取权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "日志",
+    "title": "按时间查看日志",
+    "syntax": "journalctl --since '2026-10-23 08:00:00' --no-pager",
+    "example": "journalctl --since '2026-10-23 08:00:00' --no-pager",
+    "description": "设备本地时区解析。",
+    "id": "linux-journal-time",
+    "tags": [
+      "日志"
+    ],
+    "requires": "需 systemd journal。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "网卡链路状态",
+    "syntax": "ip -br link show",
+    "example": "ip -br link show",
+    "description": "查看网卡是否 UP。",
+    "id": "linux-interfaces",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "查询目标路由",
+    "syntax": "ip route get 192.168.1.1",
+    "example": "ip route get 192.168.1.1",
+    "description": "只计算路由。",
+    "id": "linux-route-target",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "邻居表",
+    "syntax": "ip neigh show",
+    "example": "ip neigh show",
+    "description": "查看 ARP 和 ND 缓存。",
+    "id": "linux-neighbor",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "扫描 WiFi 热点",
+    "syntax": "nmcli device wifi list",
+    "example": "nmcli device wifi list",
+    "description": "扫描无线设备。",
+    "id": "linux-wifi-list",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 NetworkManager、nmcli 和 WiFi 网卡。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "连接 WiFi 并交互输入密码",
+    "syntax": "nmcli --ask device wifi connect 'MyWiFi'",
+    "example": "nmcli --ask device wifi connect 'MyWiFi'",
+    "description": "会改变联网状态，密码在提示中输入。",
+    "id": "linux-wifi-connect",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 NetworkManager、WiFi 与授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "WiFi 接口连接状态",
+    "syntax": "iw dev wlan0 link",
+    "example": "iw dev wlan0 link",
+    "description": "接口名按实际替换。",
+    "id": "linux-wifi-status",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需安装 iw。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "以太网协商状态",
+    "syntax": "ethtool eth0",
+    "example": "ethtool eth0",
+    "description": "查看速率和双工。",
+    "id": "linux-ethernet",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 ethtool；部分信息需 root。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "NetworkManager 启用 DHCP",
+    "syntax": "nmcli connection modify 'Wired connection 1' ipv4.method auto",
+    "example": "nmcli connection modify 'Wired connection 1' ipv4.method auto",
+    "description": "改变配置，重新激活后生效，可能断网。",
+    "id": "linux-dhcp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 NetworkManager 管理该连接与修改授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "查看 DHCP 租约信息",
+    "syntax": "nmcli -f DHCP4.OPTION device show eth0",
+    "example": "nmcli -f DHCP4.OPTION device show eth0",
+    "description": "查看已有租约。",
+    "id": "linux-dhcp-lease",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 NetworkManager。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "系统 DNS 解析",
+    "syntax": "getent hosts example.com",
+    "example": "getent hosts example.com",
+    "description": "遵循系统 NSS 配置。",
+    "id": "linux-dns",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "查看 DNS 服务器",
+    "syntax": "resolvectl status",
+    "example": "resolvectl status",
+    "description": "不修改 DNS。",
+    "id": "linux-dns-resolver",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 systemd-resolved 与 resolvectl。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "指定 DNS 服务器查询",
+    "syntax": "dig @1.1.1.1 example.com A",
+    "example": "dig @1.1.1.1 example.com A",
+    "description": "发出 DNS 请求。",
+    "id": "linux-dns-dig",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 dnsutils 或 bind-utils。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "HTTP 响应头",
+    "syntax": "curl -I --max-time 15 https://example.com",
+    "example": "curl -I --max-time 15 https://example.com",
+    "description": "访问网络，保留 TLS 校验。",
+    "id": "linux-curl-head",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 curl 与 CA 证书。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "下载文件",
+    "syntax": "curl -fL --max-time 60 -o /tmp/readme.txt https://example.com/readme.txt",
+    "example": "curl -fL --max-time 60 -o /tmp/readme.txt https://example.com/readme.txt",
+    "description": "写入目标，检查覆盖风险。",
+    "id": "linux-curl-download",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 curl 与 CA 证书。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "wget 下载文件",
+    "syntax": "wget -O /tmp/readme-wget.txt https://example.com/readme.txt",
+    "example": "wget -O /tmp/readme-wget.txt https://example.com/readme.txt",
+    "description": "可能覆盖目标。",
+    "id": "linux-wget",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 wget。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "SSH 远程登录",
+    "syntax": "ssh -p 22 user@192.168.1.10",
+    "example": "ssh -p 22 user@192.168.1.10",
+    "description": "首次核对主机指纹。",
+    "id": "linux-ssh",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 OpenSSH 客户端与远端授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "SCP 上传文件",
+    "syntax": "scp -P 22 /tmp/app.conf user@192.168.1.10:/tmp/app.conf",
+    "example": "scp -P 22 /tmp/app.conf user@192.168.1.10:/tmp/app.conf",
+    "description": "写远端目标，大写 -P 为端口。",
+    "id": "linux-scp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 OpenSSH scp 与远端权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "SFTP 交互会话",
+    "syntax": "sftp -P 22 user@192.168.1.10",
+    "example": "sftp -P 22 user@192.168.1.10",
+    "description": "连接后用 put/get，bye 退出。",
+    "id": "linux-sftp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 OpenSSH sftp 与远端子系统。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "查看网络连接配置",
+    "syntax": "nmcli connection show",
+    "example": "nmcli connection show",
+    "description": "不激活连接。",
+    "id": "linux-network-manager",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 NetworkManager。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "磁盘",
+    "title": "块设备及文件系统",
+    "syntax": "lsblk -f",
+    "example": "lsblk -f",
+    "description": "不格式化。",
+    "id": "linux-disk-list",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "磁盘",
+    "title": "查询挂载点",
+    "syntax": "findmnt /",
+    "example": "findmnt /",
+    "description": "查看来源及选项。",
+    "id": "linux-mount-list",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 util-linux。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "磁盘",
+    "title": "只读挂载分区",
+    "syntax": "sudo mount -o ro /dev/sdb1 /mnt/usb",
+    "example": "sudo mount -o ro /dev/sdb1 /mnt/usb",
+    "description": "核对设备和空目录，避免遮蔽文件。",
+    "id": "linux-mount",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 root/sudo；设备与目录存在。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "磁盘",
+    "title": "卸载挂载点",
+    "syntax": "sudo umount /mnt/usb",
+    "example": "sudo umount /mnt/usb",
+    "description": "确认没有正在使用目录的程序。",
+    "id": "linux-unmount",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 root/sudo；目标已挂载。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "磁盘",
+    "title": "查看 inode 使用率",
+    "syntax": "df -i /",
+    "example": "df -i /",
+    "description": "小文件可能耗尽 inode。",
+    "id": "linux-disk-inodes",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "用户",
+    "title": "当前身份与用户组",
+    "syntax": "id",
+    "example": "id",
+    "description": "查看 UID、GID 和附加组。",
+    "id": "linux-user-current",
+    "tags": [
+      "用户"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "用户",
+    "title": "查询指定账户",
+    "syntax": "getent passwd appuser",
+    "example": "getent passwd appuser",
+    "description": "遵循系统账户数据库。",
+    "id": "linux-user-list",
+    "tags": [
+      "用户"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "用户",
+    "title": "当前登录用户",
+    "syntax": "who",
+    "example": "who",
+    "description": "取决于登录记录。",
+    "id": "linux-user-who",
+    "tags": [
+      "用户"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "用户",
+    "title": "创建普通用户",
+    "syntax": "sudo useradd -m appuser",
+    "example": "sudo useradd -m appuser",
+    "description": "建立账户和家目录。",
+    "id": "linux-user-add",
+    "tags": [
+      "用户"
+    ],
+    "requires": "需 root/sudo 与 useradd。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "用户",
+    "title": "交互修改自己密码",
+    "syntax": "passwd",
+    "example": "passwd",
+    "description": "按提示输入，终端不显示密码。",
+    "id": "linux-user-password",
+    "tags": [
+      "用户"
+    ],
+    "requires": "需交互终端及密码策略允许。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "软件包",
+    "title": "APT 搜索软件包",
+    "syntax": "apt-cache search '^htop$'",
+    "example": "apt-cache search '^htop$'",
+    "description": "搜索本地索引。",
+    "id": "linux-package-apt-search",
+    "tags": [
+      "软件包"
+    ],
+    "requires": "需 Debian/Ubuntu APT。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "软件包",
+    "title": "APT 安装软件包",
+    "syntax": "sudo apt-get install htop",
+    "example": "sudo apt-get install htop",
+    "description": "修改系统及依赖，先检查计划。",
+    "id": "linux-package-apt-install",
+    "tags": [
+      "软件包"
+    ],
+    "requires": "需 Debian/Ubuntu、root/sudo 与软件源。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "软件包",
+    "title": "查询已安装包",
+    "syntax": "dpkg-query -W openssh-client",
+    "example": "dpkg-query -W openssh-client",
+    "description": "不安装软件。",
+    "id": "linux-package-dpkg",
+    "tags": [
+      "软件包"
+    ],
+    "requires": "需 Debian dpkg。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "软件包",
+    "title": "查询 RPM 包",
+    "syntax": "rpm -q openssh-clients",
+    "example": "rpm -q openssh-clients",
+    "description": "适用 RPM 系统。",
+    "id": "linux-package-rpm",
+    "tags": [
+      "软件包"
+    ],
+    "requires": "需 RPM 发行版。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "软件包",
+    "title": "DNF 软件包信息",
+    "syntax": "dnf info htop",
+    "example": "dnf info htop",
+    "description": "可能刷新软件源元数据。",
+    "id": "linux-package-dnf",
+    "tags": [
+      "软件包"
+    ],
+    "requires": "需 Fedora/RHEL 系 DNF。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "构建调试",
+    "title": "编译 C 程序",
+    "syntax": "gcc -Wall -Wextra -g -o /tmp/hello /tmp/hello.c",
+    "example": "gcc -Wall -Wextra -g -o /tmp/hello /tmp/hello.c",
+    "description": "产生可执行文件，不自动运行。",
+    "id": "linux-build-gcc",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需 GCC。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "构建调试",
+    "title": "Make 预览构建",
+    "syntax": "make -n -C /tmp/project",
+    "example": "make -n -C /tmp/project",
+    "description": "递归规则仍可能调用子 Make，先核对工程。",
+    "id": "linux-build-make",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需 make 与可信 Makefile。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "构建调试",
+    "title": "配置 CMake 构建目录",
+    "syntax": "cmake -S /tmp/project -B /tmp/project-build",
+    "example": "cmake -S /tmp/project -B /tmp/project-build",
+    "description": "配置会执行工程脚本。",
+    "id": "linux-build-cmake",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需 CMake、编译器与可信工程。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "构建调试",
+    "title": "执行 CMake 构建",
+    "syntax": "cmake --build /tmp/project-build --parallel 2",
+    "example": "cmake --build /tmp/project-build --parallel 2",
+    "description": "执行工程构建任务。",
+    "id": "linux-build-cmake-run",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需已配置的可信 CMake 工程。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "构建调试",
+    "title": "GDB 打开程序",
+    "syntax": "gdb /tmp/hello",
+    "example": "gdb /tmp/hello",
+    "description": "进入调试器，不自动运行。",
+    "id": "linux-debug-gdb",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需 gdb 与调试符号。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "构建调试",
+    "title": "追踪系统调用",
+    "syntax": "strace -o /tmp/hello.strace /tmp/hello",
+    "example": "strace -o /tmp/hello.strace /tmp/hello",
+    "description": "会运行目标程序。",
+    "id": "linux-debug-strace",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需 strace 与可信程序。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "开发板",
+    "title": "USB 设备列表",
+    "syntax": "lsusb",
+    "example": "lsusb",
+    "description": "查询设备描述符。",
+    "id": "linux-usb-list",
+    "tags": [
+      "开发板"
+    ],
+    "requires": "需 usbutils。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "开发板",
+    "title": "稳定串口设备链接",
+    "syntax": "ls -l /dev/serial/by-id",
+    "example": "ls -l /dev/serial/by-id",
+    "description": "依赖 udev 创建该目录。",
+    "id": "linux-serial-list",
+    "tags": [
+      "开发板"
+    ],
+    "requires": "Linux Shell；对应工具须可用，访问目标需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "开发板",
+    "title": "内核模块列表",
+    "syntax": "lsmod",
+    "example": "lsmod",
+    "description": "不加载模块。",
+    "id": "linux-modules",
+    "tags": [
+      "开发板"
+    ],
+    "requires": "需 kmod。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "复制单个文件",
+    "syntax": "Copy-Item -LiteralPath '.\\app.conf' -Destination '.\\app.conf.bak'",
+    "example": "Copy-Item -LiteralPath '.\\app.conf' -Destination '.\\app.conf.bak'",
+    "description": "目标存在时可能覆盖。",
+    "id": "powershell-copy",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "移动文件",
+    "syntax": "Move-Item -LiteralPath '.\\app.log' -Destination '.\\archive\\app.log'",
+    "example": "Move-Item -LiteralPath '.\\app.log' -Destination '.\\archive\\app.log'",
+    "description": "先创建归档目录，源路径改变。",
+    "id": "powershell-move",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "重命名文件",
+    "syntax": "Rename-Item -LiteralPath '.\\app-old.log' -NewName 'app.log'",
+    "example": "Rename-Item -LiteralPath '.\\app-old.log' -NewName 'app.log'",
+    "description": "新名称不含父目录。",
+    "id": "powershell-rename",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "删除文件前预览",
+    "syntax": "Remove-Item -LiteralPath '.\\test.txt' -WhatIf",
+    "example": "Remove-Item -LiteralPath '.\\test.txt' -WhatIf",
+    "description": "只报告预期动作；正式删除前去掉 WhatIf 需重新核对。",
+    "id": "powershell-remove",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "创建目录",
+    "syntax": "New-Item -ItemType Directory -Path '.\\serialstudio-data'",
+    "example": "New-Item -ItemType Directory -Path '.\\serialstudio-data'",
+    "description": "目录已存在时不应盲目强制覆盖。",
+    "id": "powershell-mkdir",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "创建空文件",
+    "syntax": "New-Item -ItemType File -Path '.\\notes.txt'",
+    "example": "New-Item -ItemType File -Path '.\\notes.txt'",
+    "description": "不使用 Force，避免覆盖已有文件。",
+    "id": "powershell-new-file",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "检查路径是否存在",
+    "syntax": "Test-Path -LiteralPath '.\\app.conf' -PathType Leaf",
+    "example": "Test-Path -LiteralPath '.\\app.conf' -PathType Leaf",
+    "description": "返回布尔值。",
+    "id": "powershell-exists",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "查看文件元数据",
+    "syntax": "Get-Item -LiteralPath '.\\app.conf' | Format-List Name,Length,CreationTime,LastWriteTime",
+    "example": "Get-Item -LiteralPath '.\\app.conf' | Format-List Name,Length,CreationTime,LastWriteTime",
+    "description": "只查询。",
+    "id": "powershell-metadata",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "统计目录文件大小",
+    "syntax": "Get-ChildItem -LiteralPath '.\\logs' -File -Recurse | Measure-Object -Property Length -Sum",
+    "example": "Get-ChildItem -LiteralPath '.\\logs' -File -Recurse | Measure-Object -Property Length -Sum",
+    "description": "只统计可访问文件。",
+    "id": "powershell-file-size",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "查找大文件",
+    "syntax": "Get-ChildItem -LiteralPath '.\\logs' -File -Recurse | Where-Object Length -gt 10MB",
+    "example": "Get-ChildItem -LiteralPath '.\\logs' -File -Recurse | Where-Object Length -gt 10MB",
+    "description": "不删除。",
+    "id": "powershell-large-files",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "查找一天内修改文件",
+    "syntax": "Get-ChildItem -LiteralPath '.\\logs' -File -Recurse | Where-Object LastWriteTime -gt (Get-Date).AddDays(-1)",
+    "example": "Get-ChildItem -LiteralPath '.\\logs' -File -Recurse | Where-Object LastWriteTime -gt (Get-Date).AddDays(-1)",
+    "description": "设备本地时间。",
+    "id": "powershell-recent-files",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "压缩",
+    "title": "创建 ZIP 归档",
+    "syntax": "Compress-Archive -LiteralPath '.\\logs' -DestinationPath '.\\logs.zip'",
+    "example": "Compress-Archive -LiteralPath '.\\logs' -DestinationPath '.\\logs.zip'",
+    "description": "不带 Force，目标已存在时报错；隐藏文件及单文件大小限制依实现。",
+    "id": "powershell-archive-create",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "需 Microsoft.PowerShell.Archive 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "压缩",
+    "title": "解压 ZIP",
+    "syntax": "Expand-Archive -LiteralPath '.\\logs.zip' -DestinationPath '.\\restore'",
+    "example": "Expand-Archive -LiteralPath '.\\logs.zip' -DestinationPath '.\\restore'",
+    "description": "先检查来源和目标路径。",
+    "id": "powershell-archive-extract",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "需 Microsoft.PowerShell.Archive 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "权限",
+    "title": "查看文件 ACL",
+    "syntax": "Get-Acl -LiteralPath '.\\app.conf' | Format-List Owner,AccessToString",
+    "example": "Get-Acl -LiteralPath '.\\app.conf' | Format-List Owner,AccessToString",
+    "description": "Windows ACL 不等同 Linux chmod。",
+    "id": "powershell-acl",
+    "tags": [
+      "权限"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "权限",
+    "title": "备份文件 ACL",
+    "syntax": "icacls.exe '.\\app.conf' /save '.\\app-acl.txt'",
+    "example": "icacls.exe '.\\app.conf' /save '.\\app-acl.txt'",
+    "description": "保存 ACL 到文本，不修改源权限。",
+    "id": "powershell-acl-backup",
+    "tags": [
+      "权限"
+    ],
+    "requires": "需 Windows icacls。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "查看文本开头",
+    "syntax": "Get-Content -LiteralPath '.\\app.log' -Encoding UTF8 -TotalCount 30",
+    "example": "Get-Content -LiteralPath '.\\app.log' -Encoding UTF8 -TotalCount 30",
+    "description": "明确 UTF-8。",
+    "id": "powershell-text-head",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "持续跟踪文本",
+    "syntax": "Get-Content -LiteralPath '.\\app.log' -Encoding UTF8 -Tail 20 -Wait",
+    "example": "Get-Content -LiteralPath '.\\app.log' -Encoding UTF8 -Tail 20 -Wait",
+    "description": "Ctrl+C 停止。",
+    "id": "powershell-text-follow",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "查看指定行段",
+    "syntax": "Get-Content -LiteralPath '.\\app.log' -Encoding UTF8 | Select-Object -Skip 19 -First 21",
+    "example": "Get-Content -LiteralPath '.\\app.log' -Encoding UTF8 | Select-Object -Skip 19 -First 21",
+    "description": "显示第 20 至 40 行。",
+    "id": "powershell-text-range",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "预览字符串替换",
+    "syntax": "(Get-Content -LiteralPath '.\\app.conf' -Raw -Encoding UTF8) -replace 'DEBUG','INFO'",
+    "example": "(Get-Content -LiteralPath '.\\app.conf' -Raw -Encoding UTF8) -replace 'DEBUG','INFO'",
+    "description": "只输出，不写回。",
+    "id": "powershell-text-replace",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "统计文本行数",
+    "syntax": "Get-Content -LiteralPath '.\\app.log' -Encoding UTF8 | Measure-Object -Line",
+    "example": "Get-Content -LiteralPath '.\\app.log' -Encoding UTF8 | Measure-Object -Line",
+    "description": "统计读取到的行。",
+    "id": "powershell-text-count",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "文本排序去重",
+    "syntax": "Get-Content -LiteralPath '.\\names.txt' -Encoding UTF8 | Sort-Object -Unique",
+    "example": "Get-Content -LiteralPath '.\\names.txt' -Encoding UTF8 | Sort-Object -Unique",
+    "description": "不修改源文件。",
+    "id": "powershell-text-sort",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "写入 UTF-8 文本",
+    "syntax": "Set-Content -LiteralPath '.\\notes.txt' -Value '设备日志' -Encoding UTF8",
+    "example": "Set-Content -LiteralPath '.\\notes.txt' -Value '设备日志' -Encoding UTF8",
+    "description": "覆盖目标；Windows PowerShell 5.1 写 BOM，PowerShell 7 默认无 BOM。",
+    "id": "powershell-text-write",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "追加 UTF-8 文本",
+    "syntax": "Add-Content -LiteralPath '.\\notes.txt' -Value '本次检查完成' -Encoding UTF8",
+    "example": "Add-Content -LiteralPath '.\\notes.txt' -Value '本次检查完成' -Encoding UTF8",
+    "description": "先确认原文件编码，避免混合编码。",
+    "id": "powershell-text-append",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "读取 JSON 属性",
+    "syntax": "Get-Content -LiteralPath '.\\config.json' -Raw -Encoding UTF8 | ConvertFrom-Json | Select-Object name,port",
+    "example": "Get-Content -LiteralPath '.\\config.json' -Raw -Encoding UTF8 | ConvertFrom-Json | Select-Object name,port",
+    "description": "文件须为有效 JSON。",
+    "id": "powershell-text-json",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "读取 CSV",
+    "syntax": "Import-Csv -LiteralPath '.\\metrics.csv' -Encoding UTF8 | Select-Object -First 10",
+    "example": "Import-Csv -LiteralPath '.\\metrics.csv' -Encoding UTF8 | Select-Object -First 10",
+    "description": "默认逗号分隔，首行为列名。",
+    "id": "powershell-text-csv",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "文本",
+    "title": "比较文本行",
+    "syntax": "Compare-Object (Get-Content '.\\before.txt' -Encoding UTF8) (Get-Content '.\\after.txt' -Encoding UTF8)",
+    "example": "Compare-Object (Get-Content '.\\before.txt' -Encoding UTF8) (Get-Content '.\\after.txt' -Encoding UTF8)",
+    "description": "查看差异，不覆盖文件。",
+    "id": "powershell-text-compare",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "编辑",
+    "title": "用记事本编辑文件",
+    "syntax": "notepad.exe '.\\notes.txt'",
+    "example": "notepad.exe '.\\notes.txt'",
+    "description": "启动图形编辑器，需在窗口内保存。",
+    "id": "powershell-editor-notepad",
+    "tags": [
+      "编辑"
+    ],
+    "requires": "需 Windows 记事本。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "编辑",
+    "title": "Vim 编辑文件",
+    "syntax": "vim.exe '.\\app.conf'",
+    "example": "vim.exe '.\\app.conf'",
+    "description": "进入后使用编辑器按键。",
+    "id": "powershell-editor-vim",
+    "tags": [
+      "编辑"
+    ],
+    "requires": "需另行安装 vim 并加入 PATH；完整交互终端。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "编辑",
+    "title": "Nano 编辑文件",
+    "syntax": "nano.exe '.\\app.conf'",
+    "example": "nano.exe '.\\app.conf'",
+    "description": "进入后使用编辑器按键。",
+    "id": "powershell-editor-nano",
+    "tags": [
+      "编辑"
+    ],
+    "requires": "需另行安装 Windows nano 并加入 PATH。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "进程",
+    "title": "按名称查询进程",
+    "syntax": "Get-Process -Name 'notepad' -ErrorAction SilentlyContinue",
+    "example": "Get-Process -Name 'notepad' -ErrorAction SilentlyContinue",
+    "description": "不存在时不显示错误。",
+    "id": "powershell-process-find",
+    "tags": [
+      "进程"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "进程",
+    "title": "查看进程路径与命令行",
+    "syntax": "Get-CimInstance Win32_Process -Filter 'ProcessId=1234' | Select-Object ProcessId,ExecutablePath,CommandLine",
+    "example": "Get-CimInstance Win32_Process -Filter 'ProcessId=1234' | Select-Object ProcessId,ExecutablePath,CommandLine",
+    "description": "先核对 PID；部分字段需提升权限。",
+    "id": "powershell-process-details",
+    "tags": [
+      "进程"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "进程",
+    "title": "终止进程前预览",
+    "syntax": "Stop-Process -Id 1234 -WhatIf",
+    "example": "Stop-Process -Id 1234 -WhatIf",
+    "description": "只预览；实际终止可能丢失数据。",
+    "id": "powershell-process-stop",
+    "tags": [
+      "进程"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "进程",
+    "title": "启动程序",
+    "syntax": "Start-Process -FilePath 'notepad.exe' -ArgumentList '.\\notes.txt'",
+    "example": "Start-Process -FilePath 'notepad.exe' -ArgumentList '.\\notes.txt'",
+    "description": "会打开程序窗口。",
+    "id": "powershell-process-start",
+    "tags": [
+      "进程"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "服务",
+    "title": "查看单个服务",
+    "syntax": "Get-Service -Name 'Spooler'",
+    "example": "Get-Service -Name 'Spooler'",
+    "description": "仅查询。",
+    "id": "powershell-service-status",
+    "tags": [
+      "服务"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "服务",
+    "title": "启动服务前预览",
+    "syntax": "Start-Service -Name 'Spooler' -WhatIf",
+    "example": "Start-Service -Name 'Spooler' -WhatIf",
+    "description": "只预览，正式执行通常需管理员权限。",
+    "id": "powershell-service-start",
+    "tags": [
+      "服务"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "服务",
+    "title": "停止服务前预览",
+    "syntax": "Stop-Service -Name 'Spooler' -WhatIf",
+    "example": "Stop-Service -Name 'Spooler' -WhatIf",
+    "description": "只预览，正式停止会影响打印。",
+    "id": "powershell-service-stop",
+    "tags": [
+      "服务"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "日志",
+    "title": "查询服务控制管理器事件",
+    "syntax": "Get-WinEvent -FilterHashtable @{LogName='System';ProviderName='Service Control Manager'} -MaxEvents 20",
+    "example": "Get-WinEvent -FilterHashtable @{LogName='System';ProviderName='Service Control Manager'} -MaxEvents 20",
+    "description": "日志读取受权限影响。",
+    "id": "powershell-service-events",
+    "tags": [
+      "日志"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "日志",
+    "title": "最近系统事件",
+    "syntax": "Get-WinEvent -LogName System -MaxEvents 30 | Select-Object TimeCreated,Id,LevelDisplayName,Message",
+    "example": "Get-WinEvent -LogName System -MaxEvents 30 | Select-Object TimeCreated,Id,LevelDisplayName,Message",
+    "description": "只读取。",
+    "id": "powershell-event-log",
+    "tags": [
+      "日志"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "日志",
+    "title": "应用错误事件",
+    "syntax": "Get-WinEvent -FilterHashtable @{LogName='Application';Level=2} -MaxEvents 20",
+    "example": "Get-WinEvent -FilterHashtable @{LogName='Application';Level=2} -MaxEvents 20",
+    "description": "Level 2 为错误。",
+    "id": "powershell-event-errors",
+    "tags": [
+      "日志"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "网卡列表",
+    "syntax": "Get-NetAdapter | Select-Object Name,Status,LinkSpeed",
+    "example": "Get-NetAdapter | Select-Object Name,Status,LinkSpeed",
+    "description": "Windows NetAdapter 模块。",
+    "id": "powershell-adapters",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows NetAdapter 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "以太网统计",
+    "syntax": "Get-NetAdapterStatistics -Name 'Ethernet'",
+    "example": "Get-NetAdapterStatistics -Name 'Ethernet'",
+    "description": "按实际本地化网卡名替换。",
+    "id": "powershell-ethernet",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows NetAdapter 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "扫描 WiFi 热点",
+    "syntax": "netsh.exe wlan show networks mode=bssid",
+    "example": "netsh.exe wlan show networks mode=bssid",
+    "description": "会查询无线接口。",
+    "id": "powershell-wifi-list",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows WLAN 服务与 WiFi；较新系统可能要求位置权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "查看 WiFi 配置名",
+    "syntax": "netsh.exe wlan show profiles",
+    "example": "netsh.exe wlan show profiles",
+    "description": "不显示明文密码。",
+    "id": "powershell-wifi-profile",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows WLAN 服务。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "连接已保存 WiFi",
+    "syntax": "netsh.exe wlan connect name='MyWiFi'",
+    "example": "netsh.exe wlan connect name='MyWiFi'",
+    "description": "改变网络连接，配置必须已存在。",
+    "id": "powershell-wifi-connect",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows WLAN、WiFi 与已保存配置。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "查看接口 DHCP 状态",
+    "syntax": "Get-NetIPInterface -AddressFamily IPv4 | Select-Object InterfaceAlias,Dhcp,ConnectionState",
+    "example": "Get-NetIPInterface -AddressFamily IPv4 | Select-Object InterfaceAlias,Dhcp,ConnectionState",
+    "description": "只查询。",
+    "id": "powershell-dhcp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 NetTCPIP 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "续租指定接口 DHCP",
+    "syntax": "ipconfig.exe /renew 'Ethernet'",
+    "example": "ipconfig.exe /renew 'Ethernet'",
+    "description": "可能短暂断网；仅适用 DHCP 接口。",
+    "id": "powershell-dhcp-renew",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows 网络接口与相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "查看 DNS 服务器",
+    "syntax": "Get-DnsClientServerAddress -AddressFamily IPv4",
+    "example": "Get-DnsClientServerAddress -AddressFamily IPv4",
+    "description": "不修改 DNS。",
+    "id": "powershell-dns-servers",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 DnsClient 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "IPv4 路由表",
+    "syntax": "Get-NetRoute -AddressFamily IPv4 | Sort-Object RouteMetric",
+    "example": "Get-NetRoute -AddressFamily IPv4 | Sort-Object RouteMetric",
+    "description": "只查询。",
+    "id": "powershell-routes",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 NetTCPIP 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "邻居缓存",
+    "syntax": "Get-NetNeighbor -AddressFamily IPv4",
+    "example": "Get-NetNeighbor -AddressFamily IPv4",
+    "description": "只查询。",
+    "id": "powershell-neighbor",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 NetTCPIP 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "HTTP 状态与响应",
+    "syntax": "Invoke-WebRequest -Uri 'https://example.com' -UseBasicParsing -TimeoutSec 15",
+    "example": "Invoke-WebRequest -Uri 'https://example.com' -UseBasicParsing -TimeoutSec 15",
+    "description": "发网络请求；不绕过 TLS 校验。",
+    "id": "powershell-http",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "下载文件",
+    "syntax": "Invoke-WebRequest -Uri 'https://example.com/readme.txt' -OutFile '.\\readme.txt' -UseBasicParsing -TimeoutSec 60",
+    "example": "Invoke-WebRequest -Uri 'https://example.com/readme.txt' -OutFile '.\\readme.txt' -UseBasicParsing -TimeoutSec 60",
+    "description": "可能覆盖本地目标。",
+    "id": "powershell-download",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "原生 curl 响应头",
+    "syntax": "curl.exe -I --max-time 15 https://example.com",
+    "example": "curl.exe -I --max-time 15 https://example.com",
+    "description": "显式 .exe 避免 PowerShell curl 别名。",
+    "id": "powershell-curl",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 curl.exe，较新 Windows 自带。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "SSH 登录",
+    "syntax": "ssh.exe -p 22 user@192.168.1.10",
+    "example": "ssh.exe -p 22 user@192.168.1.10",
+    "description": "首次核对主机指纹。",
+    "id": "powershell-ssh",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows OpenSSH 客户端。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "SCP 上传文件",
+    "syntax": "scp.exe -P 22 '.\\app.conf' user@192.168.1.10:/tmp/app.conf",
+    "example": "scp.exe -P 22 '.\\app.conf' user@192.168.1.10:/tmp/app.conf",
+    "description": "会写远端目标。",
+    "id": "powershell-scp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows OpenSSH 客户端与远端授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "SFTP 交互连接",
+    "syntax": "sftp.exe -P 22 user@192.168.1.10",
+    "example": "sftp.exe -P 22 user@192.168.1.10",
+    "description": "连接后 get/put，bye 退出。",
+    "id": "powershell-sftp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows OpenSSH sftp。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "磁盘",
+    "title": "卷与剩余空间",
+    "syntax": "Get-Volume | Select-Object DriveLetter,FileSystemLabel,FileSystem,SizeRemaining,Size",
+    "example": "Get-Volume | Select-Object DriveLetter,FileSystemLabel,FileSystem,SizeRemaining,Size",
+    "description": "只查询。",
+    "id": "powershell-volumes",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 Storage 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "磁盘",
+    "title": "物理磁盘信息",
+    "syntax": "Get-Disk | Select-Object Number,FriendlyName,PartitionStyle,OperationalStatus",
+    "example": "Get-Disk | Select-Object Number,FriendlyName,PartitionStyle,OperationalStatus",
+    "description": "不初始化或格式化。",
+    "id": "powershell-disks",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 Storage 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "磁盘",
+    "title": "驱动器挂载列表",
+    "syntax": "Get-PSDrive -PSProvider FileSystem",
+    "example": "Get-PSDrive -PSProvider FileSystem",
+    "description": "包括文件系统提供程序路径。",
+    "id": "powershell-mounts",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "磁盘",
+    "title": "查询磁盘映像挂载状态",
+    "syntax": "Get-DiskImage -ImagePath 'C:\\Images\\test.iso'",
+    "example": "Get-DiskImage -ImagePath 'C:\\Images\\test.iso'",
+    "description": "只查询指定映像。",
+    "id": "powershell-disk-image",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 Storage 模块与实际映像文件。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "用户",
+    "title": "当前账户身份",
+    "syntax": "whoami.exe /all",
+    "example": "whoami.exe /all",
+    "description": "列出用户、组与权限。",
+    "id": "powershell-user-current",
+    "tags": [
+      "用户"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "用户",
+    "title": "本地用户列表",
+    "syntax": "Get-LocalUser | Select-Object Name,Enabled,LastLogon",
+    "example": "Get-LocalUser | Select-Object Name,Enabled,LastLogon",
+    "description": "只查询。",
+    "id": "powershell-user-list",
+    "tags": [
+      "用户"
+    ],
+    "requires": "需 Windows 64 位 LocalAccounts 模块，部分版本不可用。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "用户",
+    "title": "本地组列表",
+    "syntax": "Get-LocalGroup | Select-Object Name,Description",
+    "example": "Get-LocalGroup | Select-Object Name,Description",
+    "description": "只查询。",
+    "id": "powershell-user-groups",
+    "tags": [
+      "用户"
+    ],
+    "requires": "需 Windows LocalAccounts 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "软件包",
+    "title": "查询已安装软件",
+    "syntax": "winget.exe list",
+    "example": "winget.exe list",
+    "description": "可能访问软件源并提示协议。",
+    "id": "powershell-package-winget",
+    "tags": [
+      "软件包"
+    ],
+    "requires": "需另行可用的 Windows 程序包管理器 winget。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "软件包",
+    "title": "已安装 PowerShell 模块",
+    "syntax": "Get-Module -ListAvailable | Select-Object Name,Version",
+    "example": "Get-Module -ListAvailable | Select-Object Name,Version",
+    "description": "只查询，不安装模块。",
+    "id": "powershell-package-module",
+    "tags": [
+      "软件包"
+    ],
+    "requires": "Windows PowerShell 5.1 或 PowerShell 7；操作需对应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "构建调试",
+    "title": "配置 CMake 工程",
+    "syntax": "cmake.exe -S '.\\project' -B '.\\build-test'",
+    "example": "cmake.exe -S '.\\project' -B '.\\build-test'",
+    "description": "执行可信工程配置脚本。",
+    "id": "powershell-build-cmake",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需另行安装 CMake 与编译器。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "构建调试",
+    "title": "构建 CMake 工程",
+    "syntax": "cmake.exe --build '.\\build-test' --parallel 2",
+    "example": "cmake.exe --build '.\\build-test' --parallel 2",
+    "description": "运行工程定义的构建动作。",
+    "id": "powershell-build-run",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需已配置的可信 CMake 工程。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "构建调试",
+    "title": "运行 CTest 测试",
+    "syntax": "ctest.exe --test-dir '.\\build-test' --output-on-failure",
+    "example": "ctest.exe --test-dir '.\\build-test' --output-on-failure",
+    "description": "会执行测试程序。",
+    "id": "powershell-build-ctest",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需 CTest 与可信测试集。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "构建调试",
+    "title": "查询 Git 工作区状态",
+    "syntax": "git.exe -C '.\\project' status --short",
+    "example": "git.exe -C '.\\project' status --short",
+    "description": "只查询。",
+    "id": "powershell-build-git",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需另行安装 Git。",
+    "interaction": "shell"
+  },
+  {
+    "system": "powershell",
+    "category": "开发板",
+    "title": "查询 USB 串口设备",
+    "syntax": "Get-PnpDevice -Class Ports -PresentOnly | Select-Object Status,FriendlyName,InstanceId",
+    "example": "Get-PnpDevice -Class Ports -PresentOnly | Select-Object Status,FriendlyName,InstanceId",
+    "description": "Windows 设备查询，非连接操作。",
+    "id": "powershell-serial-pnp",
+    "tags": [
+      "开发板"
+    ],
+    "requires": "需 Windows PnpDevice 模块。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "复制文件并确认覆盖",
+    "syntax": "copy /-y \".\\app.conf\" \".\\app.conf.bak\"",
+    "example": "copy /-y \".\\app.conf\" \".\\app.conf.bak\"",
+    "description": "同名目标覆盖前确认。",
+    "id": "cmd-copy",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "移动文件",
+    "syntax": "move /-y \".\\app.log\" \".\\archive\\app.log\"",
+    "example": "move /-y \".\\app.log\" \".\\archive\\app.log\"",
+    "description": "归档目录需先存在，源路径改变。",
+    "id": "cmd-move",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "重命名文件",
+    "syntax": "ren \".\\app-old.log\" \"app.log\"",
+    "example": "ren \".\\app-old.log\" \"app.log\"",
+    "description": "第二参数仅文件名。",
+    "id": "cmd-rename",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "交互删除文件",
+    "syntax": "del /p \".\\test.txt\"",
+    "example": "del /p \".\\test.txt\"",
+    "description": "执行后不可回收，先核对路径。",
+    "id": "cmd-remove-preview",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "创建目录",
+    "syntax": "mkdir \".\\serialstudio-data\"",
+    "example": "mkdir \".\\serialstudio-data\"",
+    "description": "不带删除操作。",
+    "id": "cmd-mkdir",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "查看文件属性",
+    "syntax": "attrib \".\\app.conf\"",
+    "example": "attrib \".\\app.conf\"",
+    "description": "不带加减选项时只查询属性。",
+    "id": "cmd-metadata",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "二进制比较文件",
+    "syntax": "fc /b \".\\before.bin\" \".\\after.bin\"",
+    "example": "fc /b \".\\before.bin\" \".\\after.bin\"",
+    "description": "差异返回非零。",
+    "id": "cmd-compare",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "查看目录树",
+    "syntax": "tree \".\\project\" /f /a",
+    "example": "tree \".\\project\" /f /a",
+    "description": "输出目录与文件名。",
+    "id": "cmd-tree",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "预览目录复制",
+    "syntax": "robocopy \".\\source\" \".\\backup\" /e /l /r:0 /w:0",
+    "example": "robocopy \".\\source\" \".\\backup\" /e /l /r:0 /w:0",
+    "description": "/l 只列出计划；不使用 /mir，避免镜像删除。",
+    "id": "cmd-robocopy-preview",
+    "tags": [
+      "文件"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "压缩",
+    "title": "创建 tar 归档",
+    "syntax": "tar.exe -cf \".\\logs.tar\" -C \".\\logs\" .",
+    "example": "tar.exe -cf \".\\logs.tar\" -C \".\\logs\" .",
+    "description": "会写归档文件。",
+    "id": "cmd-archive-create",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "需 Windows 自带或已安装的 bsdtar tar.exe。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "压缩",
+    "title": "查看 tar 归档",
+    "syntax": "tar.exe -tf \".\\logs.tar\"",
+    "example": "tar.exe -tf \".\\logs.tar\"",
+    "description": "不解压。",
+    "id": "cmd-archive-list",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "需 tar.exe。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "压缩",
+    "title": "解压归档",
+    "syntax": "tar.exe -xf \".\\logs.tar\" -C \".\\restore\"",
+    "example": "tar.exe -xf \".\\logs.tar\" -C \".\\restore\"",
+    "description": "先创建目标目录，可能覆盖文件。",
+    "id": "cmd-archive-extract",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "需 tar.exe。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "权限",
+    "title": "查看文件 ACL",
+    "syntax": "icacls \".\\app.conf\"",
+    "example": "icacls \".\\app.conf\"",
+    "description": "只查询。",
+    "id": "cmd-permissions",
+    "tags": [
+      "权限"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文本",
+    "title": "排序文本",
+    "syntax": "sort \".\\names.txt\"",
+    "example": "sort \".\\names.txt\"",
+    "description": "不覆盖源文件。",
+    "id": "cmd-text-sort",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文本",
+    "title": "分页查看文本",
+    "syntax": "more \".\\app.log\"",
+    "example": "more \".\\app.log\"",
+    "description": "按空格翻页，q 退出。",
+    "id": "cmd-text-page",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文本",
+    "title": "统计文本行数",
+    "syntax": "find /v /c \"\" \".\\app.log\"",
+    "example": "find /v /c \"\" \".\\app.log\"",
+    "description": "空字符串配合反向匹配统计行。",
+    "id": "cmd-text-lines",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文本",
+    "title": "按字面搜索文本",
+    "syntax": "findstr /n /l /c:\"connection refused\" \".\\app.log\"",
+    "example": "findstr /n /l /c:\"connection refused\" \".\\app.log\"",
+    "description": "/l 使用字面匹配。",
+    "id": "cmd-text-literal",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "文本",
+    "title": "递归搜索日志",
+    "syntax": "findstr /s /n /i /c:\"timeout\" \".\\logs\\*.log\"",
+    "example": "findstr /s /n /i /c:\"timeout\" \".\\logs\\*.log\"",
+    "description": "只搜索匹配文件。",
+    "id": "cmd-text-recursive",
+    "tags": [
+      "文本"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "编辑",
+    "title": "用记事本编辑文件",
+    "syntax": "notepad.exe \".\\notes.txt\"",
+    "example": "notepad.exe \".\\notes.txt\"",
+    "description": "启动图形编辑器，在窗口保存。",
+    "id": "cmd-editor",
+    "tags": [
+      "编辑"
+    ],
+    "requires": "需 Windows 记事本。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "进程",
+    "title": "按映像名查进程",
+    "syntax": "tasklist /fi \"IMAGENAME eq notepad.exe\"",
+    "example": "tasklist /fi \"IMAGENAME eq notepad.exe\"",
+    "description": "只查询。",
+    "id": "cmd-process-filter",
+    "tags": [
+      "进程"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "进程",
+    "title": "查看进程关联服务",
+    "syntax": "tasklist /svc /fi \"PID eq 1234\"",
+    "example": "tasklist /svc /fi \"PID eq 1234\"",
+    "description": "先核对 PID。",
+    "id": "cmd-process-services",
+    "tags": [
+      "进程"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "进程",
+    "title": "终止指定进程",
+    "syntax": "taskkill /pid 1234",
+    "example": "taskkill /pid 1234",
+    "description": "可能丢失未保存数据，先核对 PID。",
+    "id": "cmd-process-kill",
+    "tags": [
+      "进程"
+    ],
+    "requires": "需目标进程终止权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "服务",
+    "title": "查询服务状态",
+    "syntax": "sc.exe query Spooler",
+    "example": "sc.exe query Spooler",
+    "description": "仅查询打印服务。",
+    "id": "cmd-service-query",
+    "tags": [
+      "服务"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "服务",
+    "title": "查看服务启动配置",
+    "syntax": "sc.exe qc Spooler",
+    "example": "sc.exe qc Spooler",
+    "description": "不修改配置。",
+    "id": "cmd-service-config",
+    "tags": [
+      "服务"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "服务",
+    "title": "启动服务",
+    "syntax": "sc.exe start Spooler",
+    "example": "sc.exe start Spooler",
+    "description": "会改变服务状态。",
+    "id": "cmd-service-start",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需管理员权限和目标服务存在。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "服务",
+    "title": "停止服务",
+    "syntax": "sc.exe stop Spooler",
+    "example": "sc.exe stop Spooler",
+    "description": "会影响打印业务。",
+    "id": "cmd-service-stop",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需管理员权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "日志",
+    "title": "最近系统错误事件",
+    "syntax": "wevtutil qe System /q:\"*[System[(Level=2)]]\" /c:20 /rd:true /f:text",
+    "example": "wevtutil qe System /q:\"*[System[(Level=2)]]\" /c:20 /rd:true /f:text",
+    "description": "只查询。",
+    "id": "cmd-event-log",
+    "tags": [
+      "日志"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "日志",
+    "title": "列出事件日志通道",
+    "syntax": "wevtutil el",
+    "example": "wevtutil el",
+    "description": "只查询。",
+    "id": "cmd-event-list",
+    "tags": [
+      "日志"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "扫描 WiFi 热点",
+    "syntax": "netsh wlan show networks mode=bssid",
+    "example": "netsh wlan show networks mode=bssid",
+    "description": "查询无线接口。",
+    "id": "cmd-wifi-list",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 WLAN 服务；较新系统可能需位置权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "查看 WiFi 配置名",
+    "syntax": "netsh wlan show profiles",
+    "example": "netsh wlan show profiles",
+    "description": "不显示明文密码。",
+    "id": "cmd-wifi-profile",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 WLAN 服务。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "连接已保存 WiFi",
+    "syntax": "netsh wlan connect name=\"MyWiFi\"",
+    "example": "netsh wlan connect name=\"MyWiFi\"",
+    "description": "会切换网络，配置必须已存在。",
+    "id": "cmd-wifi-connect",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 WLAN 服务、WiFi 与已保存配置。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "查询以太网接口",
+    "syntax": "netsh interface show interface",
+    "example": "netsh interface show interface",
+    "description": "只查询网卡管理状态。",
+    "id": "cmd-ethernet",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "续租 DHCP 地址",
+    "syntax": "ipconfig /renew \"Ethernet\"",
+    "example": "ipconfig /renew \"Ethernet\"",
+    "description": "可能短暂断网，接口名按实际替换。",
+    "id": "cmd-dhcp-renew",
+    "tags": [
+      "网络"
+    ],
+    "requires": "适用 DHCP 接口，需相应权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "查看 DNS 缓存",
+    "syntax": "ipconfig /displaydns",
+    "example": "ipconfig /displaydns",
+    "description": "不清缓存。",
+    "id": "cmd-dns-cache",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "查询 HTTP 响应头",
+    "syntax": "curl.exe -I --max-time 15 https://example.com",
+    "example": "curl.exe -I --max-time 15 https://example.com",
+    "description": "联网，保留 TLS 校验。",
+    "id": "cmd-http",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 curl.exe。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "下载文件",
+    "syntax": "curl.exe -fL --max-time 60 -o \".\\readme.txt\" https://example.com/readme.txt",
+    "example": "curl.exe -fL --max-time 60 -o \".\\readme.txt\" https://example.com/readme.txt",
+    "description": "写入目标，检查覆盖风险。",
+    "id": "cmd-download",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 curl.exe。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "SSH 远程登录",
+    "syntax": "ssh.exe -p 22 user@192.168.1.10",
+    "example": "ssh.exe -p 22 user@192.168.1.10",
+    "description": "核对主机指纹。",
+    "id": "cmd-ssh",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Windows OpenSSH 客户端。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "SCP 上传文件",
+    "syntax": "scp.exe -P 22 \".\\app.conf\" user@192.168.1.10:/tmp/app.conf",
+    "example": "scp.exe -P 22 \".\\app.conf\" user@192.168.1.10:/tmp/app.conf",
+    "description": "会写远端目标。",
+    "id": "cmd-scp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 OpenSSH scp 与远端授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "SFTP 交互会话",
+    "syntax": "sftp.exe -P 22 user@192.168.1.10",
+    "example": "sftp.exe -P 22 user@192.168.1.10",
+    "description": "连接后 get/put，bye 退出。",
+    "id": "cmd-sftp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 OpenSSH sftp。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "磁盘",
+    "title": "卷序列号和卷标",
+    "syntax": "vol C:",
+    "example": "vol C:",
+    "description": "只查询。",
+    "id": "cmd-disk-vol",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "磁盘",
+    "title": "查看卷挂载点",
+    "syntax": "mountvol",
+    "example": "mountvol",
+    "description": "不带参数只查询。",
+    "id": "cmd-disk-mounts",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "用户",
+    "title": "当前用户和用户组",
+    "syntax": "whoami /all",
+    "example": "whoami /all",
+    "description": "只查询。",
+    "id": "cmd-user-current",
+    "tags": [
+      "用户"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "用户",
+    "title": "本地用户列表",
+    "syntax": "net user",
+    "example": "net user",
+    "description": "只查询，不创建账户。",
+    "id": "cmd-user-list",
+    "tags": [
+      "用户"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "用户",
+    "title": "本地组列表",
+    "syntax": "net localgroup",
+    "example": "net localgroup",
+    "description": "只查询。",
+    "id": "cmd-user-groups",
+    "tags": [
+      "用户"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "软件包",
+    "title": "查询已安装软件",
+    "syntax": "winget.exe list",
+    "example": "winget.exe list",
+    "description": "可能访问源并提示协议。",
+    "id": "cmd-package-winget",
+    "tags": [
+      "软件包"
+    ],
+    "requires": "需 Windows 程序包管理器 winget。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "构建调试",
+    "title": "配置 CMake 工程",
+    "syntax": "cmake.exe -S \".\\project\" -B \".\\build-test\"",
+    "example": "cmake.exe -S \".\\project\" -B \".\\build-test\"",
+    "description": "会执行工程脚本。",
+    "id": "cmd-build-cmake",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需 CMake、编译器和可信工程。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "构建调试",
+    "title": "执行 CMake 构建",
+    "syntax": "cmake.exe --build \".\\build-test\" --parallel 2",
+    "example": "cmake.exe --build \".\\build-test\" --parallel 2",
+    "description": "执行工程构建任务。",
+    "id": "cmd-build-run",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需已配置可信工程。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "构建调试",
+    "title": "Git 工作区状态",
+    "syntax": "git.exe -C \".\\project\" status --short",
+    "example": "git.exe -C \".\\project\" status --short",
+    "description": "只查询。",
+    "id": "cmd-build-git",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需 Git。",
+    "interaction": "shell"
+  },
+  {
+    "system": "cmd",
+    "category": "系统",
+    "title": "查看环境变量",
+    "syntax": "set PATH",
+    "example": "set PATH",
+    "description": "只显示名称以 PATH 开头的变量。",
+    "id": "cmd-env",
+    "tags": [
+      "系统"
+    ],
+    "requires": "Windows CMD 交互提示符；目标路径和操作权限需核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "查看 toybox 可用工具",
+    "syntax": "toybox",
+    "example": "toybox",
+    "description": "列出当前镜像提供的 applet，不假定全部存在。",
+    "id": "android-toybox-list",
+    "tags": [
+      "系统"
+    ],
+    "requires": "Android toybox；厂商裁剪列表依设备而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "全部系统属性",
+    "syntax": "getprop",
+    "example": "getprop",
+    "description": "可能包含设备标识，分享前检查。",
+    "id": "android-properties",
+    "tags": [
+      "系统"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "开机时长",
+    "syntax": "toybox uptime",
+    "example": "toybox uptime",
+    "description": "只查询。",
+    "id": "android-uptime",
+    "tags": [
+      "系统"
+    ],
+    "requires": "需 Android toybox uptime。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "当前系统时间",
+    "syntax": "toybox date",
+    "example": "toybox date",
+    "description": "不修改时间。",
+    "id": "android-date",
+    "tags": [
+      "系统"
+    ],
+    "requires": "需 Android toybox date。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "CPU 信息",
+    "syntax": "toybox cat /proc/cpuinfo",
+    "example": "toybox cat /proc/cpuinfo",
+    "description": "只读取当前内核信息。",
+    "id": "android-cpu",
+    "tags": [
+      "系统"
+    ],
+    "requires": "需 Android toybox cat 与 proc 读取权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "内存信息",
+    "syntax": "toybox cat /proc/meminfo",
+    "example": "toybox cat /proc/meminfo",
+    "description": "不修改系统。",
+    "id": "android-memory",
+    "tags": [
+      "系统"
+    ],
+    "requires": "需 Android toybox cat。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "电池状态",
+    "syntax": "dumpsys battery",
+    "example": "dumpsys battery",
+    "description": "只查询电量与供电。",
+    "id": "android-battery",
+    "tags": [
+      "系统"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "温控服务状态",
+    "syntax": "dumpsys thermalservice",
+    "example": "dumpsys thermalservice",
+    "description": "服务名与字段随版本变化。",
+    "id": "android-thermal",
+    "tags": [
+      "系统"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "复制共享目录文件",
+    "syntax": "toybox cp /sdcard/Download/app.conf /sdcard/Download/app.conf.bak",
+    "example": "toybox cp /sdcard/Download/app.conf /sdcard/Download/app.conf.bak",
+    "description": "可能覆盖目标。",
+    "id": "android-copy",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需 Android toybox cp 与共享存储访问权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "移动共享目录文件",
+    "syntax": "toybox mv -i /sdcard/Download/app.log /sdcard/Download/app-old.log",
+    "example": "toybox mv -i /sdcard/Download/app.log /sdcard/Download/app-old.log",
+    "description": "覆盖前询问，源路径改变。",
+    "id": "android-move",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需 Android toybox mv 与共享存储访问权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "创建共享目录",
+    "syntax": "toybox mkdir -p /sdcard/Download/serialstudio",
+    "example": "toybox mkdir -p /sdcard/Download/serialstudio",
+    "description": "不删除已有内容。",
+    "id": "android-mkdir",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需 Android toybox mkdir 与共享存储权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "交互删除单个文件",
+    "syntax": "toybox rm -i /data/local/tmp/test.txt",
+    "example": "toybox rm -i /data/local/tmp/test.txt",
+    "description": "不可回收，核对路径。",
+    "id": "android-remove",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需 Android toybox rm 与目标权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "按文件名查找",
+    "syntax": "toybox find /sdcard/Download -type f -name '*.log'",
+    "example": "toybox find /sdcard/Download -type f -name '*.log'",
+    "description": "仅读取。",
+    "id": "android-find",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需 Android toybox find 与共享存储权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "查看目录占用",
+    "syntax": "toybox du -sh /data/local/tmp",
+    "example": "toybox du -sh /data/local/tmp",
+    "description": "可读范围决定统计结果。",
+    "id": "android-size",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需 Android toybox du。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "SHA256 文件校验",
+    "syntax": "toybox sha256sum /sdcard/Download/firmware.bin",
+    "example": "toybox sha256sum /sdcard/Download/firmware.bin",
+    "description": "与可信摘要比较。",
+    "id": "android-hash",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需 Android toybox sha256sum。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "文件元数据",
+    "syntax": "toybox stat /data/local/tmp/app.conf",
+    "example": "toybox stat /data/local/tmp/app.conf",
+    "description": "查询大小时间与权限。",
+    "id": "android-stat",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需 Android toybox stat。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "创建临时目录符号链接",
+    "syntax": "toybox ln -s /data/local/tmp /data/local/tmp-link",
+    "example": "toybox ln -s /data/local/tmp /data/local/tmp-link",
+    "description": "链接路径须尚不存在；共享存储一般不支持 Unix 链接。",
+    "id": "android-link",
+    "tags": [
+      "文件"
+    ],
+    "requires": "需 Android toybox ln；父目录可写。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "权限",
+    "title": "修改临时脚本执行权限",
+    "syntax": "toybox chmod u+x /data/local/tmp/test.sh",
+    "example": "toybox chmod u+x /data/local/tmp/test.sh",
+    "description": "不会绕过 SELinux 或 noexec。",
+    "id": "android-permissions",
+    "tags": [
+      "权限"
+    ],
+    "requires": "需 Android toybox chmod 与文件属主权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "权限",
+    "title": "修改临时文件属主",
+    "syntax": "chown shell:shell /data/local/tmp/app.conf",
+    "example": "chown shell:shell /data/local/tmp/app.conf",
+    "description": "可能影响访问，先核对。",
+    "id": "android-owner",
+    "tags": [
+      "权限"
+    ],
+    "requires": "需 Android root；SELinux 仍可能拒绝。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "权限",
+    "title": "SELinux 当前模式",
+    "syntax": "getenforce",
+    "example": "getenforce",
+    "description": "只查询，不切换模式。",
+    "id": "android-selinux",
+    "tags": [
+      "权限"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "压缩",
+    "title": "创建共享文件归档",
+    "syntax": "toybox tar -czf /data/local/tmp/logs.tar.gz -C /sdcard Download",
+    "example": "toybox tar -czf /data/local/tmp/logs.tar.gz -C /sdcard Download",
+    "description": "写入归档，检查空间和目标。",
+    "id": "android-archive-create",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "需 Android toybox tar 支持 gzip 与相关文件权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "压缩",
+    "title": "查看归档内容",
+    "syntax": "toybox tar -tzf /data/local/tmp/logs.tar.gz",
+    "example": "toybox tar -tzf /data/local/tmp/logs.tar.gz",
+    "description": "不解压。",
+    "id": "android-archive-list",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "需 Android toybox tar 支持 gzip。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "压缩",
+    "title": "解压归档",
+    "syntax": "toybox tar -xzf /data/local/tmp/logs.tar.gz -C /data/local/tmp/restore",
+    "example": "toybox tar -xzf /data/local/tmp/logs.tar.gz -C /data/local/tmp/restore",
+    "description": "先创建目标目录，可能覆盖文件。",
+    "id": "android-archive-extract",
+    "tags": [
+      "压缩"
+    ],
+    "requires": "需 Android toybox tar 支持 gzip。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文本",
+    "title": "读取配置文件",
+    "syntax": "toybox cat /data/local/tmp/app.conf",
+    "example": "toybox cat /data/local/tmp/app.conf",
+    "description": "按终端编码显示。",
+    "id": "android-cat",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需 Android toybox cat 与读取权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文本",
+    "title": "查看文本开头",
+    "syntax": "toybox head -n 30 /data/local/tmp/app.log",
+    "example": "toybox head -n 30 /data/local/tmp/app.log",
+    "description": "不修改。",
+    "id": "android-head",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需 Android toybox head。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文本",
+    "title": "查看文本结尾",
+    "syntax": "toybox tail -n 50 /data/local/tmp/app.log",
+    "example": "toybox tail -n 50 /data/local/tmp/app.log",
+    "description": "不持续跟踪。",
+    "id": "android-tail",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需 Android toybox tail。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文本",
+    "title": "按文本搜索日志",
+    "syntax": "toybox grep -n 'error' /data/local/tmp/app.log",
+    "example": "toybox grep -n 'error' /data/local/tmp/app.log",
+    "description": "找不到返回非零。",
+    "id": "android-grep",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需 Android toybox grep。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文本",
+    "title": "查看指定行段",
+    "syntax": "toybox sed -n '20,40p' /data/local/tmp/app.log",
+    "example": "toybox sed -n '20,40p' /data/local/tmp/app.log",
+    "description": "不修改源文件。",
+    "id": "android-sed",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需 Android toybox sed。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文本",
+    "title": "预览字符串替换",
+    "syntax": "toybox sed 's/DEBUG/INFO/g' /data/local/tmp/app.conf",
+    "example": "toybox sed 's/DEBUG/INFO/g' /data/local/tmp/app.conf",
+    "description": "不使用 -i，不写回。",
+    "id": "android-sed-preview",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需 Android toybox sed。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文本",
+    "title": "文本排序去重",
+    "syntax": "toybox sort -u /data/local/tmp/names.txt",
+    "example": "toybox sort -u /data/local/tmp/names.txt",
+    "description": "输出到终端。",
+    "id": "android-sort",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需 Android toybox sort。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文本",
+    "title": "统计文本行数",
+    "syntax": "toybox wc -l /data/local/tmp/app.log",
+    "example": "toybox wc -l /data/local/tmp/app.log",
+    "description": "按换行符计数。",
+    "id": "android-wc",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需 Android toybox wc。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "文本",
+    "title": "提取文本字段（可选 BusyBox）",
+    "syntax": "busybox awk '{print $1, $3}' /data/local/tmp/metrics.txt",
+    "example": "busybox awk '{print $1, $3}' /data/local/tmp/metrics.txt",
+    "description": "不是 Android 出厂通用命令。",
+    "id": "android-awk",
+    "tags": [
+      "文本"
+    ],
+    "requires": "需另行安装且受信任的 busybox awk；PATH 可访问。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "编辑",
+    "title": "Vi 编辑临时文件（可选工具）",
+    "syntax": "vi /data/local/tmp/app.conf",
+    "example": "vi /data/local/tmp/app.conf",
+    "description": "编辑器按键需单独投递。",
+    "id": "android-vi",
+    "tags": [
+      "编辑"
+    ],
+    "requires": "需另行安装 vi 或镜像提供 vi；完整交互终端。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "编辑",
+    "title": "Nano 编辑临时文件（可选工具）",
+    "syntax": "nano /data/local/tmp/app.conf",
+    "example": "nano /data/local/tmp/app.conf",
+    "description": "Ctrl+O 保存，Ctrl+X 退出。",
+    "id": "android-nano",
+    "tags": [
+      "编辑"
+    ],
+    "requires": "需自行安装兼容 Android 的 nano；完整交互终端。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "进程",
+    "title": "一次性进程采样",
+    "syntax": "toybox top -b -n 1",
+    "example": "toybox top -b -n 1",
+    "description": "版本不支持参数时先查 --help。",
+    "id": "android-top",
+    "tags": [
+      "进程"
+    ],
+    "requires": "需 Android toybox top 支持批处理参数。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "进程",
+    "title": "按进程名查询 PID",
+    "syntax": "toybox pidof surfaceflinger",
+    "example": "toybox pidof surfaceflinger",
+    "description": "只查询，未找到可能返回非零。",
+    "id": "android-process-find",
+    "tags": [
+      "进程"
+    ],
+    "requires": "需 Android toybox pidof。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "进程",
+    "title": "请求进程终止",
+    "syntax": "toybox kill -TERM 1234",
+    "example": "toybox kill -TERM 1234",
+    "description": "先用 ps 核对 PID，不终止系统关键进程。",
+    "id": "android-kill",
+    "tags": [
+      "进程"
+    ],
+    "requires": "需 Android toybox kill；只可操作有权限的进程，其他进程需 root。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "进程",
+    "title": "查看进程与线程",
+    "syntax": "toybox ps -A -T",
+    "example": "toybox ps -A -T",
+    "description": "线程可见性受版本与权限限制。",
+    "id": "android-process-thread",
+    "tags": [
+      "进程"
+    ],
+    "requires": "需 Android toybox ps 支持 -T。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "服务",
+    "title": "查询 Android init 服务状态",
+    "syntax": "getprop init.svc.surfaceflinger",
+    "example": "getprop init.svc.surfaceflinger",
+    "description": "Android init 与 Linux systemd 不同。",
+    "id": "android-init-status",
+    "tags": [
+      "服务"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "服务",
+    "title": "Binder 服务列表",
+    "syntax": "service list",
+    "example": "service list",
+    "description": "Android service 工具与 Linux service 无关。",
+    "id": "android-service-list",
+    "tags": [
+      "服务"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "服务",
+    "title": "启动 Android init 服务",
+    "syntax": "start vendor.example",
+    "example": "start vendor.example",
+    "description": "会改变底层服务状态，先确认真实服务名。",
+    "id": "android-init-start",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需 Android root；厂商 init 服务存在，SELinux 允许。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "服务",
+    "title": "停止 Android init 服务",
+    "syntax": "stop vendor.example",
+    "example": "stop vendor.example",
+    "description": "可能中断硬件或系统功能。",
+    "id": "android-init-stop",
+    "tags": [
+      "服务"
+    ],
+    "requires": "需 Android root；厂商 init 服务存在，SELinux 允许。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "日志",
+    "title": "带线程时间的最近日志",
+    "syntax": "logcat -d -v threadtime -t 100",
+    "example": "logcat -d -v threadtime -t 100",
+    "description": "只导出，不清空缓冲区。",
+    "id": "android-log-thread",
+    "tags": [
+      "日志"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "日志",
+    "title": "查看崩溃日志缓冲",
+    "syntax": "logcat -b crash -d -t 100",
+    "example": "logcat -b crash -d -t 100",
+    "description": "缓冲区是否可读依设备。",
+    "id": "android-log-buffer",
+    "tags": [
+      "日志"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "日志",
+    "title": "按进程 PID 查看日志",
+    "syntax": "logcat --pid=1234 -v threadtime",
+    "example": "logcat --pid=1234 -v threadtime",
+    "description": "持续跟踪，Ctrl+C 结束。",
+    "id": "android-log-pid",
+    "tags": [
+      "日志"
+    ],
+    "requires": "需支持 --pid 的 Android logcat；先核对 PID。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "日志",
+    "title": "内核日志（需权限）",
+    "syntax": "toybox dmesg",
+    "example": "toybox dmesg",
+    "description": "生产镜像常限制访问。",
+    "id": "android-kernel-log",
+    "tags": [
+      "日志"
+    ],
+    "requires": "需 Android toybox dmesg；通常需 root 与 SELinux 授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "接口链路状态",
+    "syntax": "ip link show",
+    "example": "ip link show",
+    "description": "只查询，Android 权限可能限制。",
+    "id": "android-network-link",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "邻居缓存",
+    "syntax": "ip neigh show",
+    "example": "ip neigh show",
+    "description": "只查询；部分生产系统限制 netlink。",
+    "id": "android-network-neighbor",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "有限次数连通测试",
+    "syntax": "toybox ping -c 4 127.0.0.1",
+    "example": "toybox ping -c 4 127.0.0.1",
+    "description": "仅测试设备本机回环。",
+    "id": "android-ping",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Android toybox ping 与系统允许 ICMP。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "WiFi 服务状态",
+    "syntax": "cmd wifi status",
+    "example": "cmd wifi status",
+    "description": "接口输出依 Android 版本变化。",
+    "id": "android-wifi-status",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需提供 cmd wifi status 的 Android 版本与 Shell 权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "查看 WiFi 扫描结果",
+    "syntax": "cmd wifi list-scan-results",
+    "example": "cmd wifi list-scan-results",
+    "description": "只查看已有扫描结果。",
+    "id": "android-wifi-scan",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需支持该子命令的 Android；可能受位置权限限制。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "启用 WiFi",
+    "syntax": "svc wifi enable",
+    "example": "svc wifi enable",
+    "description": "会改变无线联网状态。",
+    "id": "android-wifi-enable",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Android svc 与 Shell 管理 WiFi 权限；厂商可能限制。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "以太网服务信息",
+    "syntax": "dumpsys ethernet",
+    "example": "dumpsys ethernet",
+    "description": "设备未提供服务时无此项。",
+    "id": "android-ethernet",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Android Ethernet 服务与 dumpsys 权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "查询网络栈与 DHCP 状态",
+    "syntax": "dumpsys network_stack",
+    "example": "dumpsys network_stack",
+    "description": "仅查询；包含的 DHCP 信息依版本不同。",
+    "id": "android-dhcp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需 Android NetworkStack 服务与 dumpsys 权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "DNS 解析器状态",
+    "syntax": "dumpsys dnsresolver",
+    "example": "dumpsys dnsresolver",
+    "description": "Android DNS 由系统网络栈管理。",
+    "id": "android-dns",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需提供 dnsresolver 服务的 Android 版本与查询权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "连接网络与路由诊断",
+    "syntax": "dumpsys connectivity",
+    "example": "dumpsys connectivity",
+    "description": "只查询，可能包含网络标识。",
+    "id": "android-connectivity",
+    "tags": [
+      "网络"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "HTTP 响应头（可选工具）",
+    "syntax": "curl -I --max-time 15 https://example.com",
+    "example": "curl -I --max-time 15 https://example.com",
+    "description": "保留 TLS 校验，不是 Android 必备工具。",
+    "id": "android-curl",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需另行安装兼容 Android 的 curl 及 CA 证书。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "SSH 远程登录（可选工具）",
+    "syntax": "ssh -p 22 user@192.168.1.10",
+    "example": "ssh -p 22 user@192.168.1.10",
+    "description": "首次核对指纹。",
+    "id": "android-ssh",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需自行安装兼容 Android 的 OpenSSH 客户端；通常非出厂命令。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "SCP 上传（可选工具）",
+    "syntax": "scp -P 22 /data/local/tmp/app.conf user@192.168.1.10:/tmp/app.conf",
+    "example": "scp -P 22 /data/local/tmp/app.conf user@192.168.1.10:/tmp/app.conf",
+    "description": "会写远端目标。",
+    "id": "android-scp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需兼容 Android 的 OpenSSH scp 与远端授权；通常非出厂命令。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "SFTP 连接（可选工具）",
+    "syntax": "sftp -P 22 user@192.168.1.10",
+    "example": "sftp -P 22 user@192.168.1.10",
+    "description": "连接后 get/put，bye 退出。",
+    "id": "android-sftp",
+    "tags": [
+      "网络"
+    ],
+    "requires": "需兼容 Android 的 OpenSSH sftp；通常非出厂命令。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "磁盘",
+    "title": "查看当前挂载",
+    "syntax": "toybox mount",
+    "example": "toybox mount",
+    "description": "不带参数只查询。",
+    "id": "android-disk-mounts",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 Android toybox mount。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "磁盘",
+    "title": "块设备链接",
+    "syntax": "toybox ls -l /dev/block/by-name",
+    "example": "toybox ls -l /dev/block/by-name",
+    "description": "目录布局依设备；可能需 root。",
+    "id": "android-disk-blocks",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 Android toybox ls；设备节点读取权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "磁盘",
+    "title": "共享存储剩余空间",
+    "syntax": "toybox df -h /sdcard",
+    "example": "toybox df -h /sdcard",
+    "description": "只查询。",
+    "id": "android-disk-space",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 Android toybox df。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "磁盘",
+    "title": "只读挂载外部文件系统",
+    "syntax": "toybox mount -o ro /dev/block/sda1 /mnt/media_rw/test",
+    "example": "toybox mount -o ro /dev/block/sda1 /mnt/media_rw/test",
+    "description": "核对设备和空挂载点，不用于改写系统分区。",
+    "id": "android-disk-mount-ro",
+    "tags": [
+      "磁盘"
+    ],
+    "requires": "需 Android root、toybox mount、正确驱动和 SELinux 授权。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "用户",
+    "title": "当前 Shell 身份",
+    "syntax": "toybox id",
+    "example": "toybox id",
+    "description": "列出 UID 与组。",
+    "id": "android-user-current",
+    "tags": [
+      "用户"
+    ],
+    "requires": "需 Android toybox id。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "用户",
+    "title": "Android 多用户列表",
+    "syntax": "pm list users",
+    "example": "pm list users",
+    "description": "与 Linux /etc/passwd 用户不同。",
+    "id": "android-user-list",
+    "tags": [
+      "用户"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "用户",
+    "title": "当前前台用户编号",
+    "syntax": "am get-current-user",
+    "example": "am get-current-user",
+    "description": "只查询。",
+    "id": "android-user-current-id",
+    "tags": [
+      "用户"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "查询 APK 安装路径",
+    "syntax": "pm path com.android.settings",
+    "example": "pm path com.android.settings",
+    "description": "只查询。",
+    "id": "android-package-path",
+    "tags": [
+      "应用"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "列出权限组",
+    "syntax": "pm list permission-groups",
+    "example": "pm list permission-groups",
+    "description": "只查询系统注册权限组。",
+    "id": "android-package-permissions",
+    "tags": [
+      "应用"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "硬件与软件特性列表",
+    "syntax": "pm list features",
+    "example": "pm list features",
+    "description": "只查询。",
+    "id": "android-package-features",
+    "tags": [
+      "应用"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "安装本机暂存 APK",
+    "syntax": "pm install -r /data/local/tmp/example.apk",
+    "example": "pm install -r /data/local/tmp/example.apk",
+    "description": "会替换应用，先核对来源、签名和用户数据影响。",
+    "id": "android-package-install",
+    "tags": [
+      "应用"
+    ],
+    "requires": "需 Android Shell 安装权限；APK 已在设备上。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "禁用当前用户应用",
+    "syntax": "pm disable-user --user 0 com.example.demo",
+    "example": "pm disable-user --user 0 com.example.demo",
+    "description": "影响该用户使用，避免禁用系统关键包。",
+    "id": "android-package-disable",
+    "tags": [
+      "应用"
+    ],
+    "requires": "需 Shell 管理包权限；包名与用户编号先核对。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "恢复启用应用",
+    "syntax": "pm enable --user 0 com.example.demo",
+    "example": "pm enable --user 0 com.example.demo",
+    "description": "恢复前确认包名与用户编号。",
+    "id": "android-package-enable",
+    "tags": [
+      "应用"
+    ],
+    "requires": "需 Shell 管理包权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "停止应用",
+    "syntax": "am force-stop com.example.demo",
+    "example": "am force-stop com.example.demo",
+    "description": "会结束应用及相关任务，可能丢失状态。",
+    "id": "android-app-force-stop",
+    "tags": [
+      "应用"
+    ],
+    "requires": "需 Shell 管理应用权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "启动指定 Activity",
+    "syntax": "am start -n com.example.demo/.MainActivity",
+    "example": "am start -n com.example.demo/.MainActivity",
+    "description": "会切换前台；组件需存在且允许启动。",
+    "id": "android-app-start",
+    "tags": [
+      "应用"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "发送显式广播",
+    "syntax": "am broadcast -a com.example.demo.REFRESH -p com.example.demo",
+    "example": "am broadcast -a com.example.demo.REFRESH -p com.example.demo",
+    "description": "会触发应用逻辑，仅用于可信测试应用。",
+    "id": "android-app-broadcast",
+    "tags": [
+      "应用"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "当前 Activity 状态",
+    "syntax": "dumpsys activity activities",
+    "example": "dumpsys activity activities",
+    "description": "只查询。",
+    "id": "android-app-activities",
+    "tags": [
+      "应用"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "设置",
+    "title": "列出全局设置",
+    "syntax": "settings list global",
+    "example": "settings list global",
+    "description": "只读，可能包含敏感设备信息。",
+    "id": "android-settings-list",
+    "tags": [
+      "设置"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "设置",
+    "title": "设置屏幕亮度",
+    "syntax": "settings put system screen_brightness 128",
+    "example": "settings put system screen_brightness 128",
+    "description": "会修改当前用户设置，自动亮度可能覆盖它。",
+    "id": "android-settings-put",
+    "tags": [
+      "设置"
+    ],
+    "requires": "需 Android Shell 设置权限；记录原值以便恢复。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "设置",
+    "title": "查询自动时间状态",
+    "syntax": "settings get global auto_time",
+    "example": "settings get global auto_time",
+    "description": "只查询。",
+    "id": "android-settings-get-global",
+    "tags": [
+      "设置"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "返回上一界面",
+    "syntax": "input keyevent KEYCODE_BACK",
+    "example": "input keyevent KEYCODE_BACK",
+    "description": "会触发返回，先确认前台。",
+    "id": "android-input-back",
+    "tags": [
+      "交互"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "长按屏幕",
+    "syntax": "input swipe 300 500 300 500 1000",
+    "example": "input swipe 300 500 300 500 1000",
+    "description": "同点滑动模拟长按，按设备坐标替换。",
+    "id": "android-input-long",
+    "tags": [
+      "交互"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "保存屏幕截图",
+    "syntax": "screencap -p /sdcard/Download/screen.png",
+    "example": "screencap -p /sdcard/Download/screen.png",
+    "description": "写入文件，可能包含私密界面。",
+    "id": "android-screen-capture",
+    "tags": [
+      "交互"
+    ],
+    "requires": "需 Android screencap 与目标存储权限，受保护内容可能不可截图。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "录制短视频",
+    "syntax": "screenrecord --time-limit 10 /sdcard/Download/screen.mp4",
+    "example": "screenrecord --time-limit 10 /sdcard/Download/screen.mp4",
+    "description": "会录屏并写文件，检查前台内容。",
+    "id": "android-screen-record",
+    "tags": [
+      "交互"
+    ],
+    "requires": "需 Android screenrecord 与设备编码器、存储权限。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "开发板",
+    "title": "输入设备列表",
+    "syntax": "getevent -lp",
+    "example": "getevent -lp",
+    "description": "查询节点能力，读取可能被限制。",
+    "id": "android-input-devices",
+    "tags": [
+      "开发板"
+    ],
+    "requires": "需 Android getevent；部分节点需 root。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "开发板",
+    "title": "USB 服务状态",
+    "syntax": "dumpsys usb",
+    "example": "dumpsys usb",
+    "description": "只查询。",
+    "id": "android-usb",
+    "tags": [
+      "开发板"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "构建调试",
+    "title": "系统构建指纹",
+    "syntax": "getprop ro.build.fingerprint",
+    "example": "getprop ro.build.fingerprint",
+    "description": "只查询版本来源。",
+    "id": "android-build-fingerprint",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "Android 设备 Shell；命令可用性及权限依版本与厂商而定。",
+    "interaction": "shell"
+  },
+  {
+    "system": "android",
+    "category": "构建调试",
+    "title": "查询可调试应用身份",
+    "syntax": "run-as com.example.demo id",
+    "example": "run-as com.example.demo id",
+    "description": "仅适用可调试应用；不获得任意应用权限。",
+    "id": "android-debug-run-as",
+    "tags": [
+      "构建调试"
+    ],
+    "requires": "需目标 APK 标记 debuggable 且支持 run-as。",
+    "interaction": "shell"
+  },
+  {
+    "system": "linux",
+    "category": "编辑器按键",
+    "title": "Vi/Vim 保存退出",
+    "syntax": ":wq",
+    "example": ":wq",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；先确认在 vi/vim 中；先发送 Esc，再填入 :wq，最后单独发送 Enter。",
+    "id": "linux-vim-save-exit",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": ":wq",
+    "delivery": "先确认在 vi/vim 中；先发送 Esc，再填入 :wq，最后单独发送 Enter。"
+  },
+  {
+    "system": "linux",
+    "category": "编辑器按键",
+    "title": "Vi/Vim 放弃修改退出",
+    "syntax": ":q!",
+    "example": ":q!",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；先确认在 vi/vim 中；先发送 Esc，再填入 :q!，最后单独发送 Enter；未保存修改将丢失。",
+    "id": "linux-vim-quit-discard",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": ":q!",
+    "delivery": "先确认在 vi/vim 中；先发送 Esc，再填入 :q!，最后单独发送 Enter；未保存修改将丢失。"
+  },
+  {
+    "system": "linux",
+    "category": "编辑器按键",
+    "title": "Vi/Vim 返回普通模式",
+    "syntax": "Esc",
+    "example": "Esc",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；只发送特殊按键 Esc，不把单词 Esc 当作文字填入。",
+    "id": "linux-vim-normal",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": "Esc",
+    "delivery": "只发送特殊按键 Esc，不把单词 Esc 当作文字填入。"
+  },
+  {
+    "system": "linux",
+    "category": "编辑器按键",
+    "title": "Nano 保存文件",
+    "syntax": "Ctrl+O",
+    "example": "Ctrl+O",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；确认 nano 前台，发送 Ctrl+O；检查文件名提示后单独发送 Enter。",
+    "id": "linux-nano-save",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": "Ctrl+O",
+    "delivery": "确认 nano 前台，发送 Ctrl+O；检查文件名提示后单独发送 Enter。"
+  },
+  {
+    "system": "linux",
+    "category": "编辑器按键",
+    "title": "Nano 退出编辑器",
+    "syntax": "Ctrl+X",
+    "example": "Ctrl+X",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；确认 nano 前台，只发送 Ctrl+X；如有保存询问，由用户选择，不自动回答。",
+    "id": "linux-nano-exit",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": "Ctrl+X",
+    "delivery": "确认 nano 前台，只发送 Ctrl+X；如有保存询问，由用户选择，不自动回答。"
+  },
+  {
+    "system": "powershell",
+    "category": "编辑器按键",
+    "title": "Vi/Vim 保存退出",
+    "syntax": ":wq",
+    "example": ":wq",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；先确认在 vi/vim 中；先发送 Esc，再填入 :wq，最后单独发送 Enter。",
+    "id": "powershell-vim-save-exit",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Windows 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": ":wq",
+    "delivery": "先确认在 vi/vim 中；先发送 Esc，再填入 :wq，最后单独发送 Enter。"
+  },
+  {
+    "system": "powershell",
+    "category": "编辑器按键",
+    "title": "Vi/Vim 放弃修改退出",
+    "syntax": ":q!",
+    "example": ":q!",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；先确认在 vi/vim 中；先发送 Esc，再填入 :q!，最后单独发送 Enter；未保存修改将丢失。",
+    "id": "powershell-vim-quit-discard",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Windows 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": ":q!",
+    "delivery": "先确认在 vi/vim 中；先发送 Esc，再填入 :q!，最后单独发送 Enter；未保存修改将丢失。"
+  },
+  {
+    "system": "powershell",
+    "category": "编辑器按键",
+    "title": "Vi/Vim 返回普通模式",
+    "syntax": "Esc",
+    "example": "Esc",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；只发送特殊按键 Esc，不把单词 Esc 当作文字填入。",
+    "id": "powershell-vim-normal",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Windows 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": "Esc",
+    "delivery": "只发送特殊按键 Esc，不把单词 Esc 当作文字填入。"
+  },
+  {
+    "system": "powershell",
+    "category": "编辑器按键",
+    "title": "Nano 保存文件",
+    "syntax": "Ctrl+O",
+    "example": "Ctrl+O",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；确认 nano 前台，发送 Ctrl+O；检查文件名提示后单独发送 Enter。",
+    "id": "powershell-nano-save",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Windows 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": "Ctrl+O",
+    "delivery": "确认 nano 前台，发送 Ctrl+O；检查文件名提示后单独发送 Enter。"
+  },
+  {
+    "system": "powershell",
+    "category": "编辑器按键",
+    "title": "Nano 退出编辑器",
+    "syntax": "Ctrl+X",
+    "example": "Ctrl+X",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；确认 nano 前台，只发送 Ctrl+X；如有保存询问，由用户选择，不自动回答。",
+    "id": "powershell-nano-exit",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Windows 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": "Ctrl+X",
+    "delivery": "确认 nano 前台，只发送 Ctrl+X；如有保存询问，由用户选择，不自动回答。"
+  },
+  {
+    "system": "android",
+    "category": "编辑器按键",
+    "title": "Vi/Vim 保存退出",
+    "syntax": ":wq",
+    "example": ":wq",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；先确认在 vi/vim 中；先发送 Esc，再填入 :wq，最后单独发送 Enter。",
+    "id": "android-vim-save-exit",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Android 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": ":wq",
+    "delivery": "先确认在 vi/vim 中；先发送 Esc，再填入 :wq，最后单独发送 Enter。"
+  },
+  {
+    "system": "android",
+    "category": "编辑器按键",
+    "title": "Vi/Vim 放弃修改退出",
+    "syntax": ":q!",
+    "example": ":q!",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；先确认在 vi/vim 中；先发送 Esc，再填入 :q!，最后单独发送 Enter；未保存修改将丢失。",
+    "id": "android-vim-quit-discard",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Android 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": ":q!",
+    "delivery": "先确认在 vi/vim 中；先发送 Esc，再填入 :q!，最后单独发送 Enter；未保存修改将丢失。"
+  },
+  {
+    "system": "android",
+    "category": "编辑器按键",
+    "title": "Vi/Vim 返回普通模式",
+    "syntax": "Esc",
+    "example": "Esc",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；只发送特殊按键 Esc，不把单词 Esc 当作文字填入。",
+    "id": "android-vim-normal",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Android 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": "Esc",
+    "delivery": "只发送特殊按键 Esc，不把单词 Esc 当作文字填入。"
+  },
+  {
+    "system": "android",
+    "category": "编辑器按键",
+    "title": "Nano 保存文件",
+    "syntax": "Ctrl+O",
+    "example": "Ctrl+O",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；确认 nano 前台，发送 Ctrl+O；检查文件名提示后单独发送 Enter。",
+    "id": "android-nano-save",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Android 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": "Ctrl+O",
+    "delivery": "确认 nano 前台，发送 Ctrl+O；检查文件名提示后单独发送 Enter。"
+  },
+  {
+    "system": "android",
+    "category": "编辑器按键",
+    "title": "Nano 退出编辑器",
+    "syntax": "Ctrl+X",
+    "example": "Ctrl+X",
+    "description": "编辑器内部操作，禁止在 Shell 提示符作为命令填入；确认 nano 前台，只发送 Ctrl+X；如有保存询问，由用户选择，不自动回答。",
+    "id": "android-nano-exit",
+    "tags": [
+      "编辑",
+      "按键"
+    ],
+    "requires": "Android 可选安装的 vi/vim 或 nano 编辑器已处于前台；需完整交互终端。",
+    "interaction": "editor-key",
+    "key": "Ctrl+X",
+    "delivery": "确认 nano 前台，只发送 Ctrl+X；如有保存询问，由用户选择，不自动回答。"
   }
 ]

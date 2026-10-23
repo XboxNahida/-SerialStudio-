@@ -17,7 +17,7 @@ $setup=Join-Path $project "安装包\SerialStudio-$version-Windows-x64-Setup.exe
 if(!$OldSetup){$OldSetup=Join-Path $project '安装包\SerialStudio-0.4.1-Windows-x64-Setup.exe'}
 New-Item -ItemType Directory -Path $root | Out-Null
 function Run-Install([string]$Package,[string[]]$Extra=@(),[int]$Expected=0){
-    $process=Start-Process -FilePath $Package -ArgumentList (@('/S','/SHORTCUTS=0')+$Extra+"/D=$install") -Wait -PassThru
+    $process=Start-Process -FilePath $Package -ArgumentList (@('/S','/SHORTCUTS=0')+$Extra+"/D=$install") -WindowStyle Hidden -Wait -PassThru
     if($process.ExitCode -ne $Expected){throw "安装退出码 $($process.ExitCode)，预期 $Expected"}
 }
 function Check-New {
@@ -27,7 +27,7 @@ function Check-New {
     if(!(Test-Path -LiteralPath (Join-Path $install '用户自存.txt'))){throw '用户文件丢失'}
 }
 function Remove-TestInstall {
-    $process=Start-Process -FilePath (Join-Path $install '卸载.exe') -ArgumentList '/S' -Wait -PassThru
+    $process=Start-Process -FilePath (Join-Path $install '卸载.exe') -ArgumentList '/S' -WindowStyle Hidden -Wait -PassThru
     if($process.ExitCode -ne 0){throw '验证卸载失败'}
     $deadline=[DateTime]::UtcNow.AddSeconds(15)
     while((Test-Path -LiteralPath (Join-Path $install '卸载.exe'))-and [DateTime]::UtcNow -lt $deadline){Start-Sleep -Milliseconds 100}
@@ -35,12 +35,12 @@ function Remove-TestInstall {
     $left=@(Get-ChildItem -LiteralPath $install -Recurse -File)
     if($left.Count -ne 1 -or $left[0].Name -ne '用户自存.txt'){throw '卸载未仅保留用户文件'}
 }
-# 先验证实际交付的上一版安装包到新测试版。
+# 先验证实际交付的上一版安装包到当前版本。
 Run-Install $OldSetup
 [IO.File]::WriteAllText((Join-Path $install '用户自存.txt'),'保留',[Text.UTF8Encoding]::new($false))
 Run-Install $setup
 Check-New
-Write-Output '通过：真实 0.4.1 安装包升级到测试版，全部安装文件 SHA256 正确，用户文件保留'
+Write-Output "通过：真实旧包 $([IO.Path]::GetFileName($OldSetup)) 升级到 $version，全部安装文件 SHA256 正确，用户文件保留"
 # 占用文件时必须在删除前停止，不能先删掉其他程序文件。
 $held=[IO.File]::Open((Join-Path $install 'Qt6Core.dll'),[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
 try {Run-Install $setup @() 1} finally {$held.Dispose()}

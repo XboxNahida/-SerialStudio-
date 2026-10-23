@@ -4,6 +4,8 @@
 #include <QTimer>
 #include <QVariant>
 #include "adbdiscovery.h"
+#include "terminalscreen.h"
+#include "pseudoterminal.h"
 
 class TerminalController : public QObject {
     Q_OBJECT
@@ -13,6 +15,8 @@ class TerminalController : public QObject {
     Q_PROPERTY(qint64 processId READ processId NOTIFY changed)
     Q_PROPERTY(QString status READ status NOTIFY changed)
     Q_PROPERTY(AdbDiscovery* adb READ adb CONSTANT)
+    Q_PROPERTY(TerminalScreen* screen READ screen CONSTANT)
+    Q_PROPERTY(bool embedded READ embedded NOTIFY changed)
 public:
     explicit TerminalController(QObject *parent=nullptr);
     ~TerminalController() override;
@@ -22,6 +26,10 @@ public:
     qint64 processId() const {return m_pid;}
     QString status() const {return m_status;}
     AdbDiscovery *adb() {return &m_adb;}
+    TerminalScreen *screen() {return &m_screen;}
+    bool embedded() const {return m_embedded;}
+    Q_INVOKABLE void close();
+    Q_INVOKABLE bool applyCommand(const QVariantMap &command);
     Q_INVOKABLE bool open(int mode,const QVariantMap &config);
     Q_INVOKABLE bool fill(const QString &text);
     Q_INVOKABLE bool sendKey(const QString &key);
@@ -37,6 +45,10 @@ private:
     void refresh();
     QProcess m_input;
     AdbDiscovery m_adb;
+    TerminalScreen m_screen;
+    PseudoTerminal m_pty;
+    bool m_embedded=false;
+    bool m_writeRejected=false;
     QTimer m_poll,m_timeout;
     QVariantList m_commands;
     void *m_handle=nullptr;
