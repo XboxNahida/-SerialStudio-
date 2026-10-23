@@ -1,0 +1,12 @@
+* text=auto
+*.cpp text eol=lf
+*.h text eol=lf
+*.qml text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.py text eol=lf
+*.ps1 text eol=crlf
+*.nsi text eol=crlf
+*.ico binary
+*.mp4 binary
+*.png binary

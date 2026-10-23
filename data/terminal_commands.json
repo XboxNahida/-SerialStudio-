@@ -1,0 +1,706 @@
+[
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "列出目录",
+    "syntax": "ls [-alh] [目录]",
+    "example": "ls -alh /tmp",
+    "description": "查看文件、权限、大小与隐藏项目。"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "当前目录",
+    "syntax": "pwd",
+    "example": "pwd",
+    "description": "显示当前工作目录。"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "切换目录",
+    "syntax": "cd [目录]",
+    "example": "cd /tmp",
+    "description": "路径有空格时使用引号。"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "读取文本",
+    "syntax": "cat [文件]",
+    "example": "cat /etc/os-release",
+    "description": "适合小型文本文件；大文件可用 less。"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "搜索内容",
+    "syntax": "grep -n [关键词] [文件]",
+    "example": "grep -n 'root' /etc/passwd",
+    "description": "显示匹配文本及行号。"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "查找文件",
+    "syntax": "find [目录] -name [名称]",
+    "example": "find /tmp -name '*.log'",
+    "description": "通配符加引号，避免提前展开。"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "跟踪日志",
+    "syntax": "tail -n [行数] -f [文件]",
+    "example": "tail -n 50 -f /var/log/syslog",
+    "description": "持续跟踪，Ctrl+C 结束；文件路径按发行版调整。"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "新建目录",
+    "syntax": "mkdir -p [目录]",
+    "example": "mkdir -p /tmp/serialstudio",
+    "description": "会创建目录，请按需修改。"
+  },
+  {
+    "system": "linux",
+    "category": "文件",
+    "title": "权限格式",
+    "syntax": "chmod [权限] [文件]",
+    "example": "chmod u+x /tmp/script.sh",
+    "description": "修改指定文件权限，先检查路径。"
+  },
+  {
+    "system": "linux",
+    "category": "系统",
+    "title": "系统版本",
+    "syntax": "uname [-a]",
+    "example": "uname -a",
+    "description": "查看内核和架构。"
+  },
+  {
+    "system": "linux",
+    "category": "系统",
+    "title": "系统负载",
+    "syntax": "top",
+    "example": "top",
+    "description": "交互查看进程，按 q 退出。"
+  },
+  {
+    "system": "linux",
+    "category": "系统",
+    "title": "进程列表",
+    "syntax": "ps [选项]",
+    "example": "ps aux",
+    "description": "查看进程、PID 与资源使用。"
+  },
+  {
+    "system": "linux",
+    "category": "系统",
+    "title": "内存",
+    "syntax": "free -h",
+    "example": "free -h",
+    "description": "查看内存与交换区。"
+  },
+  {
+    "system": "linux",
+    "category": "系统",
+    "title": "磁盘空间",
+    "syntax": "df -h [路径]",
+    "example": "df -h /",
+    "description": "查看文件系统容量。"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "网卡地址",
+    "syntax": "ip address show [设备]",
+    "example": "ip address show",
+    "description": "查看网卡与 IP 地址。"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "路由表",
+    "syntax": "ip route show",
+    "example": "ip route show",
+    "description": "查看默认网关及路由。"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "监听端口",
+    "syntax": "ss -lntup",
+    "example": "ss -lntup",
+    "description": "查看 TCP/UDP 监听，进程详情可能需权限。"
+  },
+  {
+    "system": "linux",
+    "category": "网络",
+    "title": "连通测试",
+    "syntax": "ping -c [次数] [地址]",
+    "example": "ping -c 4 127.0.0.1",
+    "description": "发送有限次探测包。"
+  },
+  {
+    "system": "linux",
+    "category": "日志",
+    "title": "内核日志",
+    "syntax": "dmesg [选项]",
+    "example": "dmesg | tail -n 50",
+    "description": "查看驱动日志，部分系统需 root。"
+  },
+  {
+    "system": "linux",
+    "category": "日志",
+    "title": "服务日志",
+    "syntax": "journalctl -u [服务] -n [行数]",
+    "example": "journalctl -u ssh -n 50 --no-pager",
+    "description": "systemd 系统适用；服务名按系统调整。"
+  },
+  {
+    "system": "linux",
+    "category": "开发板",
+    "title": "设备节点",
+    "syntax": "ls -l [设备路径]",
+    "example": "ls -l /dev/i2c-* /dev/spidev* /dev/tty*",
+    "description": "只列出设备，不访问总线。"
+  },
+  {
+    "system": "linux",
+    "category": "开发板",
+    "title": "设备树型号",
+    "syntax": "cat [sysfs 路径]",
+    "example": "cat /proc/device-tree/model",
+    "description": "查看设备树板卡型号。"
+  },
+  {
+    "system": "linux",
+    "category": "开发板",
+    "title": "USB 拓扑",
+    "syntax": "lsusb [-t]",
+    "example": "lsusb -t",
+    "description": "需要安装 usbutils。"
+  },
+  {
+    "system": "linux",
+    "category": "开发板",
+    "title": "温度",
+    "syntax": "cat /sys/class/thermal/thermal_zoneN/temp",
+    "example": "cat /sys/class/thermal/thermal_zone0/temp",
+    "description": "常见单位为毫摄氏度，节点依板卡而定。"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "列出目录",
+    "syntax": "Get-ChildItem [-Path 路径] [-Force]",
+    "example": "Get-ChildItem -Path $env:TEMP -Force",
+    "description": "包括隐藏文件。"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "当前目录",
+    "syntax": "Get-Location",
+    "example": "Get-Location",
+    "description": "显示当前路径。"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "切换目录",
+    "syntax": "Set-Location -LiteralPath 路径",
+    "example": "Set-Location -LiteralPath $env:TEMP",
+    "description": "支持带空格的路径。"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "读取 UTF-8 文本",
+    "syntax": "Get-Content -LiteralPath 文件 -Encoding UTF8",
+    "example": "Get-Content -LiteralPath '.\\日志.txt' -Encoding UTF8",
+    "description": "按 UTF-8 解码文本。"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "搜索文本",
+    "syntax": "Select-String -Path 文件 -Pattern 关键词",
+    "example": "Select-String -Path '.\\*.log' -Pattern 'error'",
+    "description": "输出匹配行。"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "递归查找",
+    "syntax": "Get-ChildItem -Path 目录 -Filter 模式 -Recurse",
+    "example": "Get-ChildItem -Path $env:TEMP -Filter '*.log' -Recurse",
+    "description": "目录较大时可能耗时。"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "文件哈希",
+    "syntax": "Get-FileHash -LiteralPath 文件 -Algorithm SHA256",
+    "example": "Get-FileHash -LiteralPath '.\\data.bin' -Algorithm SHA256",
+    "description": "校验文件完整性。"
+  },
+  {
+    "system": "powershell",
+    "category": "文件",
+    "title": "查看末尾",
+    "syntax": "Get-Content -LiteralPath 文件 -Tail 行数",
+    "example": "Get-Content -LiteralPath '.\\app.log' -Tail 50",
+    "description": "适合日志末尾。"
+  },
+  {
+    "system": "powershell",
+    "category": "系统",
+    "title": "进程列表",
+    "syntax": "Get-Process [名称]",
+    "example": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10",
+    "description": "查看累计 CPU 时间较高的进程。"
+  },
+  {
+    "system": "powershell",
+    "category": "系统",
+    "title": "服务列表",
+    "syntax": "Get-Service [名称]",
+    "example": "Get-Service | Where-Object Status -eq 'Running'",
+    "description": "只查询，不修改服务。"
+  },
+  {
+    "system": "powershell",
+    "category": "系统",
+    "title": "系统信息",
+    "syntax": "Get-ComputerInfo",
+    "example": "Get-ComputerInfo | Select-Object WindowsProductName,OsArchitecture",
+    "description": "查询 Windows 与架构信息。"
+  },
+  {
+    "system": "powershell",
+    "category": "系统",
+    "title": "命令帮助",
+    "syntax": "Get-Help 名称 [-Examples]",
+    "example": "Get-Help Get-ChildItem -Examples",
+    "description": "查询本机帮助示例。"
+  },
+  {
+    "system": "powershell",
+    "category": "系统",
+    "title": "定位程序",
+    "syntax": "Get-Command 程序",
+    "example": "Get-Command ssh.exe",
+    "description": "查看程序可用性与路径。"
+  },
+  {
+    "system": "powershell",
+    "category": "系统",
+    "title": "环境变量",
+    "syntax": "Get-ChildItem Env:",
+    "example": "Get-ChildItem Env:",
+    "description": "本机环境变量可能含敏感值，分享前检查。"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "IP 配置",
+    "syntax": "Get-NetIPConfiguration",
+    "example": "Get-NetIPConfiguration",
+    "description": "查看网卡 IP 与网关。"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "端口探测",
+    "syntax": "Test-NetConnection 主机 -Port 端口",
+    "example": "Test-NetConnection 127.0.0.1 -Port 22",
+    "description": "测试指定 TCP 端口。"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "连通测试",
+    "syntax": "Test-Connection 主机 -Count 次数",
+    "example": "Test-Connection 127.0.0.1 -Count 4",
+    "description": "发送有限次探测包。"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "TCP 连接",
+    "syntax": "Get-NetTCPConnection [-State 状态]",
+    "example": "Get-NetTCPConnection -State Listen",
+    "description": "查看本机监听端口。"
+  },
+  {
+    "system": "powershell",
+    "category": "网络",
+    "title": "DNS 查询",
+    "syntax": "Resolve-DnsName 域名",
+    "example": "Resolve-DnsName localhost",
+    "description": "查询名称解析。"
+  },
+  {
+    "system": "powershell",
+    "category": "开发板",
+    "title": "串口枚举",
+    "syntax": "Get-CimInstance Win32_SerialPort",
+    "example": "Get-CimInstance Win32_SerialPort | Select-Object DeviceID,Name",
+    "description": "查询串口，不打开设备。"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "列出目录",
+    "syntax": "dir [路径] [/a]",
+    "example": "dir /a \"%TEMP%\"",
+    "description": "列出包括隐藏项目的目录。"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "切换目录",
+    "syntax": "cd /d [目录]",
+    "example": "cd /d \"%TEMP%\"",
+    "description": "/d 支持同时切换盘符。"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "当前目录",
+    "syntax": "cd",
+    "example": "cd",
+    "description": "显示当前路径。"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "读取文本",
+    "syntax": "type [文件]",
+    "example": "type \".\\app.log\"",
+    "description": "解码受控制台代码页与文件编码影响。"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "搜索文本",
+    "syntax": "findstr /n /i 关键词 文件",
+    "example": "findstr /n /i \"error\" \".\\app.log\"",
+    "description": "显示行号并忽略大小写。"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "递归查找",
+    "syntax": "dir /s /b [路径模式]",
+    "example": "dir /s /b \"%TEMP%\\*.log\"",
+    "description": "查找匹配文件。"
+  },
+  {
+    "system": "cmd",
+    "category": "文件",
+    "title": "文件哈希",
+    "syntax": "certutil -hashfile 文件 SHA256",
+    "example": "certutil -hashfile \".\\data.bin\" SHA256",
+    "description": "校验文件完整性。"
+  },
+  {
+    "system": "cmd",
+    "category": "系统",
+    "title": "进程列表",
+    "syntax": "tasklist [/fi 过滤条件]",
+    "example": "tasklist",
+    "description": "列出进程与 PID。"
+  },
+  {
+    "system": "cmd",
+    "category": "系统",
+    "title": "系统信息",
+    "syntax": "systeminfo",
+    "example": "systeminfo",
+    "description": "查询 Windows 配置信息。"
+  },
+  {
+    "system": "cmd",
+    "category": "系统",
+    "title": "定位程序",
+    "syntax": "where [程序]",
+    "example": "where ssh.exe",
+    "description": "查找 PATH 中的程序。"
+  },
+  {
+    "system": "cmd",
+    "category": "系统",
+    "title": "查看帮助",
+    "syntax": "help [命令]",
+    "example": "help dir",
+    "description": "查询 CMD 内置命令帮助。"
+  },
+  {
+    "system": "cmd",
+    "category": "系统",
+    "title": "控制台编码",
+    "syntax": "chcp [代码页]",
+    "example": "chcp 65001",
+    "description": "切换到 UTF-8 代码页，旧程序可能有兼容差异。"
+  },
+  {
+    "system": "cmd",
+    "category": "系统",
+    "title": "清屏",
+    "syntax": "cls",
+    "example": "cls",
+    "description": "清除当前屏幕。"
+  },
+  {
+    "system": "cmd",
+    "category": "系统",
+    "title": "时间查询",
+    "syntax": "time /t",
+    "example": "time /t",
+    "description": "只显示当前时间。"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "IP 配置",
+    "syntax": "ipconfig [/all]",
+    "example": "ipconfig /all",
+    "description": "显示网卡与 DNS 信息。"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "连通测试",
+    "syntax": "ping -n 次数 地址",
+    "example": "ping -n 4 127.0.0.1",
+    "description": "有限次连通测试。"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "端口列表",
+    "syntax": "netstat -ano",
+    "example": "netstat -ano",
+    "description": "显示端口及关联 PID。"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "路由表",
+    "syntax": "route print",
+    "example": "route print",
+    "description": "只查看路由，不修改。"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "DNS 查询",
+    "syntax": "nslookup [域名]",
+    "example": "nslookup localhost",
+    "description": "查询 DNS。"
+  },
+  {
+    "system": "cmd",
+    "category": "网络",
+    "title": "邻居缓存",
+    "syntax": "arp -a",
+    "example": "arp -a",
+    "description": "查看 IPv4 邻居表。"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "系统版本",
+    "syntax": "getprop [属性]",
+    "example": "getprop ro.build.version.release",
+    "description": "以下指令均在设备 ADB Shell 中运行。"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "设备型号",
+    "syntax": "getprop ro.product.model",
+    "example": "getprop ro.product.model",
+    "description": "查询型号。"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "CPU 架构",
+    "syntax": "getprop ro.product.cpu.abi",
+    "example": "getprop ro.product.cpu.abi",
+    "description": "查询设备 ABI。"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "内核版本",
+    "syntax": "uname -a",
+    "example": "uname -a",
+    "description": "查看 Linux 内核信息。"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "进程列表",
+    "syntax": "ps -A",
+    "example": "ps -A",
+    "description": "列出设备进程。"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "内存状态",
+    "syntax": "dumpsys meminfo [包名]",
+    "example": "dumpsys meminfo",
+    "description": "查询系统或指定应用内存。"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "列出目录",
+    "syntax": "ls -al [目录]",
+    "example": "ls -al /sdcard",
+    "description": "只查看设备目录；私有数据受权限限制。"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "当前目录",
+    "syntax": "pwd",
+    "example": "pwd",
+    "description": "查看当前工作目录。"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "切换目录",
+    "syntax": "cd [目录]",
+    "example": "cd /sdcard",
+    "description": "进入设备共享存储。"
+  },
+  {
+    "system": "android",
+    "category": "文件",
+    "title": "磁盘空间",
+    "syntax": "df -h [路径]",
+    "example": "df -h /data",
+    "description": "查看分区空间。"
+  },
+  {
+    "system": "android",
+    "category": "日志",
+    "title": "最近日志",
+    "syntax": "logcat -d -t 行数",
+    "example": "logcat -d -t 100",
+    "description": "导出有限行后返回，不清日志。"
+  },
+  {
+    "system": "android",
+    "category": "日志",
+    "title": "标签过滤",
+    "syntax": "logcat -s 标签:级别",
+    "example": "logcat -s ActivityManager:I",
+    "description": "持续查看，Ctrl+C 结束。"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "应用包列表",
+    "syntax": "pm list packages [过滤词]",
+    "example": "pm list packages -3",
+    "description": "查看第三方应用包名。"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "应用详情",
+    "syntax": "dumpsys package 包名",
+    "example": "dumpsys package com.android.settings",
+    "description": "只查询应用信息。"
+  },
+  {
+    "system": "android",
+    "category": "应用",
+    "title": "打开设置",
+    "syntax": "am start -a 动作",
+    "example": "am start -a android.settings.SETTINGS",
+    "description": "会切换设备前台界面。"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "点击屏幕",
+    "syntax": "input tap x y",
+    "example": "input tap 300 500",
+    "description": "坐标以设备实际分辨率为准，会触发点击。"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "滑动屏幕",
+    "syntax": "input swipe x1 y1 x2 y2 时长毫秒",
+    "example": "input swipe 500 1500 500 500 300",
+    "description": "会触发滑动，先检查目标界面。"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "输入文字",
+    "syntax": "input text 文字",
+    "example": "input text 'hello%sworld'",
+    "description": "Android input 常用 %s 表示空格；非 ASCII 支持依系统而定。"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "按键事件",
+    "syntax": "input keyevent 键码",
+    "example": "input keyevent KEYCODE_HOME",
+    "description": "示例返回桌面；BACK、ENTER 等按需替换。"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "屏幕尺寸",
+    "syntax": "wm size",
+    "example": "wm size",
+    "description": "只查询，不更改分辨率。"
+  },
+  {
+    "system": "android",
+    "category": "交互",
+    "title": "屏幕密度",
+    "syntax": "wm density",
+    "example": "wm density",
+    "description": "只查询当前密度。"
+  },
+  {
+    "system": "android",
+    "category": "系统",
+    "title": "设置查询",
+    "syntax": "settings get 命名空间 键名",
+    "example": "settings get system screen_brightness",
+    "description": "只读取设置值。"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "IP 地址",
+    "syntax": "ip address show",
+    "example": "ip address show",
+    "description": "网络信息受系统权限限制。"
+  },
+  {
+    "system": "android",
+    "category": "网络",
+    "title": "路由表",
+    "syntax": "ip route show",
+    "example": "ip route show",
+    "description": "部分 Android 版本限制访问。"
+  }
+]

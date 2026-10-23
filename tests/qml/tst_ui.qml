@@ -1,0 +1,433 @@
+import QtQuick
+import QtQuick.Controls
+import QtTest
+import SerialWorkbench 1.0 as App
+
+TestCase {
+    id: testCase
+    name: "工作台交互"
+    when: windowShown
+    property var appWindow
+    component AnalysisStub: QtObject {
+        property bool enabled: false
+        property string text: "测试字段数据"
+        property string error: ""
+        property var samples: [{sample:1,values:{temperature:20}},{sample:2,values:{temperature:25}}]
+        property var fields: ["temperature"]
+        property url mediaUrl: ""
+        property string mediaKind: ""
+        property bool capturing: false
+        property int captured: 0
+        property string format: ""
+        property string schema: ""
+        signal changed()
+        function configure(selected,rule) {format=selected;schema=rule;enabled=true;changed();return true}
+        function clear() {}
+        function openFile(url,format) {return true}
+        function beginCapture(url) {capturing=true;changed();return true}
+        function finishCapture() {capturing=false;changed();return true}
+        function cancelCapture() {capturing=false;changed()}
+    }
+    component Stub: QtObject {
+        property QtObject analysis: AnalysisStub {}
+        property var ports: [{name:"TEST",label:"TEST · 测试用设备"}]
+        property bool connected: false
+        property bool busy: false
+        property bool writable: connected && !busy
+        property string portName: "TEST"
+        property string status: "未连接"
+        property string lastError: ""
+        property int rxBytes: 0
+        property int txBytes: 0
+        property double rxRate: 0
+        property int frameCount: 0
+        property int errorCount: 0
+        property bool periodic: false
+        property int parserMode: 1
+        property var preferences: ({dark:true,connection:{}})
+        property var lastConfig: ({})
+        property string lastSend: ""
+        property int demoCount: 0
+        property int applyCount: 0
+        property ListModel terminal: ListModel { property int dropped: 0 }
+        property ListModel frames: ListModel { property int dropped: 0 }
+        signal notify(string message)
+        function refreshPorts() {}
+        function openPort(config) { lastConfig = config; connected = true; return true }
+        function openNetwork(config) { lastConfig = config; connected = true; return true }
+        function closePort() { connected = false }
+        function savePreference(key, value) {}
+        function setLines(dtr, rts) {}
+        function clearTerminal() { terminal.clear() }
+        function clearFrames() { frames.clear() }
+        function resetStats() {}
+        function demo() { demoCount++ }
+        function send(text, hex, newline) { lastSend = text; return true }
+        function configureParser(mode, head, tail) { parserMode = mode; applyCount++; return true }
+        function startPeriodic(text, hex, newline, interval) { periodic = true; return true }
+        function stopPeriodic() { periodic = false }
+    }
+    Stub { id: stub }
+    Stub { id: networkStub }
+    QtObject {
+        id: boardStub
+        property QtObject terminal: QtObject {
+            property QtObject adb: QtObject {
+                property string executablePath: ""
+                property string resolvedPath: "C:/Android/platform-tools/adb.exe"
+                property var devices: [{serial:"boardA",state:"device",label:"RK3576 · boardA · 已连接"}]
+                property string selectedSerial: "boardA"
+                property bool ready: true
+                property bool enabled: false
+                property bool scanning: false
+                property string status: "检测到 1 台设备，1 台可连接"
+                property int refreshCount: 0
+                function refresh(){refreshCount++}
+            }
+            property bool active: false
+            property bool inputBusy: false
+            property int mode: -1
+            property string status: "尚未打开交互终端"
+            property string lastFill: ""
+            property string lastKey: ""
+            property var lastConfig: ({})
+            function open(selected,config) {mode=selected;lastConfig=config;active=true;return true}
+            function fill(text) {lastFill=text;return true}
+            function sendKey(key) {lastKey=key;return true}
+            function commands(selected,search,category) {
+                if(search && search.indexOf("不存在")>=0)return []
+                return [{system:selected===0?"linux":"cmd",category:"系统",title:"测试命令",syntax:"格式",example:selected===0?"pwd":"whoami",description:"测试用说明"}]
+            }
+        }
+        property bool busy: false
+        property bool success: true
+        property string output: "测试响应"
+        property int source: -1
+        property var request: ({})
+        property var ssh: ({})
+        property int terminalCount: 0
+        function execute(selected, config, payload) { source = selected; ssh = config; request = payload; return true }
+        function openTerminal(config) { ssh = config; terminalCount++; return terminal.open(0,config) }
+        function cancel() {}
+    }
+    QtObject {
+        id: transferStub
+        property bool busy: false
+        property bool success: true
+        property string status: "等待文件传输"
+        property int progress: 0
+        property var volumes: [{label:"TEST 磁盘",path:"E:/"}]
+        property int selectedMode: -1
+        property string source: ""
+        property string destination: ""
+        property var config: ({})
+        function refreshVolumes() {}
+        function localUrl(path) {return path}
+        function localPath(url) {return url.toString()}
+        function start(mode,from,to,options) {selectedMode=mode;source=from;destination=to;config=options;return true}
+        function cancel() {}
+    }
+    QtObject {
+        id: updaterStub
+        property bool busy: false
+        property bool updateAvailable: true
+        property bool canDownload: true
+        property bool downloadReady: false
+        property bool uninstallAvailable: false
+        property real progress: 0
+        property string status: "发现测试版"
+        property int checked: 0
+        property int downloaded: 0
+        property int installed: 0
+        function check(manual) {if(manual)checked++}
+        function download() {downloaded++}
+        function install() {installed++}
+        function ignore() {}
+        function openRelease() {}
+        function uninstall() {}
+    }
+    Component { id: windowComponent; App.Main { backend: stub; networkBackend: networkStub; board: boardStub; transfer: transferStub; updater: updaterStub; appVersion: "0.4.2-beta.1" } }
+    function initTestCase() {
+        appWindow = windowComponent.createObject(null)
+        verify(appWindow !== null)
+        wait(250)
+        compare(appWindow.width, 1200)
+        compare(appWindow.height, 800)
+        compare(findChild(appWindow,"boardSource").currentIndex,2)
+        compare(findChild(appWindow,"boardBus").currentIndex,4)
+    }
+    function cleanupTestCase() { appWindow.destroy() }
+    function init() {
+        appWindow.pageIndex = 0; appWindow.parserSource = 0
+        stub.connected = false; stub.demoCount = 0; stub.applyCount = 0
+        networkStub.connected = false; networkStub.applyCount = 0
+        wait(30)
+    }
+    function visualChild(item, name) {
+        if (item.objectName === name) return item
+        const children = item.children || []
+        for (let i = 0; i < children.length; ++i) {
+            const found = visualChild(children[i], name)
+            if (found) return found
+        }
+        return null
+    }
+    function test_navigate() {
+        mouseClick(visualChild(appWindow.contentItem, "nav1"))
+        compare(appWindow.pageIndex, 1)
+        mouseClick(findChild(appWindow, "applyParserButton"))
+        compare(stub.applyCount, 1)
+        mouseClick(visualChild(appWindow.contentItem, "nav2"))
+        compare(appWindow.pageIndex, 2)
+    }
+    function test_updateActions() {
+        appWindow.pageIndex=2
+        appWindow.width=1120;appWindow.height=760
+        wait(120)
+        const check=findChild(appWindow,"checkUpdates")
+        const download=findChild(appWindow,"downloadUpdate")
+        const install=findChild(appWindow,"installUpdate")
+        verify(check.enabled);verify(download.enabled);verify(!install.enabled)
+        verify(!findChild(appWindow,"uninstallApp").enabled)
+        const before=updaterStub.checked;mouseClick(check);compare(updaterStub.checked,before+1)
+        mouseClick(download);compare(updaterStub.downloaded,1)
+        updaterStub.busy=true;verify(!check.enabled);verify(!download.enabled)
+        updaterStub.busy=false;updaterStub.downloadReady=true
+        verify(install.enabled);verify(!download.enabled)
+        mouseClick(install);compare(updaterStub.installed,1)
+        updaterStub.downloadReady=false
+        appWindow.width=1200;appWindow.height=800
+    }
+    function test_connectAndSend() {
+        const input = findChild(appWindow, "baudInput")
+        input.text = "921600"
+        const button = findChild(appWindow, "connectButton")
+        verify(button.enabled)
+        mouseClick(button)
+        compare(stub.lastConfig.baud, "921600")
+        compare(stub.lastConfig.dataBits, 8)
+        compare(stub.lastConfig.port, "TEST")
+        const send = findChild(appWindow, "sendButton")
+        verify(send.enabled)
+        compare(findChild(appWindow, "sendMode").currentIndex, 1)
+        findChild(appWindow, "sendInput").text = "你好，开发板"
+        mouseClick(send)
+        compare(stub.lastSend, "你好，开发板")
+        mouseClick(button)
+        compare(stub.connected, false)
+        verify(!send.enabled)
+    }
+    function test_themeAndDemo() {
+        const themeButton = findChild(appWindow, "themeButton")
+        const before = themeButton.text
+        mouseClick(themeButton)
+        verify(themeButton.text !== before)
+        compare(stub.demoCount, 0)
+        mouseClick(findChild(appWindow, "demoButton"))
+        compare(stub.demoCount, 1)
+    }
+    function test_networkAndParserSource() {
+        mouseClick(visualChild(appWindow.contentItem, "nav3"))
+        compare(appWindow.pageIndex, 3)
+        verify(waitForPolish(appWindow.contentItem))
+        const host = findChild(appWindow, "networkHost")
+        verify(host !== null)
+        host.text = "192.0.2.10"
+        findChild(appWindow, "networkPort").text = "8765"
+        const connect = findChild(appWindow, "networkConnectButton")
+        wait(100)
+        mouseClick(connect)
+        compare(networkStub.lastConfig.host, "192.0.2.10")
+        compare(networkStub.lastConfig.port, 8765)
+        compare(stub.connected, false)
+        compare(findChild(appWindow, "networkSendMode").currentIndex, 1)
+        findChild(appWindow, "networkSendInput").text = "网络中文"
+        mouseClick(findChild(appWindow, "networkSendButton"))
+        compare(networkStub.lastSend, "网络中文")
+        mouseClick(connect)
+        compare(networkStub.connected, false)
+        mouseClick(visualChild(appWindow.contentItem, "nav1"))
+        verify(waitForPolish(appWindow.contentItem))
+        const parserSource = findChild(appWindow, "parserSource")
+        parserSource.currentIndex = 1
+        parserSource.activated(1)
+        mouseClick(findChild(appWindow, "applyParserButton"))
+        compare(networkStub.applyCount, 1)
+        compare(stub.applyCount, 0)
+    }
+    function test_boardSourcesAndTerminal() {
+        mouseClick(visualChild(appWindow.contentItem, "nav4"))
+        compare(appWindow.pageIndex, 4)
+        verify(waitForPolish(appWindow.contentItem))
+        const source = findChild(appWindow, "boardSource")
+        const bus = findChild(appWindow, "boardBus")
+        const execute = findChild(appWindow, "boardExecuteButton")
+        wait(100)
+        bus.currentIndex = 0
+        findChild(appWindow, "boardTx").text = "0010"
+        for (let selected = 0; selected < 3; ++selected) {
+            source.currentIndex = selected
+            mouseClick(execute)
+            compare(boardStub.source, selected)
+            compare(boardStub.request.bus, "i2c")
+            compare(boardStub.request.address, 80)
+            compare(boardStub.request.tx, "0010")
+        }
+        bus.currentIndex = 1
+        verify(waitForPolish(appWindow.contentItem))
+        mouseClick(execute)
+        compare(boardStub.request.bus, "spi")
+        compare(boardStub.request.device, "/dev/spidev0.0")
+        bus.currentIndex = 2
+        verify(waitForPolish(appWindow.contentItem))
+        mouseClick(execute)
+        compare(boardStub.request.bus, "usb")
+        compare(boardStub.request.op, "list")
+        bus.currentIndex = 0
+        verify(waitForPolish(appWindow.contentItem))
+        findChild(appWindow, "sshHost").text = "192.0.2.20"
+        const before = boardStub.terminalCount
+        wait(100)
+        mouseClick(findChild(appWindow, "sshTerminalButton"))
+        compare(boardStub.terminalCount, before + 1)
+        compare(boardStub.ssh.host, "192.0.2.20")
+        boardStub.terminal.active=false;boardStub.terminal.mode=-1
+    }
+    function test_adbDiscoveryControls() {
+        appWindow.pageIndex=4
+        const mode=findChild(appWindow,"terminalMode")
+        mode.currentIndex=3
+        wait(100)
+        const adb=boardStub.terminal.adb
+        tryCompare(adb,"enabled",true)
+        const devices=findChild(appWindow,"adbDevices")
+        verify(devices!==null,"Android 页缺少设备选择列表")
+        compare(devices.currentIndex,0)
+        const refresh=findChild(appWindow,"adbRefreshButton")
+        const before=adb.refreshCount;mouseClick(refresh);compare(adb.refreshCount,before+1)
+        const open=findChild(appWindow,"sshTerminalButton")
+        adb.ready=false;tryCompare(open,"enabled",false)
+        tryCompare(findChild(appWindow,"boardExecuteButton"),"enabled",false)
+        adb.ready=true;tryCompare(open,"enabled",true);mouseClick(open)
+        compare(boardStub.terminal.lastConfig.serial,"boardA")
+        compare(boardStub.terminal.lastConfig.adb,adb.resolvedPath)
+        boardStub.terminal.active=false;boardStub.terminal.mode=-1
+        mode.currentIndex=0;tryCompare(adb,"enabled",false)
+    }
+    function test_commandAssistant() {
+        appWindow.pageIndex=4
+        const mode=findChild(appWindow,"terminalMode")
+        verify(mode!==null)
+        mode.currentIndex=2
+        wait(100)
+        mouseClick(findChild(appWindow,"sshTerminalButton"))
+        compare(boardStub.terminal.mode,2)
+        mouseClick(findChild(appWindow,"commandAssistantButton"))
+        const assistant=findChild(appWindow,"commandAssistantWindow")
+        verify(assistant!==null);tryCompare(assistant,"visible",true)
+        compare(assistant.width,760);compare(assistant.height,580)
+        const edit=findChild(assistant,"commandEdit")
+        edit.text="echo 可编辑"
+        mouseClick(findChild(assistant,"applyCommandButton"))
+        compare(boardStub.terminal.lastFill,"echo 可编辑")
+        compare(boardStub.terminal.lastKey,"")
+        const system=findChild(assistant,"assistantSystem")
+        system.currentIndex=0
+        tryCompare(findChild(assistant,"applyCommandButton"),"enabled",false)
+        const search=findChild(assistant,"commandSearch")
+        search.text="不存在";tryCompare(assistant,"entryCount",0)
+        search.text="";tryCompare(assistant,"entryCount",1)
+        assistant.close()
+        wait(80)
+        mouseClick(visualChild(appWindow.contentItem,"terminalKey_enter"))
+        compare(boardStub.terminal.lastKey,"enter")
+        boardStub.terminal.lastKey=""
+        boardStub.terminal.active=false;boardStub.terminal.mode=-1;mode.currentIndex=0
+    }
+    function test_compactUsbLayout() {
+        appWindow.width = 1120; appWindow.height = 760; appWindow.pageIndex = 4
+        findChild(appWindow, "boardBus").currentIndex = 2
+        findChild(appWindow, "usbOperation").currentIndex = 1
+        verify(waitForPolish(appWindow.contentItem))
+        wait(100)
+        const screenshot = grabImage(appWindow.contentItem)
+        verify(screenshot.width > 0)
+        screenshot.save("usb-compact.png")
+        const viewport = findChild(appWindow, "boardConfigScroll").contentItem
+        viewport.contentY = Math.max(0, viewport.contentHeight - viewport.height)
+        wait(100)
+        mouseClick(findChild(appWindow, "boardExecuteButton"))
+        compare(boardStub.request.bus, "usb")
+        compare(boardStub.request.op, "read")
+        compare(boardStub.request.endpoint, 129)
+        findChild(appWindow, "usbOperation").currentIndex = 0
+        findChild(appWindow, "boardBus").currentIndex = 0
+        viewport.contentY = 0
+        appWindow.width = 1200; appWindow.height = 800
+    }
+    function test_dataRulesAndChart() {
+        appWindow.pageIndex=1
+        const view=findChild(appWindow,"protocolView")
+        view.currentIndex=1;view.activated(1)
+        verify(waitForPolish(appWindow.contentItem));wait(100)
+        findChild(appWindow,"dataFormat").currentIndex=3
+        findChild(appWindow,"dataSchema").text='[{"name":"x","offset":0,"type":"u16"}]'
+        verify(waitForPolish(appWindow.contentItem));wait(100)
+        mouseClick(findChild(appWindow,"applyDataButton"))
+        compare(stub.analysis.format,"binary")
+        compare(JSON.parse(stub.analysis.schema)[0].name,"x")
+        findChild(appWindow,"dataOutput").currentIndex=1
+        verify(waitForPolish(appWindow.contentItem));wait(100)
+        const chartImage=grabImage(appWindow.contentItem);verify(chartImage.width>0);chartImage.save("chart-layout.png")
+        compare(findChild(appWindow,"chartField").currentText,"temperature")
+        compare(findChild(appWindow,"fileFormat").count,17)
+        view.currentIndex=0;view.activated(0)
+    }
+    function test_dataCompactRulesAndMedia() {
+        appWindow.width=1120;appWindow.height=760;appWindow.pageIndex=1
+        const view=findChild(appWindow,"protocolView")
+        view.currentIndex=1;view.activated(1)
+        const panel=findChild(appWindow,"dataFormat").parent.parent.parent
+        panel.showRules=true
+        findChild(appWindow,"dataFormat").currentIndex=3
+        findChild(appWindow,"dataOutput").currentIndex=0
+        verify(waitForPolish(appWindow.contentItem));wait(100)
+        const rulesImage=grabImage(appWindow.contentItem);verify(rulesImage.width>0);rulesImage.save("data-compact.png")
+        // 实例化播放器控件并加载本地视频，不调用播放。
+        stub.analysis.mediaKind="video"
+        stub.analysis.mediaUrl=Qt.resolvedUrl("../fixtures/sample.mp4")
+        stub.analysis.changed()
+        verify(waitForPolish(appWindow.contentItem));wait(250)
+        compare(findChild(appWindow,"dataOutput").currentIndex,3)
+        const mediaImage=grabImage(appWindow.contentItem);verify(mediaImage.width>0);mediaImage.save("media-compact.png")
+        stub.analysis.mediaUrl="";stub.analysis.mediaKind="";stub.analysis.changed()
+        findChild(appWindow,"dataOutput").currentIndex=0
+        view.currentIndex=0;view.activated(0)
+        appWindow.width=1200;appWindow.height=800
+    }
+    function test_fileTransferSelection() {
+        appWindow.pageIndex=5;verify(waitForPolish(appWindow.contentItem));wait(100)
+        const mode=findChild(appWindow,"transferMode"),start=findChild(appWindow,"transferStart")
+        mode.currentIndex=0
+        findChild(appWindow,"transferFile").text="C:/test.bin"
+        findChild(appWindow,"transferFolder").text="E:/"
+        mouseClick(start)
+        compare(transferStub.selectedMode,0);compare(transferStub.destination,"E:/")
+        mode.currentIndex=1;verify(waitForPolish(appWindow.contentItem));wait(100)
+        verify(!start.enabled)
+        findChild(appWindow,"transferHost").text="192.0.2.30"
+        findChild(appWindow,"transferRemote").text="/tmp/test.bin"
+        findChild(appWindow,"transferOverwrite").checked=true
+        verify(start.enabled)
+        mouseClick(start)
+        compare(transferStub.selectedMode,1);compare(transferStub.config.remote,"/tmp/test.bin")
+        const image=grabImage(appWindow.contentItem);verify(image.width>0);image.save("transfer-layout.png")
+        mode.currentIndex=2;verify(waitForPolish(appWindow.contentItem));wait(100)
+        mouseClick(start);compare(transferStub.selectedMode,2);compare(transferStub.destination,"C:/test.bin")
+        appWindow.width=1120;appWindow.height=760
+        verify(waitForPolish(appWindow.contentItem));wait(100)
+        const compactImage=grabImage(appWindow.contentItem);verify(compactImage.width>0);compactImage.save("transfer-compact.png")
+        appWindow.width=1200;appWindow.height=800
+        mode.currentIndex=0
+    }
+}

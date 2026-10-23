@@ -1,0 +1,22 @@
+# 构建、部署、下载依赖与安装产物不进入公开源码。
+/build/
+/release/
+/deps/
+/安装包/
+__pycache__/
+*.pyc
+*.pro.user*
+CMakeLists.txt.user*
+.qtcreator/
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+/*.png
+
+# 本机调试记录包含设备标识、用户名和路径，仅留本地。
+/debug_state.md
+/ADB检测修复计划.md
+/发布验证/
+/*计划.md
+/设计方案.md
