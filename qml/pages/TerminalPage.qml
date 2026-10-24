@@ -42,6 +42,40 @@ Item {
     }
     property bool hexView: false
     property bool follow: true
+    property var renderedEntries: []
+    property bool renderedHex: false
+    function syncReceiveText() {
+        const model=root.backend.terminal
+        const entries=typeof model.continuousEntries==="function" ? model.continuousEntries(root.hexView) : []
+        const next=typeof model.continuousText==="function" ? model.continuousText(root.hexView) : ""
+        const previous=continuousText.text
+        let removed=0, overlap=-1
+        if(renderedHex===root.hexView && entries.length>0){
+            for(let i=0;i<renderedEntries.length;i++){
+                if(renderedEntries[i].id===entries[0].id){overlap=i;break}
+                removed+=renderedEntries[i].text.length+1
+            }
+        }
+        let stable=overlap>=0 && entries.length>=renderedEntries.length-overlap
+        if(stable)for(let i=overlap;i<renderedEntries.length;i++){
+            if(renderedEntries[i].id!==entries[i-overlap].id || renderedEntries[i].text!==entries[i-overlap].text){stable=false;break}
+        }
+        if(stable){
+            const start=continuousText.selectionStart, end=continuousText.selectionEnd
+            const reverse=continuousText.cursorPosition===start
+            const retained=previous.slice(removed)
+            if(removed>0)continuousText.remove(0,removed)
+            continuousText.insert(continuousText.length,next.slice(retained.length))
+            if(end>start){
+                if(start>=removed)continuousText.select((reverse?end:start)-removed,(reverse?start:end)-removed)
+                else continuousText.deselect()
+            }
+        } else {continuousText.deselect();continuousText.text=next}
+        renderedEntries=entries;renderedHex=root.hexView
+        if(root.follow && !continuousText.selectedText)Qt.callLater(function(){continuousScroll.contentItem.contentY=Math.max(0,continuousScroll.contentItem.contentHeight-continuousScroll.availableHeight)})
+    }
+    onHexViewChanged:syncReceiveText()
+    Connections {target:root.backend.terminal;function onCountChanged(){root.syncReceiveText()}}
     property var baudRates: ["300","600","1200","2400","4800","9600","14400","19200","38400","57600","115200","230400","460800","921600","1000000","1500000","2000000","3000000","4000000"]
     function connectPort() {
         if (backend.connected) { backend.closePort(); return }
@@ -52,6 +86,7 @@ Item {
                           stopBits: [1,2,3][stopBox.currentIndex], flow: flowBox.currentIndex})
     }
     Component.onCompleted: {
+        syncReceiveText()
         const config = backend.preferences.connection || {}
         if (config.baud) baudInput.text = String(config.baud)
         if (config.dataBits) bitsBox.currentIndex = ["5","6","7","8"].indexOf(String(config.dataBits))
@@ -61,13 +96,14 @@ Item {
         if(!selectedPort)selectedPort=config.port || (backend.ports.length ? backend.ports[0].name : "")
         restorePort()
     }
-    RowLayout {
-        anchors.fill: parent
-        spacing: 16
+    Drawer {
+        id:connectionDrawer;objectName:"connectionDrawer"
+        width:Math.min(330,root.width-32);height:root.height
+        edge:Qt.LeftEdge;parent:root
+        background:Rectangle {color:C.Theme.panel;border.color:C.Theme.line}
         C.Panel {
             visible: !root.networkMode
-            Layout.preferredWidth: 248
-            Layout.fillHeight: true
+            anchors.fill:parent
             ScrollView {
                 anchors.fill: parent
                 anchors.margins: 18
@@ -80,7 +116,7 @@ Item {
                         Layout.fillWidth: true
                         Text { text: "连接配置"; color: C.Theme.text; font.pixelSize: 16; font.weight: Font.DemiBold }
                         Item { Layout.fillWidth: true }
-                        Text { text: "UART"; color: C.Theme.subtle; font.family: "Consolas"; font.pixelSize: 11 }
+                        C.ActionButton {text:"关闭";implicitHeight:28;implicitWidth:54;onClicked:connectionDrawer.close()}
                     }
                     Rectangle { Layout.fillWidth: true; height: 1; color: C.Theme.line; Layout.topMargin: 3; Layout.bottomMargin: 3 }
                     Text { text: "串口设备"; color: C.Theme.muted; font.pixelSize: 12 }
@@ -131,14 +167,6 @@ Item {
                     C.SelectBox { id: parityBox; visible: root.advanced; Layout.fillWidth: true; model: ["无校验 / None","偶校验 / Even","奇校验 / Odd","空校验 / Space","标记 / Mark"]; enabled: baudInput.enabled }
                     Text { visible: root.advanced; text: "流控"; color: C.Theme.muted; font.pixelSize: 12 }
                     C.SelectBox { id: flowBox; visible: root.advanced; Layout.fillWidth: true; model: ["无流控","硬件 RTS / CTS","软件 XON / XOFF"]; enabled: baudInput.enabled }
-                    C.ActionButton {
-                        objectName: "connectButton"
-                        Layout.fillWidth: true; Layout.topMargin: 6; implicitHeight: 42
-                        text: root.backend.busy ? "处理中…" : root.backend.connected ? "断开连接" : "连接串口"
-                        primary: !root.backend.connected; danger: root.backend.connected
-                        enabled: !root.backend.busy && (root.backend.connected || portBox.currentIndex>=0)
-                        onClicked: root.connectPort()
-                    }
                     RowLayout {
                         CheckBox { id: dtr; visible: root.advanced; text: "DTR"; palette.windowText: C.Theme.muted; enabled: root.backend.connected; onClicked: root.backend.setLines(checked, rts.checked) }
                         CheckBox { id: rts; visible: root.advanced; text: "RTS"; palette.windowText: C.Theme.muted; enabled: root.backend.connected && flowBox.currentIndex !== 1; onClicked: root.backend.setLines(dtr.checked, checked) }
@@ -160,28 +188,35 @@ Item {
         }
         Loader {
             id:networkLoader
-            visible: root.networkMode; active: root.networkMode; Layout.preferredWidth: 248; Layout.fillHeight: true
+            visible: root.networkMode; active: root.networkMode;anchors.fill:parent
             sourceComponent: Component { NetworkConfig { anchors.fill: parent; backend: root.backend; settings: root.settings; discovery: root.discovery; detailed: root.detailed } }
         }
+    }
         ColumnLayout {
-            Layout.fillWidth: true; Layout.fillHeight: true; spacing: 14
+            anchors.fill:parent;spacing:6
             C.Panel {
+                objectName:"receivePanel"
                 Layout.fillWidth: true; Layout.fillHeight: true
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 16; spacing: 10
+                    anchors.fill: parent; anchors.margins: 9; spacing: 5
                     RowLayout {
-                        Layout.fillWidth: true
-                        Text { text: "收发终端"; color: C.Theme.text; font.pixelSize: 16; font.weight: Font.DemiBold }
-                        Rectangle {
-                            width: 50; height: 23; radius: 5; color: C.Theme.accentFill
-                            Text { anchors.centerIn: parent; text: "LIVE"; color: C.Theme.accent; font.family: "Consolas"; font.pixelSize: 10 }
+                        Layout.fillWidth: true;spacing:6
+                        C.ActionButton {
+                            objectName:root.networkMode?"networkConnectButton":"connectButton"
+                            implicitHeight:30
+                            text:root.networkMode ? (networkLoader.item ? networkLoader.item.connectionText : "打开网络") : root.backend.busy ? "处理中…" : root.backend.connected ? "断开串口" : "连接串口"
+                            primary:!root.backend.connected;danger:root.backend.connected || root.backend.busy
+                            enabled:root.networkMode ? !!networkLoader.item : !root.backend.busy && (root.backend.connected || portBox.currentIndex>=0)
+                            onClicked:root.networkMode ? networkLoader.item.connectNetwork() : root.connectPort()
                         }
+                        C.ActionButton {objectName:"connectionDrawerButton";text:"配置";implicitWidth:54;implicitHeight:30;onClicked:connectionDrawer.open()}
                         Item { Layout.fillWidth: true }
                         C.ActionButton { text: root.hexView ? "HEX" : "UTF-8"; implicitWidth: 66; implicitHeight: 30; onClicked: root.hexView = !root.hexView }
                         C.ActionButton { text: root.follow ? "自动滚动" : "暂停滚动"; implicitHeight: 30; onClicked: root.follow = !root.follow }
                         C.ActionButton { text: "保存"; implicitWidth: 58; implicitHeight: 30; onClicked: root.saveRequested() }
                         C.ActionButton { text: "清空"; implicitWidth: 58; implicitHeight: 30; onClicked: root.backend.clearTerminal() }
                     }
+                    Text {Layout.fillWidth:true;text:root.backend.connected ? root.backend.portName || "已连接" : root.networkMode ? "未连接 · 在配置中设置网络目标" : "未连接 · "+(root.selectedPort || "请在配置中选择串口");elide:Text.ElideRight;color:C.Theme.muted;font.pixelSize:10}
                     Rectangle { Layout.fillWidth: true; height: 1; color: C.Theme.line }
                     C.MessageSelectionBar {
                         id: messageSelection; objectName: "terminalMessageSelection"
@@ -203,10 +238,10 @@ Item {
                             C.ActionButton { objectName: "demoButton"; anchors.horizontalCenter: parent.horizontalCenter; text: "加载演示数据"; onClicked: root.backend.demo(); enabled: !root.backend.connected && !root.backend.busy }
                         }
                         ListView {
-                            id: terminalList; anchors.fill: parent; clip: true; spacing: 4
+                            id: terminalList; anchors.fill: parent; clip: true; spacing: 0
                             objectName: "terminalMessageList"
                             Keys.onPressed: function(event) { messageSelection.handleCopy(event) }
-                            visible: count > 0
+                            visible: count > 0 && (root.detailed || messageSelection.active)
                             model: root.backend.terminal
                             boundsBehavior: Flickable.StopAtBounds
                             ScrollBar.vertical: ScrollBar {}
@@ -221,11 +256,11 @@ Item {
                                 required property bool valid
                                 required property string eventId
                                 required property bool eventSelected
-                                width: terminalList.width; height: entry.implicitHeight+16
+                                width: terminalList.width; height: entry.implicitHeight+4
                                 color: row.eventSelected ? C.Theme.accentFill : row.kind === "DEMO" ? Qt.rgba(C.Theme.orange.r, C.Theme.orange.g, C.Theme.orange.b, 0.05) : "transparent"
                                 radius: 6
                                 RowLayout {
-                                    id: entry; anchors.left: parent.left; anchors.right: parent.right; anchors.margins: 8; y: 8; spacing: 12
+                                    id: entry; anchors.left: parent.left; anchors.right: parent.right; anchors.margins: 4; y: 2; spacing: 7
                                     CheckBox {
                                         objectName: "terminalSelect_" + row.eventId
                                         visible: messageSelection.active; checked: row.eventSelected
@@ -234,16 +269,16 @@ Item {
                                         onClicked: root.backend.terminal.setEventSelected(row.eventId, checked)
                                     }
                                     Text { visible: root.detailed; text: row.stamp; color: C.Theme.subtle; font.family: "Consolas"; font.pixelSize: 11; Layout.alignment: Qt.AlignTop; Layout.topMargin: 2 }
-                                    Text { text: row.kind; color: row.kind === "TX" ? C.Theme.blue : row.kind === "DEMO" ? C.Theme.orange : C.Theme.accent; font.family: "Consolas"; font.pixelSize: 11; Layout.preferredWidth: 36; Layout.alignment: Qt.AlignTop; Layout.topMargin: 2 }
+                                    Text { text: row.kind; color: row.kind === "TX" ? C.Theme.blue : row.kind === "DEMO" ? C.Theme.orange : C.Theme.accent; font.family: "Consolas"; font.pixelSize: 13; Layout.preferredWidth: 34; Layout.alignment: Qt.AlignTop }
                                     ColumnLayout {
-                                        Layout.fillWidth: true; spacing: 4
+                                        Layout.fillWidth: true; spacing: 1
                                         Text { visible: root.detailed || (row.kind!=="RX" && row.kind!=="TX") || !row.valid; text: row.heading + (row.detail ? " · " + row.detail : ""); color: row.valid ? C.Theme.muted : C.Theme.red; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.Wrap }
                                         TextEdit {
                                             objectName: "terminalMessageText_" + row.eventId
                                             Layout.fillWidth: true
                                             visible: text.length > 0
                                             text: root.hexView ? row.hexData : row.textData
-                                            color: C.Theme.text; font.family: "Consolas"; font.pixelSize: 12
+                                            color: C.Theme.text; font.family: "Consolas"; font.pixelSize: 14
                                             readOnly: true; selectByMouse: true; textFormat: TextEdit.PlainText
                                             wrapMode: TextEdit.WrapAnywhere; selectionColor: C.Theme.accentFill
                                             Keys.onPressed: function(event) { if (selectedText.length === 0) messageSelection.handleCopy(event) }
@@ -252,6 +287,18 @@ Item {
                                 }
                             }
                             onCountChanged: if (root.follow) Qt.callLater(positionViewAtEnd)
+                        }
+                        ScrollView {
+                            id:continuousScroll;anchors.fill:parent;clip:true
+                            visible:root.backend.terminal.count>0 && !root.detailed && !messageSelection.active
+                            contentWidth:availableWidth
+                            TextArea {
+                                id:continuousText;objectName:"continuousReceiveText"
+                                readOnly:true;selectByMouse:true;selectByKeyboard:true
+                                textFormat:TextEdit.PlainText;wrapMode:TextEdit.WrapAnywhere
+                                color:C.Theme.text;font.family:"Consolas";font.pixelSize:14
+                                padding:4;selectionColor:C.Theme.accentFill;background:null
+                            }
                         }
                     }
                     RowLayout {
@@ -265,9 +312,9 @@ Item {
                 }
             }
             C.Panel {
-                Layout.fillWidth: true; Layout.preferredHeight: 174
+                Layout.fillWidth: true; Layout.preferredHeight: 138;Layout.minimumHeight:138
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 14; spacing: 9
+                    anchors.fill: parent; anchors.margins: 8; spacing: 5
                     RowLayout {
                         Text { text: "发送数据"; color: C.Theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
                         Item { Layout.fillWidth: true }
@@ -280,7 +327,7 @@ Item {
                             id: sendInput; objectName: root.networkMode ? "networkSendInput" : "sendInput"; text: ""
                             placeholderText: "输入要发送的数据…"
                             color: C.Theme.text; placeholderTextColor: C.Theme.subtle
-                            font.family: "Consolas"; font.pixelSize: 13
+                            font.family: "Consolas"; font.pixelSize: 14
                             selectByMouse: true; wrapMode: TextEdit.WrapAnywhere
                             background: Rectangle { color: C.Theme.consoleBg; radius: 7; border.color: C.Theme.line }
                         }
@@ -304,10 +351,9 @@ Item {
                 }
             }
             C.QuickSendPanel {
-                id: quickSend; Layout.fillWidth: true; repository: root.quickCommands
+                id: quickSend; Layout.fillWidth: true; repository: root.quickCommands;expanded:false
                 scope: root.networkMode ? "network" : "serial"
                 onChosen: function(text) { sendInput.text=text; sendMode.currentIndex=selectedEntry.hex?0:1; const endings=["","\n","\r\n","\r"]; const index=endings.indexOf(selectedEntry.newline); if(index>=0)newline.currentIndex=index }
             }
         }
-    }
 }

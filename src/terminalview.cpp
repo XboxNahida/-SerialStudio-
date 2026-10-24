@@ -19,7 +19,9 @@ void TerminalView::setScreen(TerminalScreen *screen) {
     if(m_screen==screen)return;
     if(m_screen)disconnect(m_screen,nullptr,this,nullptr);
     m_screen=screen;
+    m_start=m_end=QPoint(-1,-1);
     if(screen)connect(screen,&TerminalScreen::changed,this,[this]{update();});
+    if(screen)connect(screen,&TerminalScreen::contentsReset,this,[this]{m_start=m_end=QPoint(-1,-1);update();});
     resizeScreen();update();emit screenChanged();
 }
 void TerminalView::geometryChange(const QRectF &now,const QRectF &before) {
@@ -37,8 +39,9 @@ void TerminalView::paint(QPainter *painter) {
     for(const auto &entry:cells){
         const auto cell=entry.toMap();const int row=cell.value("row").toInt(),column=cell.value("column").toInt();
         QRectF rect(6+column*m_cellWidth,5+row*m_cellHeight,cell.value("width").toInt()*m_cellWidth,m_cellHeight);
-        const bool selected=first.x()>=0 && row>=first.y() && row<=last.y() &&
-            (row!=first.y()||column>=first.x())&&(row!=last.y()||column<=last.x());
+        const qint64 selectionRow=row+m_screen->viewportTop()-m_selectionTop;
+        const bool selected=first.x()>=0 && selectionRow>=first.y() && selectionRow<=last.y() &&
+            (selectionRow!=first.y()||column>=first.x())&&(selectionRow!=last.y()||column<=last.x());
         painter->fillRect(rect,selected?QColor(52,80,110):cell.value("background").value<QColor>());
         auto font=m_font;font.setBold(cell.value("bold").toBool());font.setItalic(cell.value("italic").toBool());
         font.setUnderline(cell.value("underline").toBool());painter->setFont(font);
@@ -72,17 +75,20 @@ QPoint TerminalView::cellAt(QPointF point) const {
     return m_screen?QPoint(qBound(0,int((point.x()-6)/m_cellWidth),m_screen->columns()-1),qBound(0,int((point.y()-5)/m_cellHeight),m_screen->rows()-1)):QPoint(-1,-1);
 }
 void TerminalView::mousePressEvent(QMouseEvent *event) {
-    forceActiveFocus();if(event->button()==Qt::LeftButton){m_start=m_end=cellAt(event->position());update();}event->accept();
+    forceActiveFocus();if(event->button()==Qt::LeftButton){m_selectionTop=m_screen?m_screen->viewportTop():0;m_start=m_end=cellAt(event->position());update();}event->accept();
 }
 void TerminalView::mouseMoveEvent(QMouseEvent *event) {
-    if(event->buttons().testFlag(Qt::LeftButton)){m_end=cellAt(event->position());update();}event->accept();
+    if(event->buttons().testFlag(Qt::LeftButton) && m_screen){m_end=cellAt(event->position());m_end.ry()+=int(m_screen->viewportTop()-m_selectionTop);update();}event->accept();
 }
 void TerminalView::wheelEvent(QWheelEvent *event) {
     if(m_screen)m_screen->scroll(event->angleDelta().y()/40);
     event->accept();
 }
 void TerminalView::copy() {
-    if(m_screen&&m_start.x()>=0)QGuiApplication::clipboard()->setText(m_screen->selection(m_start.y(),m_start.x(),m_end.y(),m_end.x()));
+    if(m_screen&&m_start.x()>=0){
+        const auto value=m_screen->absoluteSelection(m_selectionTop+m_start.y(),m_start.x(),m_selectionTop+m_end.y(),m_end.x());
+        if(!value.isEmpty())QGuiApplication::clipboard()->setText(value);
+    }
 }
 void TerminalView::paste() {
     const auto value=QGuiApplication::clipboard()->text();

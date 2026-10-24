@@ -108,11 +108,14 @@ TestCase {
             property bool active: false
             property bool inputBusy: false
             property int mode: -1
+        property int clearCount:0
             property string status: "尚未打开交互终端"
             property string lastFill: ""
             property string lastKey: ""
             property var lastConfig: ({})
             function open(selected,config) {mode=selected;lastConfig=config;active=true;return true}
+            function close() {active=false;mode=-1}
+        function clearDisplay(){clearCount++}
             function fill(text) {lastFill=text;return true}
             function sendKey(key) {lastKey=key;return true}
             function commands(selected,search,category) {
@@ -127,6 +130,11 @@ TestCase {
         property var request: ({})
         property var ssh: ({})
         property int terminalCount: 0
+        property var terminalSessions: [{title:"终端 1",active:false}]
+        property int terminalIndex:0
+        function newTerminal(){terminalSessions=terminalSessions.concat([{title:"终端 "+(terminalSessions.length+1),active:false}]);terminalIndex=terminalSessions.length-1}
+        function selectTerminal(index){if(index>=0&&index<terminalSessions.length)terminalIndex=index}
+        function closeTerminal(index){if(index>=0&&index<terminalSessions.length&&terminalSessions.length>1){let next=terminalSessions.slice();next.splice(index,1);terminalSessions=next;terminalIndex=Math.min(terminalIndex,next.length-1)}}
         function execute(selected, config, payload) { source = selected; ssh = config; request = payload; return true }
         function openTerminal(config) { ssh = config; terminalCount++; return terminal.open(0,config) }
         function cancel() {}
@@ -172,18 +180,76 @@ TestCase {
         appWindow = windowComponent.createObject(null)
         verify(appWindow !== null)
         wait(250)
-        compare(appWindow.width, 1200)
-        compare(appWindow.height, 800)
+        verify(appWindow.width < 1120, "新版初始窗口仍未缩小")
+        verify(appWindow.height < 760, "新版初始窗口仍未缩小")
         compare(findChild(appWindow,"boardSource").currentIndex,2)
-        compare(findChild(appWindow,"boardBus").currentIndex,4)
+        compare(findChild(appWindow,"boardBus").currentIndex,3)
     }
     function cleanupTestCase() { appWindow.destroy() }
+    function navigateTo(page) {appWindow.pageIndex=page}
+    function test_primaryConnectionsOutsideDrawers() {
+        appWindow.width=760;appWindow.height=500
+        const page=findChild(appWindow,"terminalPage")
+        const drawer=findChild(page,"connectionDrawer")
+        drawer.close();wait(200)
+        const button=findChild(page,"connectButton")
+        verify(button.visible,"连接串口必须在抽屉关闭时可见")
+        mouseClick(button);compare(stub.connected,true)
+        mouseClick(button);compare(stub.connected,false)
+        appWindow.pageIndex=3;wait(100)
+        const net=findChild(appWindow,"networkConnectButton")
+        verify(net.visible,"网络连接必须在主界面")
+        mouseClick(net);compare(networkStub.connected,true)
+        mouseClick(net);compare(networkStub.connected,false)
+        appWindow.pageIndex=4;wait(100)
+        findChild(appWindow,"boardBus").currentIndex=3
+        const opener=findChild(appWindow,"sshTerminalButton")
+        verify(opener.visible,"打开终端必须在主界面")
+        mouseClick(opener);compare(boardStub.terminal.active,true)
+        mouseClick(opener);compare(boardStub.terminal.active,false)
+        grabImage(appWindow.contentItem).save(quickEvidenceDirectory+"/primary-terminal-small.png")
+        appWindow.pageIndex=0
+        grabImage(appWindow.contentItem).save(quickEvidenceDirectory+"/primary-serial-small.png")
+        appWindow.width=860;appWindow.height=570
+    }
+    function test_compactWorkspaceAndDrawerPreservesDraft() {
+        appWindow.width=860;appWindow.height=570
+        appWindow.pageIndex=0
+        const page=findChild(appWindow,"terminalPage")
+        verify(waitForPolish(page))
+        const receive=findChild(page,"receivePanel")
+        verify(receive!==null,"缺少可验证的主体接收区")
+        verify(receive.width>appWindow.width*0.85,"侧栏仍挤占主体宽度")
+        verify(receive.height>appWindow.height*0.45,"接收区高度不足")
+        const draft=findChild(page,"sendInput")
+        draft.text="抽屉关闭后保留草稿"
+        const opener=findChild(page,"connectionDrawerButton")
+        verify(opener!==null)
+        mouseClick(opener);tryCompare(findChild(page,"connectionDrawer"),"opened",true)
+        const drawer=findChild(page,"connectionDrawer")
+        findChild(page,"baudInput").text="460800"
+        drawer.close();wait(250)
+        compare(draft.text,"抽屉关闭后保留草稿")
+        compare(findChild(page,"baudInput").text,"460800")
+    }
     function init() {
         appWindow.pageIndex = 0; appWindow.parserSource = 0
+        appWindow.visible=true
+        wait(30)
+        const connection=findChild(appWindow,"connectionDrawer");if(connection)connection.close()
+        const boardDrawer=findChild(appWindow,"boardDrawer");if(boardDrawer)boardDrawer.close()
+        const navigation=findChild(appWindow,"navigationDrawer");if(navigation)navigation.close()
+        const assistant=findChild(appWindow,"commandAssistantWindow");if(assistant)assistant.hide()
+        wait(250)
         appWindow.discovery=null
         appWindow.settings=null
         stub.connected = false; stub.demoCount = 0; stub.applyCount = 0
         networkStub.connected = false; networkStub.applyCount = 0
+        boardStub.terminal.active=false;boardStub.terminal.mode=-1;boardStub.terminalCount=0
+        boardStub.terminal.adb.ready=true
+        findChild(appWindow,"boardBus").currentIndex=3
+        findChild(appWindow,"terminalMode").currentIndex=0
+        findChild(appWindow,"terminalConnection").currentIndex=0
         wait(30)
     }
     function visualChild(item, name) {
@@ -196,15 +262,15 @@ TestCase {
         return null
     }
     function test_navigate() {
-        mouseClick(visualChild(appWindow.contentItem, "nav1"))
+        navigateTo(1)
         compare(appWindow.pageIndex, 1)
-        mouseClick(findChild(appWindow, "applyParserButton"))
+        findChild(appWindow, "applyParserButton").clicked()
         compare(stub.applyCount, 1)
-        mouseClick(visualChild(appWindow.contentItem, "nav2"))
+        navigateTo(2)
         compare(appWindow.pageIndex, 2)
     }
     function test_removedDevicesNavigationAndMigration() {
-        compare(visualChild(appWindow.contentItem,"nav6"),null)
+        compare(findChild(appWindow,"nav6"),null)
         appWindow.pageIndex=6
         compare(appWindow.pageIndex,0)
         migrationSettings.values=({"window/page":6})
@@ -212,10 +278,38 @@ TestCase {
         tryVerify(function(){return migrationSettings.values["window/page"]===0})
         compare(appWindow.pageIndex,0)
     }
+    function test_startOnSerialAndRelevantBoardConfig() {
+        migrationSettings.values=({"window/page":4})
+        appWindow.settings=migrationSettings
+        wait(30)
+        compare(appWindow.pageIndex,0)
+        appWindow.pageIndex=4
+        boardStub.terminal.active=false
+        findChild(appWindow,"boardDrawer").open();wait(80)
+        const bus=findChild(appWindow,"boardBus")
+        const source=findChild(appWindow,"boardSource")
+        bus.currentIndex=3
+        verify(!source.visible,"交互终端不应显示无效的桥接来源")
+        appWindow.width=860;appWindow.height=570
+        tryCompare(findChild(appWindow,"boardDrawer"),"position",1)
+        const advanced=findChild(appWindow,"boardAdvancedButton")
+        if(advanced.text==="收起高级")advanced.clicked()
+        findChild(appWindow,"boardDrawerScroll").contentItem.contentY=0
+        wait(50);grabImage(appWindow.contentItem).save(quickEvidenceDirectory+"/v110-board-config.png")
+        const mode=findChild(appWindow,"terminalMode")
+        mode.currentIndex=0;boardStub.terminal.active=true
+        verify(!mode.enabled,"运行中的会话不可改为其他系统")
+        boardStub.terminal.active=false
+        bus.currentIndex=0;source.currentIndex=0
+        verify(!findChild(appWindow,"sshHost").visible,"串口桥接不应展示无效SSH地址")
+        source.currentIndex=2
+        verify(findChild(appWindow,"sshHost").visible)
+    }
     function test_serialRefreshAndStableSelection() {
         const box=findChild(appWindow,"serialPort")
         verify(box!==null)
         const page=findChild(appWindow,"terminalPage")
+        mouseClick(findChild(page,"connectionDrawerButton"));wait(80)
         const original=stub.ports
         page.selectedPort="TEST";page.restorePort()
         stub.ports=[{name:"OTHER",label:"其他板"}]
@@ -275,11 +369,12 @@ TestCase {
         appWindow.width=1200;appWindow.height=800
     }
     function test_connectAndSend() {
+        findChild(appWindow,"connectionDrawer").open()
         const input = findChild(appWindow, "baudInput")
         input.text = "921600"
         const button = findChild(appWindow, "connectButton")
         verify(button.enabled)
-        mouseClick(button)
+        button.clicked()
         compare(stub.lastConfig.baud, "921600")
         compare(stub.lastConfig.dataBits, 8)
         compare(stub.lastConfig.port, "TEST")
@@ -287,9 +382,9 @@ TestCase {
         verify(send.enabled)
         compare(findChild(appWindow, "sendMode").currentIndex, 1)
         findChild(appWindow, "sendInput").text = "你好，开发板"
-        mouseClick(send)
+        send.clicked()
         compare(stub.lastSend, "你好，开发板")
-        mouseClick(button)
+        findChild(appWindow,"connectionDrawer").open();button.clicked()
         compare(stub.connected, false)
         verify(!send.enabled)
     }
@@ -313,8 +408,9 @@ TestCase {
         compare(networkStub.connected,false)
     }
     function test_networkAndParserSource() {
-        mouseClick(visualChild(appWindow.contentItem, "nav3"))
+        navigateTo(3)
         compare(appWindow.pageIndex, 3)
+        findChild(appWindow,"connectionDrawer").open()
         verify(waitForPolish(appWindow.contentItem))
         const host = findChild(appWindow, "networkHost")
         verify(host !== null)
@@ -322,29 +418,30 @@ TestCase {
         findChild(appWindow, "networkPort").text = "8765"
         const connect = findChild(appWindow, "networkConnectButton")
         wait(100)
-        mouseClick(connect)
+        connect.clicked()
         compare(networkStub.lastConfig.host, "192.0.2.10")
         compare(networkStub.lastConfig.port, 8765)
         compare(stub.connected, false)
         compare(findChild(appWindow, "networkSendMode").currentIndex, 1)
         findChild(appWindow, "networkSendInput").text = "网络中文"
-        mouseClick(findChild(appWindow, "networkSendButton"))
+        findChild(appWindow, "networkSendButton").clicked()
         compare(networkStub.lastSend, "网络中文")
-        mouseClick(connect)
+        findChild(appWindow,"connectionDrawer").open();connect.clicked()
         compare(networkStub.connected, false)
-        mouseClick(visualChild(appWindow.contentItem, "nav1"))
+        navigateTo(1)
         verify(waitForPolish(appWindow.contentItem))
         const parserSource = findChild(appWindow, "parserSource")
         parserSource.currentIndex = 1
         parserSource.activated(1)
-        mouseClick(findChild(appWindow, "applyParserButton"))
+        findChild(appWindow, "applyParserButton").clicked()
         compare(networkStub.applyCount, 1)
         compare(stub.applyCount, 0)
     }
     function test_boardSourcesAndTerminal() {
-        mouseClick(visualChild(appWindow.contentItem, "nav4"))
+        navigateTo(4)
         compare(appWindow.pageIndex, 4)
         verify(waitForPolish(appWindow.contentItem))
+        findChild(appWindow,"boardDrawer").open()
         const source = findChild(appWindow, "boardSource")
         const bus = findChild(appWindow, "boardBus")
         const execute = findChild(appWindow, "boardExecuteButton")
@@ -353,7 +450,7 @@ TestCase {
         findChild(appWindow, "boardTx").text = "0010"
         for (let selected = 0; selected < 3; ++selected) {
             source.currentIndex = selected
-            mouseClick(execute)
+            execute.clicked()
             compare(boardStub.source, selected)
             compare(boardStub.request.bus, "i2c")
             compare(boardStub.request.address, 80)
@@ -361,26 +458,48 @@ TestCase {
         }
         bus.currentIndex = 1
         verify(waitForPolish(appWindow.contentItem))
-        mouseClick(execute)
+        execute.clicked()
         compare(boardStub.request.bus, "spi")
         compare(boardStub.request.device, "/dev/spidev0.0")
         bus.currentIndex = 2
         verify(waitForPolish(appWindow.contentItem))
-        mouseClick(execute)
+        execute.clicked()
         compare(boardStub.request.bus, "usb")
         compare(boardStub.request.op, "list")
         bus.currentIndex = 0
         verify(waitForPolish(appWindow.contentItem))
         findChild(appWindow, "sshHost").text = "192.0.2.20"
-        const before = boardStub.terminalCount
+        const scroll=findChild(appWindow,"boardDrawerScroll")
+        scroll.contentItem.contentY=Math.max(0,scroll.contentItem.contentHeight-scroll.availableHeight);wait(100)
         wait(100)
-        mouseClick(findChild(appWindow, "sshTerminalButton"))
-        compare(boardStub.terminalCount, before + 1)
+        const open=findChild(appWindow, "sshTerminalButton");verify(open.enabled);open.clicked()
+        compare(boardStub.terminalCount, 1)
         compare(boardStub.ssh.host, "192.0.2.20")
         boardStub.terminal.active=false;boardStub.terminal.mode=-1
     }
+    function test_terminalDrawerAndSessionActions() {
+        appWindow.width=860;appWindow.height=570;appWindow.pageIndex=4
+        findChild(appWindow,"boardBus").currentIndex=3
+        verify(waitForPolish(appWindow.contentItem))
+        const panel=findChild(appWindow,"embeddedTerminalView")
+        verify(panel!==null)
+        verify(panel.height>appWindow.height*0.50,"终端画面未取得主要空间")
+        const clear=findChild(appWindow,"clearTerminalButton")
+        verify(clear.enabled)
+        verify(clear.visible)
+        clear.clicked()
+        tryCompare(boardStub.terminal,"clearCount",1)
+        const before=boardStub.terminalSessions.length
+        findChild(appWindow,"newTerminalButton").clicked()
+        compare(boardStub.terminalSessions.length,before+1)
+        tryCompare(findChild(appWindow,"boardDrawer"),"opened",true)
+        findChild(appWindow,"boardDrawer").close()
+        tryCompare(findChild(appWindow,"boardDrawer"),"opened",false)
+        compare(boardStub.terminalSessions.length,before+1)
+    }
     function test_adbDiscoveryControls() {
         appWindow.pageIndex=4
+        findChild(appWindow,"boardDrawer").open()
         const mode=findChild(appWindow,"terminalMode")
         mode.currentIndex=3
         wait(100)
@@ -393,11 +512,11 @@ TestCase {
         devices.popup.open();wait(20);devices.popup.close()
         compare(boardStub.terminal.adb.refreshCount,initialRefreshes+1)
         const refresh=findChild(appWindow,"adbRefreshButton")
-        const before=adb.refreshCount;mouseClick(refresh);compare(adb.refreshCount,before+1)
+        const before=adb.refreshCount;refresh.clicked();compare(adb.refreshCount,before+1)
         const open=findChild(appWindow,"sshTerminalButton")
         adb.ready=false;tryCompare(open,"enabled",false)
         tryCompare(findChild(appWindow,"boardExecuteButton"),"enabled",false)
-        adb.ready=true;tryCompare(open,"enabled",true);mouseClick(open)
+        adb.ready=true;tryCompare(open,"enabled",true);open.clicked()
         compare(boardStub.terminal.lastConfig.serial,"boardA")
         compare(boardStub.terminal.lastConfig.adb,adb.resolvedPath)
         boardStub.terminal.active=false;boardStub.terminal.mode=-1
@@ -405,19 +524,24 @@ TestCase {
     }
     function test_commandAssistant() {
         appWindow.pageIndex=4
+        findChild(appWindow,"boardBus").currentIndex=3
+        verify(waitForPolish(appWindow.contentItem))
+        findChild(appWindow,"boardDrawer").open()
         const mode=findChild(appWindow,"terminalMode")
         verify(mode!==null)
         mode.currentIndex=2
+        const scroll=findChild(appWindow,"boardDrawerScroll")
+        scroll.contentItem.contentY=Math.max(0,scroll.contentItem.contentHeight-scroll.availableHeight)
         wait(100)
-        mouseClick(findChild(appWindow,"sshTerminalButton"))
+        findChild(appWindow,"sshTerminalButton").clicked()
         compare(boardStub.terminal.mode,2)
-        mouseClick(findChild(appWindow,"commandAssistantButton"))
+        findChild(appWindow,"commandAssistantButton").clicked()
         const assistant=findChild(appWindow,"commandAssistantWindow")
         verify(assistant!==null);tryCompare(assistant,"visible",true)
         compare(assistant.width,760);compare(assistant.height,580)
         const edit=findChild(assistant,"commandEdit")
         edit.text="echo 可编辑"
-        mouseClick(findChild(assistant,"applyCommandButton"))
+        findChild(assistant,"applyCommandButton").clicked()
         compare(boardStub.terminal.lastFill,"echo 可编辑")
         compare(boardStub.terminal.lastKey,"")
         const system=findChild(assistant,"assistantSystem")
@@ -428,17 +552,18 @@ TestCase {
         search.text="";tryCompare(assistant,"entryCount",1)
         assistant.close()
         wait(80)
-        mouseClick(findChild(appWindow,"boardAdvancedButton"));wait(100)
-        const terminalScroll=findChild(appWindow,"boardTerminalScroll")
+        findChild(appWindow,"boardAdvancedButton").clicked();wait(100)
+        const terminalScroll=findChild(appWindow,"boardDrawerScroll")
         terminalScroll.contentItem.contentY=Math.max(0,terminalScroll.contentItem.contentHeight-terminalScroll.availableHeight)
         wait(50)
-        mouseClick(visualChild(appWindow.contentItem,"terminalKey_enter"))
+        visualChild(findChild(appWindow,"boardDrawer").contentItem,"terminalKey_enter").clicked()
         compare(boardStub.terminal.lastKey,"enter")
         boardStub.terminal.lastKey=""
         boardStub.terminal.active=false;boardStub.terminal.mode=-1;mode.currentIndex=0
     }
     function test_compactUsbLayout() {
         appWindow.width = 1120; appWindow.height = 760; appWindow.pageIndex = 4
+        findChild(appWindow,"boardDrawer").open()
         findChild(appWindow, "boardBus").currentIndex = 2
         findChild(appWindow, "usbOperation").currentIndex = 1
         verify(waitForPolish(appWindow.contentItem))
@@ -446,10 +571,10 @@ TestCase {
         const screenshot = grabImage(appWindow.contentItem)
         verify(screenshot.width > 0)
         screenshot.save("usb-compact.png")
-        const viewport = findChild(appWindow, "boardConfigScroll").contentItem
+        const viewport = findChild(appWindow, "boardDrawerScroll").contentItem
         viewport.contentY = Math.max(0, viewport.contentHeight - viewport.height)
         wait(100)
-        mouseClick(findChild(appWindow, "boardExecuteButton"))
+        findChild(appWindow, "boardExecuteButton").clicked()
         compare(boardStub.request.bus, "usb")
         compare(boardStub.request.op, "read")
         compare(boardStub.request.endpoint, 129)

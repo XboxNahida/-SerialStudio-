@@ -37,6 +37,12 @@ TestCase {
         compare(chosen.count,1);compare(chosen.signalArguments[0][0],"AA 01")
         compare(panel.selectedEntry.hex,true);compare(panel.selectedEntry.newline,"\r\n")
     }
+    function test_assistantFavoritesAreNotEditableShellSnippets() {
+        const id=commandRepository.put("terminal-linux",{title:"保存退出",text:":wq",builtinId:"vim-save",interaction:"editor-key",favorite:true})
+        panel.scope="terminal-linux";panel.reload()
+        verify(!panel.allEntries.some(function(item){return item.id===id}),"助手收藏快照不应流入只填文本的快捷面板")
+        commandRepository.remove("terminal-linux",id)
+    }
     function test_editorAddsUpdatesDeletes() {
         mouseClick(field("quickAdd"));wait(30)
         const title=field("quickTitle");const text=field("quickText")

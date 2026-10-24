@@ -9,6 +9,28 @@
 class BoardTests : public QObject {
     Q_OBJECT
 private slots:
+    void terminalSessionsKeepIndependentScreens()
+    {
+        Session serial(nullptr,false),network(nullptr,false);BoardController board(&serial,&network);
+        const auto initial=board.property("terminalSessions");
+        QVERIFY2(initial.isValid(),"尚未支持独立终端标签");
+        QCOMPARE(initial.toList().size(),1);
+        auto *first=board.terminal();first->screen()->feed("first session");
+        QVERIFY(QMetaObject::invokeMethod(&board,"newTerminal"));
+        QCOMPARE(board.property("terminalSessions").toList().size(),2);
+        auto *second=board.terminal();QVERIFY(second!=first);QVERIFY(!second->active());
+        second->screen()->feed("second session");
+        QVERIFY(QMetaObject::invokeMethod(&board,"selectTerminal",Q_ARG(int,0)));
+        QCOMPARE(board.terminal(),first);QCOMPARE(first->screen()->lineText(0),QString("first session"));
+        QVERIFY(QMetaObject::invokeMethod(&board,"selectTerminal",Q_ARG(int,1)));
+        QCOMPARE(board.terminal(),second);QCOMPARE(second->screen()->lineText(0),QString("second session"));
+        QVERIFY(QMetaObject::invokeMethod(&board,"closeTerminal",Q_ARG(int,1)));
+        QCOMPARE(board.property("terminalSessions").toList().size(),1);QCOMPARE(board.terminal(),first);
+        QVERIFY(QMetaObject::invokeMethod(&board,"selectTerminal",Q_ARG(int,99)));
+        QCOMPARE(board.terminal(),first);
+        QVERIFY(QMetaObject::invokeMethod(&board,"closeTerminal",Q_ARG(int,0)));
+        QCOMPARE(board.property("terminalSessions").toList().size(),1);QVERIFY(!board.terminal()->active());
+    }
     void routedBridge_data()
     { QTest::addColumn<int>("mode"); QTest::newRow("JSON行") << 1; QTest::newRow("自定义帧") << 3; }
     void routedBridge()

@@ -93,8 +93,9 @@ int main(int argc, char *argv[])
         QTimer::singleShot(200, &session, &Session::demo);
     }
     if (cli.isSet("compact") && !engine.rootObjects().isEmpty()) {
-        engine.rootObjects().first()->setProperty("width", 1120);
-        engine.rootObjects().first()->setProperty("height", 760);
+        auto *window=engine.rootObjects().first();
+        window->setProperty("width",window->property("minimumWidth"));
+        window->setProperty("height",window->property("minimumHeight"));
     }
     if(cli.isSet("assistant")&&!engine.rootObjects().isEmpty()){
         auto *assistant=engine.rootObjects().first()->findChild<QObject *>("commandAssistantWindow");

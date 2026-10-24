@@ -30,4 +30,5 @@ private:
     QFont m_font;
     qreal m_cellWidth=9,m_cellHeight=19,m_ascent=15;
     QPoint m_start{-1,-1},m_end{-1,-1};
+    qint64 m_selectionTop=0;
 };

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
-project(SerialStudio VERSION 1.0.0 LANGUAGES C CXX)
-set(SERIALSTUDIO_VERSION "1.0.0")
+project(SerialStudio VERSION 1.1.0 LANGUAGES C CXX)
+set(SERIALSTUDIO_VERSION "1.1.0")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/deps/qt/lib/cmake/Qt6SerialPort/Qt6SerialPortConfig.cmake")
@@ -16,6 +16,8 @@ qt_add_qml_module(SerialStudio
     QML_FILES qml/Main.qml
         qml/components/Theme.qml qml/components/ActionButton.qml
         qml/components/SelectBox.qml qml/components/InputBox.qml
+        qml/components/CommandInput.qml qml/components/CommandGuide.js
+        qml/components/AdbNetwork.qml
         qml/components/Panel.qml qml/components/Metric.qml
         qml/components/QuickSendPanel.qml qml/components/PersistentForm.qml
         qml/components/NetworkTargets.qml qml/components/MessageSelectionBar.qml qml/components/CopyTextButton.qml
@@ -62,7 +64,7 @@ target_link_libraries(SerialStudio PRIVATE settingscore)
 add_library(terminalcore STATIC src/terminalcontroller.cpp src/terminalcontroller.h src/adbdiscovery.cpp src/adbdiscovery.h
     src/terminalscreen.cpp src/terminalscreen.h src/pseudoterminal.cpp src/pseudoterminal.h)
 target_include_directories(terminalcore PUBLIC src)
-target_link_libraries(terminalcore PUBLIC Qt6::Gui vterm)
+target_link_libraries(terminalcore PUBLIC Qt6::Gui Qt6::SerialPort vterm)
 add_library(terminalview STATIC src/terminalview.cpp src/terminalview.h)
 target_link_libraries(terminalview PUBLIC terminalcore Qt6::Quick)
 target_include_directories(terminalview PUBLIC src)

@@ -58,12 +58,36 @@ TestCase {
         mouseClick(field("clearSelectedMessages"));compare(messageFixture.model.selectedCount,0)
         verify(!field("copySelectedMessages").enabled)
     }
+    function test_compactContinuousTextSelection() {
+        open(terminalFactory)
+        const editor=field("continuousReceiveText")
+        verify(editor.visible)
+        verify(editor.text.indexOf("RX\n一\nTX\n二")===0)
+        editor.forceActiveFocus();editor.select(0,9);keyClick(Qt.Key_C,Qt.ControlModifier)
+        compare(messageFixture.clipboard(),"RX\n一\nTX\n二")
+        const selected=editor.selectedText
+        page.follow=false;messageFixture.append();wait(40)
+        // 轮换丢弃的内容不能被错误选中为新的消息。
+        verify(editor.selectedText===selected || editor.selectedText==="")
+    }
     function test_singleMessageTextSelectionKeepsCtrlC() {
         open(terminalFactory)
         mouseClick(field("messageSelectionToggle"));mouseClick(field("selectAllMessages"))
         const text=field("terminalMessageText_"+messageFixture.idAt(1))
         text.forceActiveFocus();text.selectAll();keyClick(Qt.Key_C,Qt.ControlModifier)
         compare(messageFixture.clipboard(),"二")
+    }
+    function test_compactSelectionSurvivesRollover() {
+        open(terminalFactory)
+        const editor=field("continuousReceiveText")
+        const start=editor.text.indexOf("TX\n二")
+        editor.forceActiveFocus();editor.select(start+4,start)
+        compare(editor.selectedText,"TX\n二")
+        page.follow=false;messageFixture.append();wait(40)
+        compare(editor.selectedText,"TX\n二")
+        compare(editor.cursorPosition,0)
+        keyClick(Qt.Key_C,Qt.ControlModifier)
+        compare(messageFixture.clipboard(),"TX\n二")
     }
     function test_protocolCurrentFormatAndSelectNone() {
         open(protocolFactory)

@@ -79,13 +79,13 @@ LocalInventory localInventory()
     return result;
 }
 }
-DeviceDiscovery::DeviceDiscovery(QObject *parent,bool monitor):QObject(parent),m_adb(this),m_monitor(monitor)
+DeviceDiscovery::DeviceDiscovery(QObject *parent,bool monitor,quint16 listenPort):QObject(parent),m_adb(this),m_requestedPort(listenPort),m_monitor(monitor)
 {
     connect(&m_adb,&AdbDiscovery::changed,this,&DeviceDiscovery::rebuild);
     m_broadcast=new QUdpSocket(this);
-    if(m_broadcast->bind(QHostAddress::AnyIPv4,45454,QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint))
+    if(m_broadcast->bind(QHostAddress::AnyIPv4,listenPort,QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint))
         connect(m_broadcast,&QUdpSocket::readyRead,this,&DeviceDiscovery::receiveAnnouncements);
-    else m_status=QStringLiteral("UDP 服务发现端口 45454 无法监听：%1").arg(m_broadcast->errorString());
+    else m_status=QStringLiteral("UDP 服务发现端口 %1 无法监听：%2").arg(m_requestedPort).arg(m_broadcast->errorString());
     if(monitor) {
         m_poll.setInterval(3000);
         connect(&m_poll,&QTimer::timeout,this,&DeviceDiscovery::refresh);
@@ -94,6 +94,7 @@ DeviceDiscovery::DeviceDiscovery(QObject *parent,bool monitor):QObject(parent),m
     }
 }
 DeviceDiscovery::~DeviceDiscovery() { cancelScan(); }
+quint16 DeviceDiscovery::listenPort() const { return m_broadcast?m_broadcast->localPort():0; }
 QVariantList DeviceDiscovery::normalizedDevices(const QVariantList &devices)
 {
     QMap<QString,QVariantMap> unique;
@@ -254,7 +255,7 @@ void DeviceDiscovery::refresh()
         if(!m_scanning) {
             m_status=QStringLiteral("本机枚举完成；服务广播仅识别 SerialStudio v1 声明，静默目标请手动扫描");
             if(!inventory->warning.isEmpty()) m_status+="；"+inventory->warning;
-            if(m_broadcast->state()!=QAbstractSocket::BoundState) m_status+=QStringLiteral("；UDP 45454 监听不可用");
+            if(m_broadcast->state()!=QAbstractSocket::BoundState) m_status+=QStringLiteral("；UDP %1 监听不可用").arg(m_requestedPort);
         }
         if(m_monitor && m_broadcast->state()==QAbstractSocket::BoundState) {
             const QByteArray request=R"({"service":"serialstudio-discover","version":1})";
@@ -263,7 +264,7 @@ void DeviceDiscovery::refresh()
                 const int prefix=adapter.value("prefixLength").toInt();
                 if(!adapter.value("up").toBool() || !localIpv4(ip) || (ip>>24)==127 || prefix<1 || prefix>30) continue;
                 const quint32 broadcast=ip | (0xffffffffU >> prefix);
-                m_broadcast->writeDatagram(request,QHostAddress(broadcast),45454);
+                m_broadcast->writeDatagram(request,QHostAddress(broadcast),m_broadcast->localPort());
             }
         }
         rebuild();

@@ -81,6 +81,24 @@ private slots:
         QVERIFY(restored.remove("serial",id)); QVERIFY(!restored.remove("serial",id)); QVERIFY(reopened.flush());
         SettingsStore finalStore(dir.path()); QuickCommands finalCommands(&finalStore); QVERIFY(finalCommands.entries("serial").isEmpty());
     }
+    void builtinFavoriteMetadataSurvivesRestart()
+    {
+        QTemporaryDir dir(temporaryTemplate()); QString id;
+        {
+            SettingsStore store(dir.path()); QuickCommands commands(&store);
+            id=commands.put("terminal-linux",{{"builtinId","linux-legacy-01"},{"title",QStringLiteral("列出目录")},
+                {"text","ls -alh /tmp"},{"favorite",true},{"interaction","shell"}});
+            QVERIFY(!id.isEmpty()); QVERIFY(store.flush());
+        }
+        SettingsStore reopened(dir.path()); QuickCommands restored(&reopened);
+        QCOMPARE(restored.entries("terminal-linux").size(),1);
+        const auto entry=restored.entries("terminal-linux").first().toMap();
+        QCOMPARE(entry.value("builtinId").toString(),QString("linux-legacy-01"));
+        QVERIFY(entry.value("favorite").toBool()); QCOMPARE(entry.value("id").toString(),id);
+        QVERIFY(restored.remove("terminal-linux",id)); QVERIFY(reopened.flush());
+        SettingsStore again(dir.path()); QuickCommands finalCommands(&again);
+        QVERIFY(finalCommands.entries("terminal-linux").isEmpty());
+    }
     void commandImportAtomicAndExport()
     {
         QTemporaryDir dir(temporaryTemplate()); SettingsStore store(dir.path()); QuickCommands commands(&store);

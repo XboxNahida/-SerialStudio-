@@ -3,6 +3,7 @@
 #include <QProcess>
 #include <QTimer>
 #include <QVariant>
+#include <QSerialPort>
 #include "adbdiscovery.h"
 #include "terminalscreen.h"
 #include "pseudoterminal.h"
@@ -17,6 +18,8 @@ class TerminalController : public QObject {
     Q_PROPERTY(AdbDiscovery* adb READ adb CONSTANT)
     Q_PROPERTY(TerminalScreen* screen READ screen CONSTANT)
     Q_PROPERTY(bool embedded READ embedded NOTIFY changed)
+    Q_PROPERTY(QString connectionSummary READ connectionSummary NOTIFY changed)
+    Q_PROPERTY(QString transport READ transport NOTIFY changed)
 public:
     explicit TerminalController(QObject *parent=nullptr);
     ~TerminalController() override;
@@ -28,7 +31,10 @@ public:
     AdbDiscovery *adb() {return &m_adb;}
     TerminalScreen *screen() {return &m_screen;}
     bool embedded() const {return m_embedded;}
+    QString connectionSummary() const {return m_connectionSummary;}
+    QString transport() const {return m_transport;}
     Q_INVOKABLE void close();
+    Q_INVOKABLE void clearDisplay() { m_screen.clearDisplay(); }
     Q_INVOKABLE bool applyCommand(const QVariantMap &command);
     Q_INVOKABLE bool open(int mode,const QVariantMap &config);
     Q_INVOKABLE bool fill(const QString &text);
@@ -47,6 +53,7 @@ private:
     AdbDiscovery m_adb;
     TerminalScreen m_screen;
     PseudoTerminal m_pty;
+    QSerialPort m_serial;
     bool m_embedded=false;
     bool m_writeRejected=false;
     QTimer m_poll,m_timeout;
@@ -56,4 +63,6 @@ private:
     quint64 m_started=0;
     int m_mode=-1;
     QString m_status=QStringLiteral("尚未打开交互终端");
+    QString m_connectionSummary;
+    QString m_transport;
 };

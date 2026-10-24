@@ -11,11 +11,41 @@
 class TerminalTests : public QObject {
     Q_OBJECT
 private slots:
+    void transportSelection()
+    {
+        QString program,error;QStringList arguments;
+        QVERIFY(TerminalController::launchSpec(1,{{"transport","ssh"},{"host","192.0.2.10"},{"user","tester"}},&program,&arguments,&error));
+        QVERIFY(program.endsWith("ssh.exe",Qt::CaseInsensitive));
+        QVERIFY(arguments.contains("powershell.exe"));QVERIFY(arguments.contains("tester@192.0.2.10"));
+        QVERIFY(TerminalController::launchSpec(2,{{"transport","ssh"},{"host","192.0.2.10"},{"user","tester"}},&program,&arguments,&error));
+        QVERIFY(program.endsWith("ssh.exe",Qt::CaseInsensitive));QVERIFY(arguments.contains("cmd.exe"));
+        QVERIFY(TerminalController::launchSpec(0,{{"transport","adb"},{"adb",QCoreApplication::applicationFilePath()},{"serial","192.0.2.10:5555"}},&program,&arguments,&error));
+        QCOMPARE(arguments,QStringList({"-s","192.0.2.10:5555","shell"}));
+        QVERIFY(!TerminalController::launchSpec(2,{{"transport","unknown"}},&program,&arguments,&error));
+        QVERIFY(!TerminalController::launchSpec(0,{{"transport","local"}},&program,&arguments,&error));
+    }
+    void serialGuards()
+    {
+        TerminalController terminal;
+        QVERIFY(!terminal.open(0,{{"transport","serial"},{"presentation","qt"},{"port",""},{"baud",115200}}));
+        QVERIFY(terminal.status().contains(QStringLiteral("串口")));
+        QVERIFY(!terminal.open(0,{{"transport","serial"},{"presentation","qt"},{"port","NOT-A-REAL-PORT"},{"baud",0}}));
+        QVERIFY(terminal.status().contains(QStringLiteral("波特率")));
+        for(const auto &key:QStringList{"dataBits","parity","stopBits","flow"}){
+            QVariantMap config{{"transport","serial"},{"presentation","qt"},{"port","NOT-A-REAL-PORT"},{"baud",115200}};
+            config.insert(key,"garbage");
+            QVERIFY(!terminal.open(0,config));
+            QVERIFY2(terminal.status().contains(QStringLiteral("无效")),qPrintable(terminal.status()));
+        }
+        QVERIFY(!terminal.active());
+    }
     void embeddedSession()
     {
         TerminalController terminal;
         QVERIFY(terminal.open(2,{{"presentation","qt"}}));
         QVERIFY(terminal.property("embedded").toBool());
+        QCOMPARE(terminal.property("connectionSummary").toString(),QStringLiteral("本机 · Windows CMD"));
+        QCOMPARE(terminal.property("transport").toString(),QStringLiteral("local"));
         auto *screen=terminal.property("screen").value<QObject*>();QVERIFY(screen);
         QTemporaryDir dir;const auto marker=dir.filePath("explicit.txt");
         QTest::qWait(400);
@@ -25,6 +55,7 @@ private slots:
         QVERIFY(terminal.sendKey("ctrlC"));
         QVERIFY(QMetaObject::invokeMethod(&terminal,"close"));
         QVERIFY(!terminal.active());QVERIFY(!terminal.fill("echo rejected"));
+        QVERIFY(terminal.property("connectionSummary").toString().isEmpty());
     }
     void adbSdkFallback()
     {
@@ -91,6 +122,20 @@ private slots:
         TerminalController terminal;
         for(int mode=0;mode<4;++mode){const auto entries=terminal.commands(mode);QVERIFY(entries.size()>=15);for(const auto &entry:entries){const auto map=entry.toMap();QVERIFY(!map.value("syntax").toString().isEmpty());QVERIFY(TerminalController::validText(map.value("example").toString()));}}
         QVERIFY(!terminal.commands(0,"网").isEmpty());QVERIFY(terminal.commands(0,"不存在的指令xyz").isEmpty());
+        QVERIFY(!terminal.commands(0,QStringLiteral("当前用户服务")).isEmpty());
+        int dictionarySize=0;
+        for(int mode=0;mode<4;++mode) {
+            const auto entries=terminal.commands(mode);dictionarySize+=entries.size();
+            for(const auto &entry:entries) {
+                const auto map=entry.toMap();
+                if(map.value("interaction")=="shell") {
+                    QVERIFY(!map.value("location").toString().isEmpty());
+                    QVERIFY(!map.value("usage").toString().isEmpty());
+                    QVERIFY(map.contains("parameters"));QVERIFY(map.contains("advanced"));
+                }
+            }
+        }
+        QVERIFY(dictionarySize>=500);
         QVERIFY(TerminalController::validText("ls -al /tmp/测试"));
         QVERIFY(!TerminalController::validText("ls\nreboot"));QVERIFY(!TerminalController::validText("ls\r"));
         QVERIFY(!TerminalController::validText(QString(QChar(3))));QVERIFY(!terminal.fill("pwd"));QVERIFY(!terminal.sendKey("enter"));

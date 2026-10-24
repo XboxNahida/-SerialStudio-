@@ -72,6 +72,30 @@ class 指令库验证(unittest.TestCase):
                 if ex.startswith('toybox '):
                     self.assertIn('toybox', c['requires'])
 
+    def test_字典字段及高级语法(self):
+        for c in self.commands:
+            if c['interaction'] != 'shell':
+                continue
+            with self.subTest(id=c['id']):
+                self.assertTrue(c.get('location'))
+                self.assertTrue(c.get('usage'))
+                for p in c['parameters']:
+                    self.assertIsInstance(p['index'], int)
+                    self.assertTrue(p['label'])
+                    self.assertTrue(p['hint'])
+                    self.assertTrue(all(v['value'] and v['description'] for v in p['choices']))
+                for option in c['options']:
+                    self.assertTrue(option['value'])
+                    self.assertTrue(option['description'])
+                for example in c['advanced']:
+                    self.assertTrue(example['title'])
+                    self.assertTrue(example['description'])
+                    self.assertFalse(any(ord(ch) < 32 for ch in example['command']))
+                    if c['system'] in ('linux', 'android'):
+                        self.assertTrue(shlex.split(example['command']))
+                    if c['system'] == 'android':
+                        self.assertNotRegex(example['command'], r'^adb\s')
+
     def test_常用任务矩阵可追溯及覆盖率(self):
         path = ROOT / '指令任务覆盖矩阵.md'
         self.assertTrue(path.exists(), '需明确定义任务分母，不能以命令数量推算覆盖率')

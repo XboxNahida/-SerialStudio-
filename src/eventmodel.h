@@ -29,6 +29,8 @@ public:
     Q_INVOKABLE void selectAll();
     Q_INVOKABLE void clearSelection();
     Q_INVOKABLE QString selectedText(bool hex, bool detailed, bool protocol) const;
+    Q_INVOKABLE QString continuousText(bool hex) const;
+    Q_INVOKABLE QVariantList continuousEntries(bool hex) const;
 signals:
     void countChanged();
     void selectionChanged();

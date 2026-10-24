@@ -10,6 +10,11 @@ C.Panel {
     property var discovery: null
     property bool detailed: false
     property bool advanced: false
+    readonly property string connectionText: backend.busy ? "取消连接" : backend.connected ? "关闭网络" : mode.currentIndex===1 ? "开始监听" : "打开网络"
+    function connectNetwork() {
+        if(backend.connected || backend.busy)backend.closePort()
+        else backend.openNetwork({mode:mode.currentIndex,host:hostInput.text,port:Number(portInput.text),bind:bind.text,localPort:Number(localPort.text)})
+    }
     function applyDevice(device) {
         if(root.backend.connected || root.backend.busy)return false
         const config=device.config || device
@@ -56,15 +61,6 @@ C.Panel {
             C.InputBox { id: bind; visible: mode.currentIndex === 2 && root.advanced; text: "0.0.0.0"; Layout.fillWidth: true; enabled: mode.enabled }
             Text { visible: mode.currentIndex === 2 && root.advanced; text: "本地端口（0 为自动分配）"; color: C.Theme.muted; font.pixelSize: 12 }
             C.InputBox { id: localPort; visible: mode.currentIndex === 2 && root.advanced; text: "0"; Layout.fillWidth: true; enabled: mode.enabled; validator: IntValidator { bottom: 0; top: 65535 } }
-            C.ActionButton {
-                objectName: "networkConnectButton"; Layout.fillWidth: true; implicitHeight: 42; Layout.topMargin: 8
-                text: root.backend.busy ? "取消连接" : root.backend.connected ? "关闭网络" : mode.currentIndex === 1 ? "开始监听" : "打开网络"
-                primary: !root.backend.connected; danger: root.backend.connected
-                onClicked: {
-                    if (root.backend.connected || root.backend.busy) root.backend.closePort()
-                    else root.backend.openNetwork({mode: mode.currentIndex, host: hostInput.text, port: Number(portInput.text), bind: bind.text, localPort: Number(localPort.text)})
-                }
-            }
             Text {
                 Layout.fillWidth: true; wrapMode: Text.Wrap; font.pixelSize: 11; lineHeight: 1.5; color: C.Theme.subtle
                 visible: root.detailed || root.advanced

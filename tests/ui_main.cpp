@@ -9,6 +9,9 @@
 #include <QQmlContext>
 #include <QClipboard>
 #include <QGuiApplication>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonArray>
 #include "eventmodel.h"
 
 class MessageFixture : public QObject {
@@ -39,6 +42,9 @@ class UiSetup : public QObject {
 public slots:
     void applicationAvailable() { QQuickStyle::setStyle(QStringLiteral("Basic"));qmlRegisterType<TerminalView>("SerialStudio.Terminal",1,0,"TerminalView"); }
     void qmlEngineAvailable(QQmlEngine *engine) {
+        QFile catalog(QCoreApplication::applicationDirPath()+"/../data/terminal_commands.json");
+        if(catalog.open(QIODevice::ReadOnly))
+            engine->rootContext()->setContextProperty("dictionaryEntries",QJsonDocument::fromJson(catalog.readAll()).array().toVariantList());
         engine->rootContext()->setContextProperty("commandRepository",&m_commands);
         engine->rootContext()->setContextProperty("messageFixture",&m_messages);
         engine->rootContext()->setContextProperty("formSettings",&m_settings);

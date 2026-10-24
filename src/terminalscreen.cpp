@@ -25,11 +25,17 @@ void TerminalScreen::feed(const QByteArray &bytes) {
 void TerminalScreen::resize(int columns,int rows) {
     columns=qBound(10,columns,400);rows=qBound(3,rows,160);
     if(columns==m_columns && rows==m_rows)return;
+    emit contentsReset();
     m_columns=columns;m_rows=rows;m_offset=0;
     vterm_set_size(m_terminal,rows,columns);emit sizeChanged(columns,rows);emit changed();
 }
 void TerminalScreen::reset() {
-    m_history.clear();m_offset=0;vterm_screen_reset(m_screen,1);emit changed();
+    emit contentsReset();m_firstLine=0;m_history.clear();m_offset=0;vterm_screen_reset(m_screen,1);emit changed();
+}
+void TerminalScreen::clearDisplay() {
+    // 只在本地模拟器擦除画面，保留光标、交互模式及子进程。
+    emit contentsReset();m_firstLine=0;m_history.clear();m_offset=0;
+    feed("\x1b[2J");
 }
 void TerminalScreen::scroll(int lines) {
     m_offset=m_alternate?0:qBound(0,m_offset+lines,historySize());emit changed();
@@ -39,14 +45,14 @@ int TerminalScreen::moveCursor(VTermPos pos,VTermPos,int visible,void *user) {
 }
 int TerminalScreen::property(VTermProp property,VTermValue *value,void *user) {
     auto *self=static_cast<TerminalScreen*>(user);
-    if(property==VTERM_PROP_ALTSCREEN){self->m_alternate=value->boolean!=0;self->m_offset=0;}
+    if(property==VTERM_PROP_ALTSCREEN){emit self->contentsReset();self->m_alternate=value->boolean!=0;self->m_offset=0;}
     if(property==VTERM_PROP_CURSORVISIBLE)self->m_visible=value->boolean!=0;
     return 1;
 }
 int TerminalScreen::pushLine(int columns,const VTermScreenCell *cells,void *user) {
     auto *self=static_cast<TerminalScreen*>(user);
     self->m_history.emplace_back(cells,cells+columns);
-    if(self->m_history.size()>10000)self->m_history.pop_front();
+    if(self->m_history.size()>10000){self->m_history.pop_front();++self->m_firstLine;}
     if(self->m_offset)self->m_offset=qMin(self->m_offset+1,self->historySize());
     return 1;
 }
@@ -58,12 +64,17 @@ int TerminalScreen::popLine(int columns,VTermScreenCell *cells,void *user) {
 }
 VTermScreenCell TerminalScreen::cell(int row,int column) const {
     VTermScreenCell result{};if(row<0||row>=m_rows||column<0||column>=m_columns)return result;
-    const int absolute=historySize()+row-m_offset;
+    return absoluteCell(viewportTop()+row,column);
+}
+VTermScreenCell TerminalScreen::absoluteCell(qint64 row,int column) const {
+    VTermScreenCell result{};
+    if(row<m_firstLine || row>=m_firstLine+historySize()+m_rows || column<0 || column>=m_columns)return result;
+    const auto absolute=row-m_firstLine;
     if(absolute<historySize()) {
         const auto &line=m_history[size_t(absolute)];
         return column<int(line.size())?line[size_t(column)]:result;
     }
-    vterm_screen_get_cell(m_screen,{absolute-historySize(),column},&result);return result;
+    vterm_screen_get_cell(m_screen,{int(absolute-historySize()),column},&result);return result;
 }
 QString TerminalScreen::text(const VTermScreenCell &cell) {
     QString result;
@@ -90,12 +101,16 @@ QVariantList TerminalScreen::cells() const {
     }return result;
 }
 QString TerminalScreen::selection(int startRow,int startColumn,int endRow,int endColumn) const {
+    return absoluteSelection(viewportTop()+startRow,startColumn,viewportTop()+endRow,endColumn);
+}
+QString TerminalScreen::absoluteSelection(qint64 startRow,int startColumn,qint64 endRow,int endColumn) const {
     if(startRow>endRow || (startRow==endRow && startColumn>endColumn)){std::swap(startRow,endRow);std::swap(startColumn,endColumn);}
+    if(startRow<m_firstLine || endRow>=m_firstLine+historySize()+m_rows)return {};
     QStringList lines;
-    for(int row=qMax(0,startRow);row<=qMin(endRow,m_rows-1);++row){
+    for(qint64 row=startRow;row<=endRow;++row){
         QString line;
         for(int column=row==startRow?qMax(0,startColumn):0;column<=(row==endRow?qMin(endColumn,m_columns-1):m_columns-1);++column){
-            const auto value=cell(row,column);const auto part=text(value);line+=part.isEmpty()?(value.chars[0]==0?QString(" "):QString()):part;
+            const auto value=absoluteCell(row,column);const auto part=text(value);line+=part.isEmpty()?(value.chars[0]==0?QString(" "):QString()):part;
         }
         while(line.endsWith(' '))line.chop(1);
         lines.append(line);

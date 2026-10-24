@@ -3,6 +3,7 @@ import QtQuick.Controls.Basic
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import "../components" as C
+import "../components/CommandGuide.js" as Guide
 
 Window {
     id: root
@@ -16,6 +17,8 @@ Window {
     property string customError: ""
     property string editingId: ""
     property bool favoritesOnly: false
+    property var guideParts: []
+    property int guideSection: 0
     readonly property int entryCount: entries.length
     readonly property string commandScope: "terminal-" + ["linux","powershell","cmd","android"][Math.max(0,system.currentIndex)]
     readonly property var selectedEntry: selectedIndex>=0 && selectedIndex<entries.length ? entries[selectedIndex] : ({})
@@ -36,6 +39,11 @@ Window {
         const revision=repositoryRevision
         const result=controller ? controller.commands(system.currentIndex,"","").slice() : []
         if(repository)for(const saved of repository.entries(commandScope)) {
+            if(saved.builtinId) {
+                const index=result.findIndex(function(item){return item.id===saved.builtinId})
+                if(index>=0)result[index]=Object.assign({},result[index],{favorite:!!saved.favorite,favoriteId:saved.id})
+                continue
+            }
             result.push(Object.assign({},saved,{custom:true,category:saved.category || "自定义",
                 example:saved.text,syntax:saved.syntax || saved.text,interaction:"shell",
                 description:saved.description || "用户保存的指令；执行前核对目标与参数。",
@@ -50,17 +58,63 @@ Window {
     }
     function select(index) {
         selectedIndex=index
+        guideSection=0
         edit.text=index>=0 && index<entries.length ? entries[index].example : ""
+        loadGuide(selectedEntry)
+    }
+    function loadGuide(entry) {guideParts=Guide.parts(entry)}
+    function syncGuide(source) {
+        // 手动编辑或参数补全后，参数表必须对应当前指令，不显示过期值。
+        const entry=source || selectedEntry
+        const words=Guide.tokens(edit.text), original=Guide.tokens(entry.example || "")
+        const compatible=words.length===original.length && words[0]===original[0]
+        guideParts=Guide.parts(compatible?Object.assign({},entry,{example:edit.text}):{example:edit.text,syntax:entry.syntax})
+    }
+    function useAdvanced(example) {
+        edit.text=example.command;syncGuide();edit.forceActiveFocus()
+    }
+    function browseTask(index) {
+        if(index<=0)return
+        search.text=["","连接","下载","调试","应用","设置","文件","高级语法"][index]
+        category.currentIndex=0;favoritesOnly=false;reload()
+    }
+    function setGuideValue(index,value) {
+        if(index<0 || index>=guideParts.length)return
+        guideParts[index].value=value
+        edit.text=guideParts.map(function(part){return part.value}).filter(function(value){return value.length>0}).join(" ")
+    }
+    function chooseCandidate(entry) {
+        search.text="";category.currentIndex=0;favoritesOnly=false;reload()
+        select(entries.findIndex(function(item){return item.id===entry.id}))
+    }
+    function toggleFavorite() {
+        if(!repository || selectedIndex<0)return false
+        const item=selectedEntry
+        let ok
+        if(item.custom)ok=!!repository.put(commandScope,Object.assign({},item,{text:item.example,favorite:!item.favorite}))
+        else if(item.favoriteId)ok=repository.remove(commandScope,item.favoriteId)
+        else {
+            const snapshot=Object.assign({},item,{builtinId:item.id,text:item.example,favorite:true,hex:false,newline:""})
+            delete snapshot.id
+            ok=!!repository.put(commandScope,snapshot)
+        }
+        customError=ok?"":repository.error || "收藏保存失败"
+        if(ok){repositoryRevision++;reload()}
+        return ok
     }
     function reload() {
         if(!system || !search || !category || !edit)return
+        const previousId=selectedEntry.id, draft=edit.text, previousGuide=guideParts
         const needle=search.text.trim().toLowerCase()
         const chosen=category.currentText
         entries=allEntries().filter(function(item) {
-            const haystack=[item.title,item.syntax,item.example,item.description,item.requires,Array.isArray(item.tags) ? item.tags.join(" ") : ""].join(" ").toLowerCase()
+            const haystack=[item.title,item.category,item.syntax,item.example,item.description,item.requires,item.location,item.usage,
+                JSON.stringify(item.parameters || []),JSON.stringify(item.options || []),JSON.stringify(item.advanced || []),Array.isArray(item.tags) ? item.tags.join(" ") : ""].join(" ").toLowerCase()
             return (!root.favoritesOnly || item.favorite) && (!chosen || chosen==="全部" || chosen===item.category) && (!needle || haystack.indexOf(needle)>=0)
         }).sort(function(a,b) {return a.category===b.category ? 0 : a.category<b.category ? -1 : 1})
-        select(entries.length>0?0:-1)
+        const previousIndex=entries.findIndex(function(item){return item.id===previousId})
+        select(previousIndex>=0?previousIndex:entries.length>0?0:-1)
+        if(previousIndex>=0){edit.text=draft;guideParts=previousGuide}
     }
     function showFor(mode) {
         system.currentIndex=mode;search.text="";category.currentIndex=0;reload()
@@ -165,15 +219,17 @@ Window {
             Item { Layout.fillWidth: true }
             C.SelectBox {
                 id: system; objectName: "assistantSystem"; Layout.preferredWidth: 200
-                model: ["Linux · SSH","Windows · PowerShell","Windows · CMD","Android · ADB Shell"]
+                model: ["Linux · 目标 Shell","Windows · PowerShell","Windows · CMD","Android · 设备 Shell"]
                 currentIndex: root.selectedMode
                 onCurrentIndexChanged: {category.currentIndex=0;customDialog.close();root.reload()}
             }
         }
         RowLayout {
-            C.InputBox { id: search; objectName: "commandSearch"; Layout.fillWidth: true; placeholderText: "搜索名称、标签、工具或说明"; onTextChanged: root.reload() }
+            C.SelectBox {objectName:"commandTask";Layout.preferredWidth:145;model:["按用途找指令…","连接设备","下载与部署","调试与排错","启动应用 / 操作","修改系统设置","管理文件","复杂语法 / 进阶"];onActivated:function(index){root.browseTask(index)}}
+            C.InputBox { id: search; objectName: "commandSearch"; Layout.fillWidth: true; placeholderText: "搜用途 / 参数 / 高级用法"; onTextChanged: root.reload() }
             C.SelectBox { id: category; objectName: "commandCategory"; Layout.preferredWidth: 120; model: root.categories(); onCurrentTextChanged: root.reload() }
         }
+        Text {Layout.fillWidth:true;text:"先选用途或搜索：亮度、启动、下载、崩溃、Wi-Fi…  找到 "+root.entryCount+" 项；示例需替换地址和路径。";color:C.Theme.muted;font.pixelSize:11;wrapMode:Text.Wrap}
         RowLayout {
             spacing: 6
             C.ActionButton { objectName: "newCustomCommand"; text: "新增"; implicitHeight: 32; enabled: !!root.repository; onClicked: root.beginCustom(false) }
@@ -207,7 +263,7 @@ Window {
                             ColumnLayout {
                                 Layout.fillWidth: true; spacing: 5
                                 Text { Layout.fillWidth: true; text: entry.modelData.title; color: C.Theme.text; font.pixelSize: 12; elide: Text.ElideRight }
-                                Text { Layout.fillWidth: true; text: entry.modelData.custom ? (entry.modelData.favorite ? "★ 收藏指令" : "我的指令") : entry.modelData.interaction==="editor-key" ? "编辑器内部按键" : "内置模板"; color: C.Theme.muted; font.pixelSize: 10 }
+                                Text { Layout.fillWidth: true; text: (entry.modelData.favorite ? "★ " : "")+(entry.modelData.custom ? "我的指令" : entry.modelData.interaction==="editor-key" ? "编辑器内部按键" : "内置模板"); color: C.Theme.muted; font.pixelSize: 10 }
                             }
                             C.ActionButton {
                                 text: entry.modelData.interaction==="editor-key" ? "按键" : "填入"
@@ -221,21 +277,74 @@ Window {
             }
             ColumnLayout {
                 Layout.fillWidth: true; Layout.fillHeight: true; spacing: 8
-                Text { Layout.fillWidth: true; text: root.selectedEntry.title || "选择左侧指令"; color: C.Theme.text; font.pixelSize: 16; elide: Text.ElideRight }
+                RowLayout {
+                    Layout.fillWidth:true
+                    Text { Layout.fillWidth: true; text: root.selectedEntry.title || "选择左侧指令"; color: C.Theme.text; font.pixelSize: 16; elide: Text.ElideRight }
+                    C.ActionButton {objectName:"toggleCommandFavorite";text:root.selectedEntry.favorite?"★ 已收藏":"☆ 收藏";implicitHeight:30;enabled:!!root.repository && root.selectedIndex>=0;onClicked:root.toggleFavorite()}
+                }
+                RowLayout {
+                    visible:!root.editorKey;Layout.fillWidth:true;spacing:5
+                    C.ActionButton {objectName:"guideParameters";text:"参数填空";Layout.fillWidth:true;implicitHeight:28;primary:root.guideSection===0;onClicked:root.guideSection=0}
+                    C.ActionButton {objectName:"guideOptions";text:"选项 ("+(root.selectedEntry.options || []).length+")";Layout.fillWidth:true;implicitHeight:28;primary:root.guideSection===1;onClicked:root.guideSection=1}
+                    C.ActionButton {objectName:"guideAdvanced";text:"高级 ("+(root.selectedEntry.advanced || []).length+")";Layout.fillWidth:true;implicitHeight:28;primary:root.guideSection===2;onClicked:root.guideSection=2}
+                }
                 ScrollView {
                     Layout.fillWidth: true; Layout.fillHeight: true; contentWidth: availableWidth; clip: true
                     ColumnLayout {
                         width: parent.width; spacing: 9
                         Text { text: root.editorKey ? "编辑器内操作" : "常见用法"; color: C.Theme.muted; font.pixelSize: 11 }
                         TextEdit { Layout.fillWidth: true; text: root.selectedEntry.syntax || ""; color: C.Theme.blue; readOnly: true; selectByMouse: true; wrapMode: TextEdit.WrapAnywhere; font.family: "Consolas"; font.pixelSize: 13 }
-                        Text { Layout.fillWidth: true; text: root.selectedEntry.description || "通过分类或关键词查找指令。"; color: C.Theme.muted; font.pixelSize: 12; wrapMode: Text.Wrap; lineHeight: 1.3 }
+                        Text { visible:!root.editorKey; Layout.fillWidth:true; text:"格式读法：[参数] 可选；<参数> 必填；A | B 二选一；… 可重复。这些括号是说明符号，不直接输入。";color:C.Theme.muted;font.pixelSize:11;wrapMode:Text.Wrap;textFormat:Text.PlainText }
+                        Text {objectName:"commandLocation";Layout.fillWidth:true;visible:!!root.selectedEntry.location;text:"执行位置："+(root.selectedEntry.location || "");color:C.Theme.accent;font.pixelSize:12;wrapMode:Text.Wrap;textFormat:Text.PlainText}
+                        Text { Layout.fillWidth: true; text: root.selectedEntry.usage || root.selectedEntry.description || "通过分类或用途查找指令。"; color: C.Theme.muted; font.pixelSize: 12; wrapMode: Text.Wrap; lineHeight: 1.3;textFormat:Text.PlainText }
+                        Text {visible:!root.editorKey && root.guideSection===0 && root.guideParts.length>0;text:"参数填空 · 下方同步生成指令";color:C.Theme.accent;font.pixelSize:12}
+                        Repeater {
+                            model:root.guideParts
+                            ColumnLayout {
+                                id:guidePart
+                                required property var modelData
+                                required property int index
+                                visible:root.guideSection===0 && modelData.editable
+                                Layout.fillWidth:true;spacing:3
+                                Text {text:modelData.label;color:C.Theme.muted;font.pixelSize:11;textFormat:Text.PlainText}
+                                RowLayout {
+                                    Layout.fillWidth:true
+                                    C.CommandInput {id:parameterValue;Layout.fillWidth:true;Layout.minimumWidth:60;text:guidePart.modelData.value;readOnly:!guidePart.modelData.editable;font.family:"Consolas";maximumLength:4096;valueChoices:guidePart.modelData.choices || [];onTextEdited:root.setGuideValue(guidePart.index,text);onCompletionApplied:root.setGuideValue(guidePart.index,text)}
+                                    C.SelectBox {
+                                        objectName:"parameterChoice_"+guidePart.index
+                                        visible:(guidePart.modelData.choices || []).length>0;Layout.preferredWidth:110
+                                        model:guidePart.modelData.choices || [];textRole:"value";displayText:"可选值…"
+                                        onActivated:function(choice){parameterValue.text=model[choice].value;root.setGuideValue(guidePart.index,parameterValue.text)}
+                                    }
+                                }
+                                Text {Layout.fillWidth:true;text:modelData.hint;color:C.Theme.subtle;font.pixelSize:10;wrapMode:Text.Wrap;textFormat:Text.PlainText}
+                            }
+                        }
+                        Text {visible:root.guideSection===1;text:(root.selectedEntry.options || []).length>0?"选项字典 · 在下方输入 - 可查看候选":"此模板没有独立选项表，请查看格式和参数说明。";Layout.fillWidth:true;wrapMode:Text.Wrap;color:C.Theme.accent;font.pixelSize:12}
+                        Repeater {
+                            model:root.selectedEntry.options || []
+                            Text {required property var modelData;visible:root.guideSection===1;Layout.fillWidth:true;text:modelData.value+"  "+modelData.description;color:C.Theme.muted;font.pixelSize:11;wrapMode:Text.Wrap;textFormat:Text.PlainText}
+                        }
+                        Text {visible:root.guideSection===2;text:(root.selectedEntry.advanced || []).length>0?"高级用法 · 选择后仍只修改草稿":"更多组合用法请搜索“高级语法”或该工具名称。";Layout.fillWidth:true;wrapMode:Text.Wrap;color:C.Theme.accent;font.pixelSize:12}
+                        Repeater {
+                            model:root.selectedEntry.advanced || []
+                            ColumnLayout {
+                                required property var modelData
+                                visible:root.guideSection===2
+                                Layout.fillWidth:true;spacing:4
+                                Text {Layout.fillWidth:true;text:modelData.title;color:C.Theme.text;font.pixelSize:12;wrapMode:Text.Wrap;textFormat:Text.PlainText}
+                                TextEdit {Layout.fillWidth:true;text:modelData.command;readOnly:true;selectByMouse:true;wrapMode:TextEdit.WrapAnywhere;color:C.Theme.blue;font.family:"Consolas";font.pixelSize:12;textFormat:TextEdit.PlainText}
+                                Text {Layout.fillWidth:true;text:modelData.description;color:C.Theme.muted;font.pixelSize:11;wrapMode:Text.Wrap;textFormat:Text.PlainText}
+                                C.ActionButton {text:"采用此示例";implicitHeight:28;onClicked:root.useAdvanced(modelData)}
+                            }
+                        }
                         Text { Layout.fillWidth: true; text: root.selectedEntry.requires || ""; color: C.Theme.orange; font.pixelSize: 11; wrapMode: Text.Wrap }
                         Text { Layout.fillWidth: true; visible: root.editorKey; text: root.selectedEntry.delivery || ""; color: C.Theme.orange; font.pixelSize: 11; wrapMode: Text.Wrap }
                         Text { Layout.fillWidth: true; text: root.editorKey ? "请先确认编辑器处于前台；按键会直接影响编辑器状态，保存和覆盖提示由你确认。" : "核对路径、PID、网卡和权限；删除、安装、服务及联网操作会改变系统。填入只追加内容，不清空已有输入。"; color: C.Theme.orange; font.pixelSize: 11; wrapMode: Text.Wrap; lineHeight: 1.3 }
                     }
                 }
                 Text { text: root.editorKey ? "按键标识 · 按上方说明操作" : "示例 / 可编辑指令 · 单行"; color: C.Theme.muted; font.pixelSize: 11 }
-                C.InputBox { id: edit; objectName: "commandEdit"; Layout.fillWidth: true; font.family: "Consolas"; maximumLength: 4096; readOnly: root.editorKey; placeholderText: "选择模板后修改参数" }
+                C.CommandInput { id: edit; objectName: "commandEdit"; Layout.fillWidth: true; font.family: "Consolas"; maximumLength: 4096; readOnly: root.editorKey; placeholderText: "输入指令或留空看推荐 · Tab 补全";candidateEntries:root.allEntries();onCandidateChosen:function(entry){root.chooseCandidate(entry)};onTextEdited:root.syncGuide();onCompletionApplied:function(candidate){root.syncGuide(candidate.entry)} }
                 C.ActionButton {
                     objectName: "applyCommandButton"; Layout.fillWidth: true
                     text: root.editorKey ? "发送编辑器按键" : "填入终端 · 不回车"; primary: true

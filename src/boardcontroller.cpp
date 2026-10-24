@@ -20,10 +20,42 @@ QString sshProgram()
     return QStandardPaths::findExecutable(QStringLiteral("ssh"));
 }
 }
+QVariantList BoardController::terminalSessions() const
+{
+    QVariantList result;
+    for(int i=0;i<m_terminals.size();++i)
+        result.append(QVariantMap{{"title",QStringLiteral("终端 %1").arg(i+1)},
+                                  {"active",m_terminals.at(i)->active()}});
+    return result;
+}
+void BoardController::newTerminal()
+{
+    const bool persist=m_terminals.isEmpty() || terminal()->adb()->persistenceEnabled();
+    auto *session=new TerminalController(this);
+    session->adb()->setPersistenceEnabled(persist);
+    m_terminals.append(session);m_terminalIndex=int(m_terminals.size())-1;
+    connect(session,&TerminalController::changed,this,&BoardController::terminalsChanged);
+    emit terminalsChanged();
+}
+void BoardController::selectTerminal(int index)
+{
+    if(index<0 || index>=m_terminals.size() || index==m_terminalIndex)return;
+    m_terminalIndex=index;emit terminalsChanged();
+}
+void BoardController::closeTerminal(int index)
+{
+    if(index<0 || index>=m_terminals.size())return;
+    auto *session=m_terminals.takeAt(index);
+    if(index<m_terminalIndex)--m_terminalIndex;
+    m_terminalIndex=qMin(m_terminalIndex,int(m_terminals.size())-1);
+    if(m_terminals.isEmpty())newTerminal();
+    session->close();session->deleteLater();emit terminalsChanged();
+}
 BoardController::BoardController(Session *serial, Session *network, QObject *parent)
     : QObject(parent), m_serial(serial), m_network(network)
 {
     Q_INIT_RESOURCE(board_scripts);
+    newTerminal();
     for (auto session : {serial, network}) {
         connect(session, &Session::frameReceived, this, [this, session](const QByteArray &b) { frame(session, b); });
         connect(session, &Session::stateChanged, this, [this, session] {
@@ -143,7 +175,7 @@ void BoardController::cancel()
 bool BoardController::openTerminal(const QVariantMap &ssh)
 {
     if (m_busy) return false;
-    const bool opened=m_terminal.open(0,ssh);
-    finish(opened,m_terminal.status());
+    const bool opened=terminal()->open(0,ssh);
+    finish(opened,terminal()->status());
     return opened;
 }

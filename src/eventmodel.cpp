@@ -95,3 +95,22 @@ QString EventModel::selectedText(bool hex, bool detailed, bool protocol) const
     }
     return lines.join('\n');
 }
+QString EventModel::continuousText(bool hex) const
+{
+    QStringList lines;
+    for (const auto &value : continuousEntries(hex)) lines.append(value.toMap().value("text").toString());
+    return lines.join('\n');
+}
+QVariantList EventModel::continuousEntries(bool hex) const
+{
+    QVariantList result;
+    for(int row=0;row<rowCount();++row){
+        QStringList lines;
+        const auto &entry=m_entries[row];lines.append(entry.kind);
+        if((entry.kind!="RX" && entry.kind!="TX") || !entry.valid)
+            lines.append(entry.title+(entry.detail.isEmpty()?QString():QStringLiteral(" · ")+entry.detail));
+        if(!entry.bytes.isEmpty())lines.append(data(index(row),hex?HexRole:TextRole).toString());
+        result.append(QVariantMap{{"id",m_ids[row]},{"text",lines.join('\n')}});
+    }
+    return result;
+}

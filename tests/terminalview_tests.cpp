@@ -50,6 +50,26 @@ struct ViewWindow {
 class TerminalViewTests : public QObject {
     Q_OBJECT
 private slots:
+    void selectionSurvivesWheelAndNewOutput() {
+        TerminalScreen screen;ViewWindow ui(&screen);
+        for(int i=0;i<65;++i)screen.feed(QByteArray("line-")+QByteArray::number(i)+"\r\n");
+        screen.scroll(8);QTest::qWait(50);
+        QFont font("Consolas");font.setPixelSize(14);
+        const auto cw=QFontMetricsF(font).horizontalAdvance('M');
+        QTest::mousePress(&ui.window,Qt::LeftButton,Qt::NoModifier,QPoint(7,7));
+        const QPoint end(qRound(6+7*cw),7);
+        QMouseEvent move(QEvent::MouseMove,end,ui.window.mapToGlobal(end),Qt::NoButton,Qt::LeftButton,Qt::NoModifier);
+        QCoreApplication::sendEvent(&ui.window,&move);
+        QTest::mouseRelease(&ui.window,Qt::LeftButton,Qt::NoModifier,end);
+        ui.view->copy();const auto original=QGuiApplication::clipboard()->text();
+        QVERIFY(original.startsWith("line-"));
+        QWheelEvent wheel(QPointF(20,20),ui.window.mapToGlobal(QPoint(20,20)),{},QPoint(0,120),Qt::NoButton,Qt::NoModifier,Qt::NoScrollPhase,false);
+        QCoreApplication::sendEvent(ui.view,&wheel);
+        ui.view->copy();QCOMPARE(QGuiApplication::clipboard()->text(),original);
+        screen.feed("new-data\r\n");ui.view->copy();QCOMPARE(QGuiApplication::clipboard()->text(),original);
+        screen.clearDisplay();QGuiApplication::clipboard()->setText("unchanged");ui.view->copy();
+        QCOMPARE(QGuiApplication::clipboard()->text(),QString("unchanged"));
+    }
     void keyboardImeClipboardAndResize() {
         TerminalScreen screen;ViewWindow ui(&screen);
         QTRY_VERIFY(ui.view->hasActiveFocus());

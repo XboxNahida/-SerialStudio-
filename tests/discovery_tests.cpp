@@ -87,10 +87,11 @@ private slots:
         }
     }
     void broadcastReceive() {
-        DeviceDiscovery discovery(nullptr,false);
+        DeviceDiscovery discovery(nullptr,false,0);
+        QVERIFY(discovery.listenPort()>0);
         QUdpSocket sender;
         const QByteArray packet=R"({"service":"serialstudio-board","version":1,"name":"回环测试广播","port":12345})";
-        QCOMPARE(sender.writeDatagram(packet,QHostAddress::LocalHost,45454),qint64(packet.size()));
+        QCOMPARE(sender.writeDatagram(packet,QHostAddress::LocalHost,discovery.listenPort()),qint64(packet.size()));
         const auto seen=[&discovery] {
             for(const auto &entry:discovery.devices()) if(entry.toMap().value("address")=="127.0.0.1:12345") return true;
             return false;

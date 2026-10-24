@@ -18,12 +18,13 @@ class DeviceDiscovery : public QObject {
     Q_PROPERTY(QString status READ status NOTIFY changed)
     Q_PROPERTY(AdbDiscovery* adb READ adb CONSTANT)
 public:
-    explicit DeviceDiscovery(QObject *parent=nullptr, bool monitor=true);
+    explicit DeviceDiscovery(QObject *parent=nullptr, bool monitor=true, quint16 listenPort=45454);
     ~DeviceDiscovery() override;
     QVariantList devices() const { return m_devices; }
     QVariantList interfaces() const { return m_interfaces; }
     bool scanning() const { return m_refreshing || m_scanning; }
     QString status() const { return m_status; }
+    quint16 listenPort() const;
     AdbDiscovery *adb() { return &m_adb; }
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void setSavedDevices(const QVariantList &devices);
@@ -42,6 +43,7 @@ private:
     AdbDiscovery m_adb;
     QTimer m_poll;
     QUdpSocket *m_broadcast=nullptr;
+    quint16 m_requestedPort=45454;
     QVariantList m_devices,m_interfaces,m_local,m_saved,m_probed;
     QMap<QString,QPair<qint64,QVariantMap>> m_announced;
     QString m_status=QStringLiteral("尚未刷新设备");

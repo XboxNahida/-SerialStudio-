@@ -2,6 +2,7 @@
 /build/
 /release/
 /验收版/
+/验收版-*/
 /deps/
 /安装包/
 __pycache__/

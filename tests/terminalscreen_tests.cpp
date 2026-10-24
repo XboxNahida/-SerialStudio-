@@ -4,6 +4,19 @@
 class ScreenTests : public QObject {
     Q_OBJECT
 private slots:
+    void clearDisplayPreservesModesAndSendsNothing() {
+        TerminalScreen screen;screen.resize(20,4);
+        for(int i=0;i<10;++i)screen.feed("old\r\n");
+        QVERIFY(screen.historySize()>0);
+        screen.feed("\x1b[?1049h\x1b[?2004hvisible");
+        QSignalSpy sent(&screen,&TerminalScreen::output);
+        QVERIFY2(QMetaObject::invokeMethod(&screen,"clearDisplay"),"尚未提供仅清理显示的操作");
+        QCOMPARE(screen.historySize(),0);QVERIFY(screen.alternate());QVERIFY(sent.isEmpty());
+        for(int row=0;row<screen.rows();++row)QVERIFY(screen.lineText(row).isEmpty());
+        screen.paste("next");QVERIFY(!sent.isEmpty());
+        QByteArray bytes;for(const auto &signal:sent)bytes+=signal.first().toByteArray();
+        QVERIFY(bytes.contains("\x1b[200~"));QVERIFY(bytes.contains("next"));
+    }
     void cursorAndErase() {
         TerminalScreen screen;screen.resize(20,4);
         screen.feed("hello\rXY\x1b[K");

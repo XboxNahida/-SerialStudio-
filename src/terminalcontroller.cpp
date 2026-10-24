@@ -48,16 +48,31 @@ TerminalController::TerminalController(QObject *parent):QObject(parent)
     Q_INIT_RESOURCE(terminal_catalog);
     QFile catalog(":/terminal/data/terminal_commands.json");
     if(catalog.open(QIODevice::ReadOnly))m_commands=QJsonDocument::fromJson(catalog.readAll()).array().toVariantList();
-    connect(&m_pty,&PseudoTerminal::received,&m_screen,&TerminalScreen::feed);
+    connect(&m_pty,&PseudoTerminal::received,this,[this](const QByteArray &bytes){if(m_transport!="serial")m_screen.feed(bytes);});
     connect(&m_screen,&TerminalScreen::output,this,[this](const QByteArray &bytes){
+        if(m_transport=="serial"){
+            if(!m_serial.isOpen() || m_serial.bytesToWrite()+bytes.size()>256*1024 || m_serial.write(bytes)!=bytes.size()){
+                m_writeRejected=true;
+                fail(QStringLiteral("串口输入未完整送达：端口已关闭或队列已满，请检查连接后重试。"));
+            }
+            return;
+        }
         if(m_embedded&&!m_pty.write(bytes)){
             m_writeRejected=true;
             fail(QStringLiteral("终端输入未完整送达：会话已关闭或输入队列已满。请检查终端当前内容，必要时关闭会话。"));
         }
     });
+    m_serial.setReadBufferSize(256*1024);
+    connect(&m_serial,&QSerialPort::readyRead,this,[this]{m_screen.feed(m_serial.readAll());});
+    connect(&m_serial,&QSerialPort::errorOccurred,this,[this](QSerialPort::SerialPortError error){
+        if(m_transport=="serial" && m_serial.isOpen() &&
+           (error==QSerialPort::ResourceError || error==QSerialPort::ReadError || error==QSerialPort::WriteError)){
+            const auto detail=m_serial.errorString();m_serial.close();fail(QStringLiteral("串口连接已断开：%1").arg(detail));
+        }
+    });
     connect(&m_screen,&TerminalScreen::sizeChanged,&m_pty,&PseudoTerminal::resize);
-    connect(&m_pty,&PseudoTerminal::fault,this,[this](const QString &error){fail(error);});
-    connect(&m_pty,&PseudoTerminal::finished,this,[this](int code){m_status=QStringLiteral("Qt 终端已退出（%1）").arg(code);emit changed();});
+    connect(&m_pty,&PseudoTerminal::fault,this,[this](const QString &error){if(m_transport!="serial")fail(error);});
+    connect(&m_pty,&PseudoTerminal::finished,this,[this](int code){if(m_transport=="serial")return;m_status=QStringLiteral("Qt 终端已退出（%1）").arg(code);emit changed();});
     m_poll.setInterval(250);
     connect(&m_poll,&QTimer::timeout,this,&TerminalController::refresh);
     m_timeout.setSingleShot(true);m_timeout.setInterval(3000);
@@ -82,6 +97,7 @@ TerminalController::~TerminalController()
 }
 bool TerminalController::active() const
 {
+    if(m_transport=="serial")return m_serial.isOpen();
     if(m_embedded)return m_pty.running();
 #ifdef Q_OS_WIN
     return m_handle&&WaitForSingleObject(static_cast<HANDLE>(m_handle),0)==WAIT_TIMEOUT;
@@ -96,14 +112,16 @@ void TerminalController::refresh()
 #ifdef Q_OS_WIN
     CloseHandle(static_cast<HANDLE>(m_handle));
 #endif
-    m_handle=nullptr;m_pid=0;m_started=0;m_mode=-1;m_poll.stop();
+    m_handle=nullptr;m_pid=0;m_started=0;m_mode=-1;m_poll.stop();m_connectionSummary.clear();
     m_status=QStringLiteral("交互终端已关闭，请重新打开");emit changed();
 }
 bool TerminalController::launchSpec(int mode,const QVariantMap &config,QString *program,QStringList *arguments,QString *error)
 {
     if(!program||!arguments||!error)return false;
     program->clear();arguments->clear();error->clear();
-    if(mode==0){
+    if(mode<0 || mode>=systems.size()){*error=QStringLiteral("未知终端系统");return false;}
+    const auto transport=config.value("transport",mode==0?"ssh":mode==3?"adb":"local").toString();
+    if(transport=="ssh"){
         const auto host=config.value("host").toString().trimmed(),user=config.value("user","root").toString().trimmed();
         const auto port=config.value("port",22).toInt();const auto key=config.value("key").toString();
         if(!QRegularExpression("^[A-Za-z0-9][A-Za-z0-9_.:-]{0,252}$").match(host).hasMatch()||
@@ -113,11 +131,13 @@ bool TerminalController::launchSpec(int mode,const QVariantMap &config,QString *
         *arguments={"-p",QString::number(port),"-o","ConnectTimeout=8"};
         if(!key.isEmpty())*arguments<<"-i"<<key;
         *arguments<<"-t"<<"--"<<(user+"@"+host);
-    }else if(mode==1){
+        if(mode==1)*arguments<<"powershell.exe"<<"-NoLogo"<<"-NoExit";
+        else if(mode==2)*arguments<<"cmd.exe"<<"/D"<<"/K";
+    }else if(transport=="local" && mode==1){
         *program=executable("System32/WindowsPowerShell/v1.0/powershell.exe","powershell.exe");*arguments={"-NoLogo","-NoExit"};
-    }else if(mode==2){
+    }else if(transport=="local" && mode==2){
         *program=executable("System32/cmd.exe","cmd.exe");*arguments={"/D","/K"};
-    }else if(mode==3){
+    }else if(transport=="adb" && (mode==0 || mode==3)){
         const auto adb=config.value("adb").toString().trimmed();
         *program=AdbDiscovery::resolveExecutable(adb);
         const auto serial=config.value("serial").toString().trimmed();
@@ -126,9 +146,9 @@ bool TerminalController::launchSpec(int mode,const QVariantMap &config,QString *
         }
         if(!serial.isEmpty())*arguments<<"-s"<<serial;
         *arguments<<"shell";
-    }else{*error=QStringLiteral("未知终端系统");return false;}
+    }else{*error=QStringLiteral("该系统不支持所选连接方式；请选择 SSH、ADB、串口或 Windows 本机终端");return false;}
     if(program->isEmpty()||!QFileInfo(*program).isFile()){
-        *error=mode==3?QStringLiteral("未找到 adb.exe，请安装 Android platform-tools 并填写完整路径"):QStringLiteral("未找到所需系统终端程序");return false;
+        *error=transport=="adb"?QStringLiteral("未找到 adb.exe，请安装 Android platform-tools 并填写完整路径"):QStringLiteral("未找到所需系统终端程序");return false;
     }
     *program=QFileInfo(*program).absoluteFilePath();return true;
 }
@@ -137,12 +157,45 @@ bool TerminalController::open(int mode,const QVariantMap &config)
     refresh();
     if(active())return fail(QStringLiteral("已有受控终端，请先关闭该终端窗口再打开其他系统"));
     if(inputBusy())return fail(QStringLiteral("输入投递中，请稍候"));
+    if(mode<0 || mode>=systems.size())return fail(QStringLiteral("未知终端系统"));
+    const auto transport=config.value("transport",mode==0?"ssh":mode==3?"adb":"local").toString();
+    if(transport=="serial"){
+        if(config.value("presentation","qt").toString()!="qt")return fail(QStringLiteral("串口交互请使用 Qt 内置终端"));
+        const auto port=config.value("port").toString().trimmed();
+        if(port.isEmpty())return fail(QStringLiteral("请选择串口设备"));
+        bool baudOk=false;const auto baud=config.value("baud",115200).toInt(&baudOk);
+        if(!baudOk || baud<=0)return fail(QStringLiteral("串口波特率必须为正整数"));
+        bool bitsOk=false,parityOk=false,stopOk=false,flowOk=false;
+        const int bits=config.value("dataBits",8).toInt(&bitsOk),parity=config.value("parity",0).toInt(&parityOk),
+            stop=config.value("stopBits",1).toInt(&stopOk),flow=config.value("flow",0).toInt(&flowOk);
+        if(!bitsOk || !parityOk || !stopOk || !flowOk || bits<5 || bits>8 || !QList<int>{0,2,3,4,5}.contains(parity) || !QList<int>{1,2,3}.contains(stop) || flow<0 || flow>2)
+            return fail(QStringLiteral("串口数据位、校验、停止位或流控无效"));
+        // 旧进程可能刚退出而尚未轮询清理；先排空并停止旧PTY，避免污染新串口会话。
+        m_pty.close();
+        m_serial.setPortName(port);
+        if(!m_serial.setBaudRate(baud) || !m_serial.setDataBits(QSerialPort::DataBits(bits)) ||
+           !m_serial.setParity(QSerialPort::Parity(parity)) || !m_serial.setStopBits(QSerialPort::StopBits(stop)) ||
+           !m_serial.setFlowControl(QSerialPort::FlowControl(flow)))return fail(QStringLiteral("串口参数不受支持：%1").arg(m_serial.errorString()));
+        if(!m_serial.open(QIODevice::ReadWrite))return fail(QStringLiteral("无法打开串口 %1：%2。若串口工作台或其他程序已占用，请先断开。").arg(port,m_serial.errorString()));
+        m_transport=transport;m_embedded=true;m_mode=mode;m_screen.reset();
+        m_connectionSummary=QStringLiteral("串口 · %1 · %2 bps").arg(port).arg(baud);
+        m_status=QStringLiteral("串口交互已连接；Enter 发送回车，支持 ANSI 终端。设备须提供交互 Shell。");emit changed();return true;
+    }
     QString program,error;QStringList arguments;
     if(!launchSpec(mode,config,&program,&arguments,&error))return fail(error);
+    QString summary;
+    if(transport=="ssh")summary=QStringLiteral("%1@%2:%3").arg(config.value("user","root").toString().trimmed(),
+        config.value("host").toString().trimmed(),QString::number(config.value("port",22).toInt()));
+    else if(transport=="adb")summary=QStringLiteral("ADB · %1").arg(config.value("serial").toString().trimmed().isEmpty()
+        ?QStringLiteral("默认设备"):config.value("serial").toString().trimmed());
+    else summary=mode==1?QStringLiteral("本机 · Windows PowerShell"):QStringLiteral("本机 · Windows CMD");
     m_embedded=config.value("presentation","computer").toString()=="qt";
     if(m_embedded){
+        m_transport=transport;
         m_screen.reset();
         if(!m_pty.start(program,arguments,m_screen.columns(),m_screen.rows()))return fail(m_pty.error());
+        m_transport=transport;
+        m_connectionSummary=summary;
         m_mode=mode;m_status=QStringLiteral("Qt 交互终端已打开；辅助指令默认只填入");emit changed();return true;
     }
 #ifdef Q_OS_WIN
@@ -155,6 +208,8 @@ bool TerminalController::open(int mode,const QVariantMap &config)
         return fail(QStringLiteral("无法打开交互终端：Windows 错误 %1").arg(GetLastError()));
     CloseHandle(info.hThread);
     m_handle=info.hProcess;m_started=creationTime(info.hProcess);m_pid=info.dwProcessId;m_mode=mode;m_poll.start();
+    m_transport=transport;
+    m_connectionSummary=summary;
     m_status=QStringLiteral("已打开 %1 终端；辅助输入只追加文字，不自动回车").arg(systems.at(mode));emit changed();return true;
 #else
     return fail(QStringLiteral("定向终端输入当前仅在 Windows 上支持"));
@@ -168,12 +223,14 @@ bool TerminalController::validText(const QString &text)
 }
 void TerminalController::close()
 {
-    if(m_embedded)m_pty.close();
+    if(m_serial.isOpen())m_serial.close();
+    if(m_embedded && m_transport!="serial")m_pty.close();
     // 电脑终端由用户关闭窗口；此入口仅解除助手的控制。
 #ifdef Q_OS_WIN
     if(m_handle){CloseHandle(static_cast<HANDLE>(m_handle));m_handle=nullptr;}
 #endif
     m_poll.stop();m_pid=0;m_started=0;m_mode=-1;
+    m_connectionSummary.clear();
     m_status=QStringLiteral("终端会话已关闭");emit changed();
 }
 bool TerminalController::applyCommand(const QVariantMap &command)
@@ -230,7 +287,7 @@ QVariantList TerminalController::commands(int mode,const QString &search,const Q
     for(const auto &entry:m_commands){
         const auto map=entry.toMap();if(map.value("system").toString()!=systems.at(mode))continue;
         if(!category.isEmpty()&&category!="全部"&&category!=map.value("category").toString())continue;
-        QString searchable;for(const auto &value:map)searchable+=value.toString()+" ";
+        const QString searchable=QString::fromUtf8(QJsonDocument(QJsonObject::fromVariantMap(map)).toJson(QJsonDocument::Compact));
         if(!search.trimmed().isEmpty()&&!searchable.contains(search.trimmed(),Qt::CaseInsensitive))continue;
         result.append(entry);
     }return result;

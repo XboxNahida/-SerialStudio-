@@ -28,16 +28,23 @@ ApplicationWindow {
     C.PersistentForm {
         settings:root.settings;scope:"window"
         onRestored: if(root.settings && Number(root.settings.value("window/page",0))===6)root.settings.setValue("window/page",0)
-        fields:[{key:"width",object:root,property:"width"},{key:"height",object:root,property:"height"},
-            {key:"page",object:root,property:"pageIndex"},{key:"parserSource",object:root,property:"parserSource"},
+        fields:[{key:"parserSource",object:root,property:"parserSource"},
             {key:"lightMode",object:root,property:"lightMode"},{key:"detailed",object:root,property:"detailed"}]
     }
+    C.PersistentForm {
+        settings:root.settings;scope:"windowV110"
+        fields:[{key:"width",object:root,property:"width"},{key:"height",object:root,property:"height"}]
+        onRestored: {
+            root.width=Math.max(root.minimumWidth,Math.min(root.width,Screen.desktopAvailableWidth-40))
+            root.height=Math.max(root.minimumHeight,Math.min(root.height,Screen.desktopAvailableHeight-60))
+        }
+    }
     visible: true
-    width: 1200
-    height: 800
-    minimumWidth: 1120
-    minimumHeight: 760
-    title: "串口工作台 · Serial Studio"
+    width: 860
+    height: 570
+    minimumWidth: 760
+    minimumHeight: 500
+    title: "串口工作台 · Serial Studio " + appVersion
     color: C.Theme.background
     font.family: "Microsoft YaHei UI"
     font.pixelSize: 13
@@ -66,10 +73,12 @@ ApplicationWindow {
         target: root.networkBackend === root.backend ? null : root.networkBackend
         function onNotify(message) { toastLabel.text = message; toastTimer.restart() }
     }
-    RowLayout {
-        anchors.fill: parent; spacing: 0
+    Drawer {
+        id:navigation;objectName:"navigationDrawer"
+        width:224;height:root.height;edge:Qt.LeftEdge
+        background:Rectangle {color:C.Theme.sidebar;border.color:C.Theme.line}
         Rectangle {
-            Layout.preferredWidth: 180; Layout.fillHeight: true; color: C.Theme.sidebar
+            anchors.fill:parent;color:C.Theme.sidebar
             Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: C.Theme.line }
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 14; spacing: 8
@@ -85,7 +94,7 @@ ApplicationWindow {
                         Text { text: "S T U D I O"; color: C.Theme.subtle; font.family: "Consolas"; font.pixelSize: 10 }
                     }
                 }
-                Text { text: "开发工具"; color: C.Theme.subtle; font.pixelSize: 10; Layout.topMargin: 20; Layout.leftMargin: 12; Layout.bottomMargin: 7 }
+                Text { text: "开发工具"; color: C.Theme.subtle; font.pixelSize: 10; Layout.topMargin: 6; Layout.leftMargin: 12; Layout.bottomMargin: 3 }
                 Repeater {
                     model: [{page:0,label:"串口终端",icon:">_",sub:"TERMINAL"},{page:3,label:"网络调试",icon:"↔",sub:"NETWORK"},
                             {page:1,label:"协议解析",icon:"{}",sub:"PROTOCOL"},{page:4,label:"开发板总线",icon:"⌘",sub:"BOARD / SSH"},
@@ -97,7 +106,7 @@ ApplicationWindow {
                         required property int index
                         required property var modelData
                         readonly property int page: modelData.page
-                        Layout.fillWidth: true; height: 50; radius: 10
+                        Layout.fillWidth: true; height: 42; radius: 10
                         color: root.pageIndex === page ? C.Theme.accentFill : navMouse.containsMouse ? C.Theme.raised : "transparent"
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; spacing: 12
@@ -110,12 +119,12 @@ ApplicationWindow {
                             Item { Layout.fillWidth: true }
                             Rectangle { visible: (nav.page === 2 && root.updater && root.updater.updateAvailable) || root.pageIndex === nav.page; width: 3; height: 18; radius: 1; color: nav.page === 2 && root.updater && root.updater.updateAvailable ? C.Theme.red : C.Theme.accent; Layout.rightMargin: 8 }
                         }
-                        MouseArea { id: navMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.pageIndex = nav.page }
+                        MouseArea { id: navMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: {root.pageIndex = nav.page;navigation.close()} }
                     }
                 }
                 Item { Layout.fillHeight: true }
                 Rectangle {
-                    Layout.fillWidth: true; height: 108; radius: 12; color: C.Theme.consoleBg; border.color: C.Theme.line
+                    visible:root.height>650;Layout.fillWidth: true; height: 108; radius: 12; color: C.Theme.consoleBg; border.color: C.Theme.line
                     Column {
                         anchors.fill: parent; anchors.margins: 14; spacing: 10
                         Text { text: "当前会话"; color: C.Theme.subtle; font.pixelSize: 10 }
@@ -128,7 +137,7 @@ ApplicationWindow {
                     }
                 }
                 C.ActionButton {
-                    objectName: "themeButton"
+                    objectName: "drawerThemeButton"
                     Layout.fillWidth: true; Layout.topMargin: 10
                     text: C.Theme.dark ? "☼   浅色外观" : "☾   深色外观"
                     onClicked: { root.lightMode=C.Theme.dark; C.Theme.dark=!root.lightMode; root.backend.savePreference("dark", C.Theme.dark) }
@@ -136,16 +145,19 @@ ApplicationWindow {
                 Text { text: "v" + root.appVersion + " / WINDOWS"; color: C.Theme.subtle; font.family: "Consolas"; font.pixelSize: 9; Layout.topMargin: 12; Layout.bottomMargin: 4; Layout.leftMargin: 5 }
             }
         }
+    }
         ColumnLayout {
-            Layout.fillWidth: true; Layout.fillHeight: true; Layout.margins: 20; spacing: 14
+            anchors.fill:parent;anchors.margins:10;spacing:8
             RowLayout {
-                Layout.fillWidth: true; Layout.preferredHeight: 40
+                Layout.fillWidth: true; Layout.preferredHeight: 34;spacing:8
+                C.ActionButton {objectName:"navigationButton";text:"☰";implicitWidth:36;implicitHeight:32;onClicked:navigation.open();ToolTip.visible:hovered;ToolTip.text:"切换页面"}
                 Column {
-                    spacing: 5
-                    Text { text: ["串口工作台","协议解析","设置与扩展","网络调试","开发板总线","文件传输","","HTTP / MQTT"][root.pageIndex]; color: C.Theme.text; font.pixelSize: 24; font.weight: Font.DemiBold }
-                    Text { text: ["连接设备，观察每一个字节。","分帧、解释数据，输出文字、图表和媒体。","为下一次调试，准备更顺手的工具。","网线直连 / 无线局域网 · TCP / UDP。","多系统终端、指令辅助与 I²C、SPI、USB 操作。","USB / ADB / MTP / SFTP 文件浏览与传输。","","HTTP 请求与 MQTT 发布订阅调试。"][root.pageIndex]; color: C.Theme.muted; font.pixelSize: 11 }
+                    spacing: 2
+                    Text { text: ["串口工作台","协议解析","设置与扩展","网络调试","开发板终端","文件传输","","HTTP / MQTT"][root.pageIndex]; color: C.Theme.text; font.pixelSize: 18; font.weight: Font.DemiBold }
+                    Text {visible:root.detailed && root.height>650;text:"Serial Studio · v"+root.appVersion;color:C.Theme.subtle;font.pixelSize:10}
                 }
                 Item { Layout.fillWidth: true }
+                C.ActionButton {objectName:"themeButton";text:C.Theme.dark?"☼":"☾";implicitWidth:32;implicitHeight:30;onClicked:{root.lightMode=C.Theme.dark;root.backend.savePreference("dark",!root.lightMode)}}
                 C.ActionButton {objectName:"displayStyleButton";text:root.detailed?"详细显示":"简约显示";implicitHeight:32;onClicked:root.detailed=!root.detailed}
                 C.SelectBox {
                     visible: root.pageIndex === 1; objectName: "parserSource"; implicitWidth: 130
@@ -162,7 +174,7 @@ ApplicationWindow {
                 }
             }
             Rectangle {
-                visible: root.pageIndex === 0 && root.height >= 880
+                visible: root.detailed && root.pageIndex === 0 && root.height >= 880
                 Layout.fillWidth: true; Layout.preferredHeight: 100; radius: 14
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
@@ -182,7 +194,7 @@ ApplicationWindow {
                 }
             }
             RowLayout {
-                visible: root.detailed && (root.pageIndex === 0 || root.pageIndex === 3 || (root.pageIndex===1 && !protocolPage.showData))
+                visible: root.detailed && root.height>=650 && (root.pageIndex === 0 || root.pageIndex === 3 || (root.pageIndex===1 && !protocolPage.showData))
                 Layout.fillWidth: true; spacing: 12
                 C.Metric { Layout.fillWidth: true; caption: "接收数据"; value: root.formatBytes(root.activeBackend.rxBytes); unit: "B" }
                 C.Metric { Layout.fillWidth: true; caption: "发送数据"; value: root.formatBytes(root.activeBackend.txBytes); unit: "B"; tint: C.Theme.blue }
@@ -207,7 +219,6 @@ ApplicationWindow {
                 C.ActionButton { text: "重置统计"; implicitHeight: 24; implicitWidth: 68; font.pixelSize: 10; onClicked: root.activeBackend.resetStats() }
             }
         }
-    }
     Rectangle {
         visible: toastTimer.running
         anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 42

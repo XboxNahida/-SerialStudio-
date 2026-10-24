@@ -15,6 +15,8 @@ class AdbDiscovery : public QObject {
     Q_PROPERTY(bool persistenceEnabled READ persistenceEnabled WRITE setPersistenceEnabled NOTIFY changed)
     Q_PROPERTY(bool scanning READ scanning NOTIFY changed)
     Q_PROPERTY(QString status READ status NOTIFY changed)
+    Q_PROPERTY(bool connectionBusy READ connectionBusy NOTIFY changed)
+    Q_PROPERTY(QString connectionStatus READ connectionStatus NOTIFY changed)
 public:
     explicit AdbDiscovery(QObject *parent=nullptr);
     ~AdbDiscovery() override;
@@ -26,19 +28,33 @@ public:
     bool persistenceEnabled() const {return m_persistenceEnabled;}
     bool scanning() const {return m_scanning;}
     QString status() const {return m_status;}
+    bool connectionBusy() const {return m_connectionBusy;}
+    QString connectionStatus() const {return m_connectionStatus;}
     bool ready() const;
     void setExecutablePath(const QString &path);
     void setSelectedSerial(const QString &serial);
     void setEnabled(bool enabled);
     void setPersistenceEnabled(bool enabled);
     Q_INVOKABLE void refresh();
+    Q_INVOKABLE bool connectDevice(QString endpoint);
+    Q_INVOKABLE bool pairDevice(QString endpoint,QString code);
+    Q_INVOKABLE bool disconnectDevice(QString endpoint);
     static QString resolveExecutable(const QString &path);
 signals:
     void changed();
 private:
     void collect();
     void complete(int code,QProcess::ExitStatus exit);
+    bool startConnection(const QString &operation,const QString &endpoint,const QString &code={});
+    void collectConnection();
+    void completeConnection(int code,QProcess::ExitStatus exit);
     QProcess m_process;
+    QProcess m_connectionProcess;
+    QTimer m_connectionTimeout;
+    QByteArray m_connectionOutput;
+    QString m_connectionOperation,m_connectionEndpoint,m_connectionFailure,m_pairCode;
+    QString m_connectionStatus=QStringLiteral("网络 ADB：填写设备地址与端口后连接");
+    bool m_connectionBusy=false,m_refreshAfterScan=false;
     QTimer m_poll,m_timeout;
     QByteArray m_output,m_errors;
     QVariantList m_devices;

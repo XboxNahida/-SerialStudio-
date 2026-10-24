@@ -56,6 +56,75 @@ TestCase {
     property var legacyApi:legacyTransfer
     Component {id:transferFactory;App.TransferPage {width:1000;height:650;controller:tests.legacyApi;files:tests.api}}
     function field(name){const value=findChild(page,name);verify(value!==null,name);return value}
+    function test_minimumViewportFormsRemainReachable(){
+        page.width=760;page.height=500
+        for(const mode of [0,2,4]) {
+            field("fileTransport").currentIndex=mode
+            wait(60)
+            verify(field("browserOpen").x>=0)
+            verify(field("browserPath").width>80)
+            grabImage(page).save(quickEvidenceDirectory+"/cross-files-small-"+mode+".png")
+        }
+    }
+    function test_smbIndependentEntryAndShareRootBoundary(){
+        compare(field("fileTransport").count,5)
+        field("fileTransport").currentIndex=4
+        compare(page.kind,"local");compare(page.smb,true)
+        verify(!page.open("C:/",false));compare(files.visits,0)
+        verify(!page.open("//server",false));compare(files.visits,0)
+        verify(page.open("\\\\server\\share\\folder",false));compare(files.kind,"local")
+        files.complete();wait(10);page.goParent();compare(files.last.path,"//server/share")
+        files.complete();wait(10);const visits=files.visits;page.goParent();compare(files.visits,visits)
+        verify(!page.open("//server/share/../other",false));compare(files.visits,visits)
+        field("fileTransport").currentIndex=3;compare(page.smb,false)
+    }
+    function test_smbRestoreDoesNotBrowseAndLegacyLocalUncRemainsUsable(){
+        field("fileTransport").currentIndex=4
+        field("browserPath").text="\\\\server\\share\\资料"
+        page.destroy();page=factory.createObject(tests);wait(30)
+        compare(field("fileTransport").currentIndex,4)
+        compare(field("browserPath").text,"\\\\server\\share\\资料")
+        compare(files.visits,0)
+        field("fileTransport").currentIndex=3
+        verify(page.open("//server/share",false));compare(files.kind,"local")
+        files.complete()
+        field("fileTransport").currentIndex=4
+        field("fileTransport").currentIndex=2
+        compare(field("browserPath").text,"/")
+    }
+    function test_sftpSystemDefaultsAndPersistence(){
+        field("fileTransport").currentIndex=2
+        field("fileSftpSystem").currentIndex=1
+        compare(field("browserPath").text,"/sdcard")
+        field("fileSftpSystem").currentIndex=2
+        compare(field("browserPath").text,"/C:/Users")
+        compare(field("fileUser").text,"")
+        field("fileUser").text="alice";field("browserPath").text="/D:/资料"
+        page.destroy();page=factory.createObject(tests);wait(30)
+        compare(field("fileSftpSystem").currentIndex,2)
+        compare(field("fileUser").text,"alice");compare(field("browserPath").text,"/D:/资料")
+        compare(files.visits,0)
+    }
+    function test_automaticAdbSelectionPersistsWithoutConnecting(){
+        files.adb.selectedSerial="192.0.2.1:5555";wait(10)
+        compare(settings.saved["fileBrowser/serial"],"192.0.2.1:5555")
+        page.destroy();page=null;wait(10);files.adb.selectedSerial="B"
+        page=factory.createObject(tests);wait(30)
+        compare(files.adb.selectedSerial,"192.0.2.1:5555")
+        compare(files.visits,0)
+    }
+    function test_explorerSortingKeepsEntryIdentity(){
+        files.entries=[{id:"file2",name:"z.bin",size:2048,directory:false},{id:"folder",name:"资料",size:0,directory:true},{id:"file1",name:"a.txt",size:3,directory:false}]
+        compare(page.sortedEntries[0].id,"folder")
+        compare(page.sortedEntries[1].id,"file1")
+        page.selected=files.entries[0]
+        page.sortColumn="size";page.sortDescending=true
+        compare(page.sortedEntries[0].id,"folder")
+        compare(page.sortedEntries[1].id,"file2")
+        compare(page.selected.id,"file2")
+        compare(page.fileType(files.entries[2]),"TXT 文件")
+        wait(50);grabImage(page).save(quickEvidenceDirectory+"/v110-file-details.png")
+    }
     function init(){files.busy=false;files.visits=0;files.transfers=0;files.deletions=0;files.clipboardName="";files.entries=[];files.path="";settings.saved=({});files.adb.selectedSerial="B";page=factory.createObject(tests);verify(page!==null);wait(30)}
     function cleanup(){page.destroy();page=null;wait(10)}
     function test_startAndRestoreDoNotReadFiles(){
@@ -74,6 +143,8 @@ TestCase {
         mouseClick(field("browserOpen"));compare(files.visits,1);compare(files.last.options.serial,"B");compare(files.last.path,"/sdcard")
         files.complete();wait(20);compare(field("browserEntries").count,1)
         page.selected=files.entries[0];field("browserSaveDirectory").text="C:/downloads"
+        field("browserSettingsScroll").contentItem.contentY=field("browserSettingsScroll").contentItem.contentHeight-field("browserSettingsScroll").height
+        wait(30)
         mouseClick(field("browserDownload"));compare(files.transfers,1);compare(files.last.id,"/sdcard/data.bin")
         field("fileTransport").currentIndex=3;compare(page.selected,null);compare(files.entries.length,0)
         verify(!field("browserDownload").enabled)

@@ -29,7 +29,10 @@ Rectangle {
         })
     }
     signal chosen(string text)
-    function reload() { allEntries=repository ? repository.entries(scope) : [] }
+    function reload() {
+        // 内置收藏是助手的元数据，不作为可编辑的普通发送片段。
+        allEntries=repository ? repository.entries(scope).filter(function(entry){return !entry.builtinId && entry.interaction!=="editor-key"}) : []
+    }
     function editEntry(entry) {
         editingEntry=entry || ({});editingScope=scope
         titleInput.text=editingEntry.title || "";textInput.text=editingEntry.text || ""

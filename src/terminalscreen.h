@@ -28,16 +28,20 @@ public:
     bool alternate() const {return m_alternate;}
     int historySize() const {return int(m_history.size());}
     int scrollOffset() const {return m_offset;}
+    qint64 viewportTop() const {return m_firstLine+historySize()-m_offset;}
+    QString absoluteSelection(qint64 startRow,int startColumn,qint64 endRow,int endColumn) const;
     QVariantList cells() const;
     QString lineText(int row) const;
     void feed(const QByteArray &bytes);
     Q_INVOKABLE void resize(int columns,int rows);
     Q_INVOKABLE void reset();
+    Q_INVOKABLE void clearDisplay();
     Q_INVOKABLE void scroll(int lines);
     Q_INVOKABLE QString selection(int startRow,int startColumn,int endRow,int endColumn) const;
     Q_INVOKABLE void key(int key,int modifiers,const QString &text);
     Q_INVOKABLE void paste(const QString &text);
 signals:
+    void contentsReset();
     void changed();
     void output(const QByteArray &bytes);
     void sizeChanged(int columns,int rows);
@@ -54,4 +58,6 @@ private:
     bool m_visible=true,m_alternate=false;
     VTermPos m_cursor{};
     std::deque<std::vector<VTermScreenCell>> m_history;
+    qint64 m_firstLine=0;
+    VTermScreenCell absoluteCell(qint64 row,int column) const;
 };
