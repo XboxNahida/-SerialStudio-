@@ -1,4 +1,5 @@
 #include "adbdiscovery.h"
+#include "toolpaths.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
@@ -10,8 +11,10 @@
 QString AdbDiscovery::resolveExecutable(const QString &path)
 {
     QStringList candidates;
-    if(!path.trimmed().isEmpty())candidates<<path.trimmed();
+    if(!path.trimmed().isEmpty())return ToolPaths::resolve("adb",path);
     else {
+        const auto managed=ToolPaths::resolve("adb");
+        if(!managed.isEmpty() || ToolPaths::hasOverride("adb"))return managed;
         const QDir app(QCoreApplication::applicationDirPath());
         candidates<<app.filePath("platform-tools/adb.exe")<<app.filePath("adb.exe")<<QStandardPaths::findExecutable("adb.exe");
         for(const auto &key:{"ANDROID_SDK_ROOT","ANDROID_HOME"}){

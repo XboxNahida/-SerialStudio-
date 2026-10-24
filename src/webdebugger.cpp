@@ -1,11 +1,13 @@
 #include "webdebugger.h"
+#include "systemproxy.h"
 #include <QNetworkReply>
 #include <QRegularExpression>
 #include <QSslError>
 
 namespace { constexpr qsizetype bodyLimit=8*1024*1024; }
-WebDebugger::WebDebugger(QObject *parent):QObject(parent)
+WebDebugger::WebDebugger(SystemProxy *proxy,QObject *parent):QObject(parent),m_proxy(proxy)
 {
+    if(m_proxy) m_proxy->apply(&m_manager);
     m_timeout.setSingleShot(true);
     connect(&m_timeout,&QTimer::timeout,this,[this] {
         if(!m_reply) return;

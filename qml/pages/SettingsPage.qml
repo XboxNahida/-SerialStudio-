@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import "../components" as C
 
 ScrollView {
@@ -9,12 +10,90 @@ ScrollView {
     property var updater: null
     property string appVersion: ""
     property var settings: null
+    property var systemProxy: null
+    property var toolManager: null
+    property bool toolAdvanced: false
+    property string selectedTool: ""
+    property var pendingTool: ({})
     property bool detailed: false
     signal themeToggleRequested()
     clip: true
     contentWidth: availableWidth
+    FileDialog {
+        id: toolPicker; title: "选择工具可执行文件"; nameFilters: ["可执行程序 (*.exe)"]
+        onAccepted: if(root.toolManager)root.toolManager.setPath(root.selectedTool,selectedFile.toString())
+    }
+    Dialog {
+        id: toolConfirm; title: "下载工具 · " + (root.pendingTool.name || "")
+        anchors.centerIn: Overlay.overlay
+        width: Math.min(480,root.width-32); modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        contentItem: Text {
+            wrapMode: Text.Wrap; color: C.Theme.text
+            text: (root.pendingTool.version || "") + "\n下载约 " + ((root.pendingTool.bytes || 0)/1048576).toFixed(1) + " MiB；解压需额外空间。\n" + (root.pendingTool.license || "") + "\n来源：" + (root.pendingTool.url || "") + "\n确认后按系统代理下载并校验，不安装系统驱动。"
+        }
+        onAccepted: if(root.toolManager)root.toolManager.install(root.pendingTool.id)
+    }
     ColumnLayout {
         width: root.availableWidth; spacing: 16
+        C.Panel {
+            Layout.fillWidth: true; implicitHeight: toolColumn.implicitHeight+32
+            ColumnLayout {
+                id: toolColumn
+                anchors {left:parent.left;right:parent.right;top:parent.top;margins:16}
+                spacing: 10
+                RowLayout {
+                    Layout.fillWidth:true
+                    Text {Layout.fillWidth:true;text:"开发工具";color:C.Theme.text;font.pixelSize:18}
+                    C.ActionButton {text:root.toolAdvanced?"收起高级路径":"高级路径";onClicked:root.toolAdvanced=!root.toolAdvanced}
+                    C.ActionButton {text:"刷新";onClicked:if(root.toolManager)root.toolManager.refresh()}
+                }
+                Text {Layout.fillWidth:true;wrapMode:Text.Wrap;color:C.Theme.muted;text:root.toolManager?root.toolManager.status:"工具管理未启用"}
+                Text {Layout.fillWidth:true;wrapMode:Text.Wrap;color:C.Theme.subtle;font.pixelSize:11;text:"自选路径 → 受管工具 → 系统 PATH；不修改系统环境。目录："+(root.toolManager?root.toolManager.directory:"")}
+                ProgressBar {Layout.fillWidth:true;visible:root.toolManager && root.toolManager.busy;value:root.toolManager?root.toolManager.progress:0}
+                C.ActionButton {text:"取消下载/解压";visible:root.toolManager && root.toolManager.busy;onClicked:root.toolManager.cancel()}
+                Repeater {
+                    model:root.toolManager?root.toolManager.components:[]
+                    delegate: ColumnLayout {
+                        id: toolRow
+                        required property var modelData
+                        Layout.fillWidth:true;spacing:6
+                        RowLayout {
+                            Layout.fillWidth:true
+                            Text {Layout.fillWidth:true;wrapMode:Text.Wrap;color:C.Theme.text;text:toolRow.modelData.name+" · "+(toolRow.modelData.available?"可用":"未找到")+(toolRow.modelData.version?"\n提供版本："+toolRow.modelData.version:"")}
+                            C.ActionButton {text:toolRow.modelData.installed?"已部署":toolRow.modelData.required?"下载补齐":"下载";visible:!!toolRow.modelData.url;enabled:root.toolManager && !root.toolManager.busy && !toolRow.modelData.installed;onClicked:{root.pendingTool=toolRow.modelData;toolConfirm.open()}}
+                            C.ActionButton {objectName:"toolOfficialButton";text:"官方说明";onClicked:root.toolManager.openOfficial(toolRow.modelData.id)}
+                        }
+                        Repeater {
+                            model:toolRow.modelData.paths
+                            delegate: ColumnLayout {
+                                required property var modelData
+                                Layout.fillWidth:true;visible:root.toolAdvanced
+                                Text {Layout.fillWidth:true;wrapMode:Text.Wrap;color:C.Theme.subtle;font.pixelSize:11;text:modelData.name+"："+(modelData.resolved || "不可用，请选择路径或安装工具")}
+                                RowLayout {
+                                    Layout.fillWidth:true
+                                    C.InputBox {Layout.fillWidth:true;implicitWidth:100;text:modelData.custom;placeholderText:"留空自动查找";onEditingFinished:root.toolManager.setPath(modelData.name,text)}
+                                    C.ActionButton {text:"选择";enabled:!root.toolManager.busy;onClicked:{root.selectedTool=modelData.name;toolPicker.open()}}
+                                    C.ActionButton {text:"自动";enabled:!root.toolManager.busy;onClicked:root.toolManager.setPath(modelData.name,"")}
+                                }
+                            }
+                        }
+                        Rectangle {Layout.fillWidth:true;height:1;color:C.Theme.line}
+                    }
+                }
+            }
+        }
+        C.Panel {
+            Layout.fillWidth: true; implicitHeight: proxyColumn.implicitHeight+32
+            ColumnLayout {
+                id: proxyColumn
+                anchors { left: parent.left; right: parent.right; top: parent.top; margins: 16 }
+                Text { text: "网络 · 自动跟随系统"; color: C.Theme.text; font.pixelSize: 18 }
+                Text { Layout.fillWidth: true; wrapMode: Text.Wrap; color: C.Theme.muted; text: root.systemProxy ? root.systemProxy.status : "代理服务未启用" }
+                Text { Layout.fillWidth: true; wrapMode: Text.Wrap; color: C.Theme.subtle; font.pixelSize: 12; text: "更新、工具下载、HTTP 和 MQTT 使用系统代理规则；失败时不擅自改为直连。SSH/SFTP、网络 ADB 使用系统路由和各自连接设置，不自动使用 HTTP 代理。USB ADB 为本机连接。代理变更对新请求/重连生效。" }
+                C.ActionButton { text: "刷新代理状态"; onClicked: if(root.systemProxy) root.systemProxy.refresh() }
+            }
+        }
         C.Panel {
             Layout.fillWidth: true; implicitHeight: updateColumn.implicitHeight + 40
             ColumnLayout {

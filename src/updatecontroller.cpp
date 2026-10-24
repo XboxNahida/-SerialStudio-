@@ -1,4 +1,5 @@
 #include "updatecontroller.h"
+#include "systemproxy.h"
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QDesktopServices>
@@ -61,6 +62,7 @@ QString uninstallPath(){return QDir(QCoreApplication::applicationDirPath()).file
 UpdateController::UpdateController(QString version,QNetworkAccessManager *network,QObject *parent)
     :QObject(parent),m_network(network?network:new QNetworkAccessManager(this)),m_current(std::move(version)),
       m_cacheRoot(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)+"/updates") {
+    if(!network) { SystemProxy proxy;proxy.apply(m_network); }
     m_launch=[](const QString &program,const QStringList &arguments){return QProcess::startDetached(program,arguments);};
 }
 int UpdateController::compareVersions(const QString &left,const QString &right) {

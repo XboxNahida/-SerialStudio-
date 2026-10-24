@@ -7,6 +7,7 @@
 #include <QVariant>
 
 class QAbstractSocket;
+class SystemProxy;
 class MqttClient : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool connected READ connected NOTIFY changed)
@@ -17,7 +18,7 @@ class MqttClient : public QObject {
     Q_PROPERTY(int selectedCount READ selectedCount NOTIFY changed)
     Q_PROPERTY(QStringList subscriptions READ subscriptions NOTIFY changed)
 public:
-    explicit MqttClient(QObject *parent=nullptr);
+    explicit MqttClient(SystemProxy *proxy=nullptr,QObject *parent=nullptr);
     ~MqttClient() override;
     bool connected() const { return m_connected; }
     bool busy() const { return m_connecting || !m_pending.isEmpty(); }
@@ -65,4 +66,5 @@ private:
     int m_keepAlive=60;
     qint64 m_lastSent=0,m_pingSent=0,m_connectStarted=0;
     qsizetype m_messageBytes=0;
+    SystemProxy *m_proxy=nullptr;
 };

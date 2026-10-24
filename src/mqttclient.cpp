@@ -1,4 +1,5 @@
 #include "mqttclient.h"
+#include "systemproxy.h"
 #include <QAbstractSocket>
 #include <QDateTime>
 #include <QFile>
@@ -30,7 +31,7 @@ bool validTopic(const QString &topic,bool filter)
     return true;
 }
 }
-MqttClient::MqttClient(QObject *parent):QObject(parent)
+MqttClient::MqttClient(SystemProxy *proxy,QObject *parent):QObject(parent),m_proxy(proxy)
 {
     m_timer.setInterval(200); m_clock.start();
     connect(&m_timer,&QTimer::timeout,this,&MqttClient::tick);
@@ -49,6 +50,9 @@ bool MqttClient::connectBroker(const QVariantMap &config)
         return reject(QStringLiteral("MQTT 主机/端口/保活参数无效"));
     if(!validString(client) || !validString(user,true) || password.toUtf8().size()>65535 || (!password.isEmpty() && user.isEmpty()))
         return reject(QStringLiteral("MQTT client ID/用户名无效，密码需要用户名"));
+    const auto route=m_proxy?m_proxy->socketProxy(host,quint16(port)):QNetworkProxy(QNetworkProxy::NoProxy);
+    if(route.type()!=QNetworkProxy::NoProxy && !(route.capabilities() & QNetworkProxy::TunnelingCapability))
+        return reject(QStringLiteral("系统为此 MQTT 目标选择的代理不支持 TCP 隧道，请调整系统代理规则"));
     m_config=config; m_keepAlive=keep;
     if(config.value("tls").toBool()) {
         if(!QSslSocket::supportsSsl()) return reject(QStringLiteral("MQTT TLS 运行库不可用"));
@@ -73,6 +77,7 @@ bool MqttClient::connectBroker(const QVariantMap &config)
     }
     m_connected=false; m_connecting=true; m_waitPing=false; m_input.clear(); m_pending.clear(); m_subscriptions.clear();
     m_socket->setReadBufferSize(65536);
+    m_socket->setProxy(route);
     connect(m_socket,&QAbstractSocket::readyRead,this,&MqttClient::receive);
     connect(m_socket,&QAbstractSocket::errorOccurred,this,[this](QAbstractSocket::SocketError) { if(m_socket)close(QStringLiteral("MQTT 连接错误：%1").arg(m_socket->errorString())); });
     connect(m_socket,&QAbstractSocket::disconnected,this,[this]{close(QStringLiteral("MQTT 对端已断开"));});

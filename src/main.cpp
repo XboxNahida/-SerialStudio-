@@ -20,9 +20,19 @@
 #include "webdebugger.h"
 #include "mqttclient.h"
 #include "remotefiles.h"
+#include "systemproxy.h"
+#include "toolmanager.h"
 
 int main(int argc, char *argv[])
 {
+    if(argc==3 && QByteArray(argv[1])=="--remove-managed-tools") {
+        QCoreApplication helper(argc,argv);
+        return ToolManager::removeManaged(helper.arguments().at(2))?0:1;
+    }
+    if(argc==4 && QByteArray(argv[1])=="--seed-managed-tools") {
+        QCoreApplication helper(argc,argv);
+        return ToolManager::seedManaged(helper.arguments().at(2),helper.arguments().at(3))?0:1;
+    }
     for(int i=1;i<argc;++i)if(QByteArray(argv[i])=="--terminal-input"){
         QCoreApplication helper(argc,argv);QFile input;
         if(!input.open(stdin,QIODevice::ReadOnly))return 1;
@@ -49,6 +59,8 @@ int main(int argc, char *argv[])
     QTemporaryDir previewConfig;
     const bool preview=cli.isSet("smoke-test")||cli.isSet("capture");
     SettingsStore settings(cli.isSet("config-dir")?cli.value("config-dir"):preview?previewConfig.path():QString());
+    SystemProxy systemProxy;
+    ToolManager toolManager(&settings,&systemProxy,(preview||cli.isSet("config-dir"))?QDir(settings.directory()).filePath("tools"):QString());
     QuickCommands quickCommands(&settings);
     Session session(nullptr, !preview&&!cli.isSet("config-dir"));
     Session network(nullptr, false);
@@ -58,8 +70,8 @@ int main(int argc, char *argv[])
     board.terminal()->adb()->setPersistenceEnabled(persistLegacy);
     discovery.adb()->setPersistenceEnabled(persistLegacy);
     discovery.setSavedDevices(settings.value("devices/saved",QVariantList()).toList());
-    WebDebugger web;
-    MqttClient mqtt;
+    WebDebugger web(&systemProxy);
+    MqttClient mqtt(&systemProxy);
     FileTransfer transfer;
     RemoteFiles files;
     files.adb()->setPersistenceEnabled(false);
@@ -78,6 +90,8 @@ int main(int argc, char *argv[])
                                  {"discovery", QVariant::fromValue(&discovery)},
                                  {"web", QVariant::fromValue(&web)},
                                  {"mqtt", QVariant::fromValue(&mqtt)},
+                                 {"systemProxy", QVariant::fromValue(&systemProxy)},
+                                 {"toolManager", QVariant::fromValue(&toolManager)},
                                  {"appVersion", QCoreApplication::applicationVersion()},
                                  {"pageIndex", qBound(0, cli.value("page").toInt(), 7)},
                                  {"lightMode", cli.isSet("light")}});

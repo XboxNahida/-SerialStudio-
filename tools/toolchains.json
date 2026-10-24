@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "platform": "windows-x64",
+  "managedRoot": "SerialStudio/tools",
+  "components": [
+    {
+      "id": "android-platform-tools",
+      "name": "Android Platform Tools",
+      "version": "37.0.1",
+      "archive": "platform-tools_r37.0.1-win.zip",
+      "url": "https://dl.google.com/android/repository/platform-tools_r37.0.1-win.zip",
+      "bytes": 8044989,
+      "sha256": "45F4D63113E895EBDE0C90F194099A4676B6AC653BD28D54314A9E022BBC1A99",
+      "license": "Android SDK License / Apache 2.0 components; see official distribution terms",
+      "licenseUrl": "https://developer.android.com/studio/terms",
+      "entrypoints": ["platform-tools/adb.exe", "platform-tools/fastboot.exe"],
+      "required": true,
+      "tools": {"adb":"platform-tools/adb.exe", "fastboot":"platform-tools/fastboot.exe"},
+      "redistribution": "随 Android SDK Platform-Tools 官方归档分发；用户安装需遵守 Google Android SDK License。"
+    },
+    {
+      "id": "python",
+      "name": "Python 嵌入式运行时",
+      "version": "3.13.7",
+      "archive": "python-3.13.7-embed-amd64.zip",
+      "bytes": 10922561,
+      "url": "https://www.python.org/ftp/python/3.13.7/python-3.13.7-embed-amd64.zip",
+      "sha256": "F6CCA216A359BE84797CABB54149CE5E062AFB16CC7567EB7FC51CACB2D86B65",
+      "license": "Python Software Foundation License",
+      "licenseUrl": "https://docs.python.org/3/license.html",
+      "entrypoints": ["python.exe"],
+      "required": true,
+      "tools": {"python":"python.exe"},
+      "redistribution": "Python 官方 Windows embeddable package，随归档 LICENSE.txt 分发。"
+    },
+    {
+      "id": "openssh",
+      "name": "OpenSSH Client",
+      "version": "10.4.0.0p1-Preview",
+      "archive": "OpenSSH-Win64-10.4.0.0p1-Preview.zip",
+      "url": "https://github.com/PowerShell/Win32-OpenSSH/releases/download/10.4.0.0p1-Preview/OpenSSH-Win64.zip",
+      "bytes": 6021393,
+      "sha256": "B67FF8BECD203502190EC42AC7787C24C2CD3325ED7700485FE7A1C83D2A7957",
+      "license": "BSD-style OpenSSH license and bundled component licenses",
+      "licenseUrl": "https://github.com/PowerShell/Win32-OpenSSH/blob/10.4.0.0p1-Preview/LICENSE.txt",
+      "entrypoints": ["OpenSSH-Win64/ssh.exe", "OpenSSH-Win64/sftp.exe", "OpenSSH-Win64/scp.exe"],
+      "required": true,
+      "tools": {"ssh":"OpenSSH-Win64/ssh.exe", "sftp":"OpenSSH-Win64/sftp.exe", "scp":"OpenSSH-Win64/scp.exe"},
+      "include": ["OpenSSH-Win64/ssh.exe","OpenSSH-Win64/sftp.exe","OpenSSH-Win64/scp.exe","OpenSSH-Win64/libcrypto.dll","OpenSSH-Win64/ssh-keygen.exe","OpenSSH-Win64/ssh-keyscan.exe","OpenSSH-Win64/ssh-add.exe","OpenSSH-Win64/ssh-agent.exe","OpenSSH-Win64/ssh-sk-helper.exe","OpenSSH-Win64/ssh-pkcs11-helper.exe","OpenSSH-Win64/ssh-shellhost.exe","OpenSSH-Win64/LICENSE.txt","OpenSSH-Win64/NOTICE.txt"],
+      "redistribution": "Win32-OpenSSH 官方 Windows 归档；保留 LICENSE.txt、NOTICE.txt 和组件许可。"
+    }
+  ],
+  "optional": [
+    {
+      "id": "openocd",
+      "name": "OpenOCD · 烧录与调试",
+      "version": "0.12.0-7",
+      "status": "download",
+      "archive": "xpack-openocd-0.12.0-7-win32-x64.zip",
+      "url": "https://github.com/xpack-dev-tools/openocd-xpack/releases/download/v0.12.0-7/xpack-openocd-0.12.0-7-win32-x64.zip",
+      "sha256": "6BFD3C97135AAFEF8AFFC9AF1ACF34FD0E2B9CA26044506F6ABD7F95B7630052",
+      "bytes": 3225998,
+      "entrypoints": ["xpack-openocd-0.12.0-7/bin/openocd.exe"],
+      "tools": {"openocd":"xpack-openocd-0.12.0-7/bin/openocd.exe"},
+      "license": "GPL-2.0-or-later；保留归档许可；源代码见该固定 Release",
+      "licenseUrl": "https://github.com/xpack-dev-tools/openocd-xpack/releases/tag/v0.12.0-7",
+      "reason": "按需下载 xPack Windows x64 发行版，不自动安装 USB 探针驱动。"
+    },
+    {
+      "id": "jlink",
+      "name": "SEGGER J-Link",
+      "status": "user-selected",
+      "homepage": "https://www.segger.com/downloads/jlink/",
+      "tools": {"jlink":"JLink.exe"},
+      "reason": "专有工具和驱动按 SEGGER 许可由用户安装或指定路径。"
+    },
+    {
+      "id": "stm32cubeprogrammer",
+      "name": "STM32CubeProgrammer",
+      "status": "user-selected",
+      "homepage": "https://www.st.com/en/development-tools/stm32cubeprog.html",
+      "tools": {"stm32cubeprogrammer":"STM32_Programmer_CLI.exe"},
+      "reason": "专有工具按 ST 许可由用户安装或指定路径。"
+    },
+    {
+      "id": "dfu-util",
+      "name": "dfu-util",
+      "status": "user-selected",
+      "homepage": "https://dfu-util.sourceforge.net/releases/",
+      "tools": {"dfu-util":"dfu-util.exe"},
+      "reason": "尚未锁定受支持的 Windows ZIP 归档，可从官方来源安装后指定路径。"
+    }
+  ]
+}

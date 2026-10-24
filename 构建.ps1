@@ -80,7 +80,7 @@ try {
         Copy-Item -LiteralPath (Join-Path $projectRoot '桥接协议说明.md') -Destination $release -Force
         Copy-Item -LiteralPath (Join-Path $projectRoot '数据解析与文件传输说明.md') -Destination $release -Force
         Copy-Item -LiteralPath (Join-Path $projectRoot '终端指令辅助说明.md') -Destination $release -Force
-        foreach ($document in @('正式版验收清单.md','指令任务覆盖矩阵.md')) {
+        foreach ($document in @('正式版验收清单.md','指令任务覆盖矩阵.md','工具链与代理说明.md','安装与卸载说明.md')) {
             if (Test-Path -LiteralPath (Join-Path $projectRoot $document)) { Copy-Item -LiteralPath (Join-Path $projectRoot $document) -Destination $release -Force }
         }
         $boardOutput = Join-Path $release 'board'

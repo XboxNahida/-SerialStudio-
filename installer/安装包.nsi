@@ -5,6 +5,7 @@ Unicode true
 !include "Sections.nsh"
 !include "x64.nsh"
 !include "WinVer.nsh"
+!include "nsDialogs.nsh"
 
 !define APP_NAME "串口工作台 · Serial Studio"
 !ifdef TEST_ROOT
@@ -45,6 +46,7 @@ VIAddVersionKey /LANG=2052 "LegalCopyright" "Serial Studio 项目"
 !define MUI_FINISHPAGE_RUN_NOTCHECKED
 !insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_UNPAGE_CONFIRM
+UninstPage custom un.ToolOptions un.ToolOptionsLeave
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
 !insertmacro MUI_LANGUAGE "SimpChinese"
@@ -52,6 +54,9 @@ VIAddVersionKey /LANG=2052 "LegalCopyright" "Serial Studio 项目"
 Var DesktopDir
 Var MenuDir
 Var Options
+Var ToolsDir
+Var RemoveTools
+Var ToolsCheckbox
 
 !macro ShellDirectories
     SetShellVarContext current
@@ -82,6 +87,7 @@ replacement_ready:
     SetOverwrite on
     File /r "${PAYLOAD}\*"
     WriteUninstaller "$INSTDIR\卸载.exe"
+    SetOutPath "$INSTDIR"
     SetRegView 64
     WriteRegStr HKCU "${UNINSTALL_KEY}" "DisplayName" "${APP_NAME}"
     WriteRegStr HKCU "${UNINSTALL_KEY}" "DisplayVersion" "${APP_VERSION}"
@@ -93,6 +99,19 @@ replacement_ready:
     WriteRegDWORD HKCU "${UNINSTALL_KEY}" "NoModify" 1
     WriteRegDWORD HKCU "${UNINSTALL_KEY}" "NoRepair" 1
     WriteRegDWORD HKCU "${UNINSTALL_KEY}" "EstimatedSize" ${INSTALLED_KIB}
+    ; 注册卸载入口后部署工具；失败时仍可卸载本次已写入的程序文件。
+    !ifdef TOOL_INSTALL
+        InitPluginsDir
+        !include "${TOOL_INSTALL}"
+        ClearErrors
+        ExecWait '"$INSTDIR\SerialStudio.exe" --seed-managed-tools "$PLUGINSDIR\ToolSeed" "$ToolsDir"' $1
+        ${If} ${Errors}
+        ${OrIf} $1 != 0
+            MessageBox MB_ICONSTOP "必备工具部署失败（空间不足、路径冲突或校验异常），已有工具保留。可重新安装、卸载或在设置中指定工具。" /SD IDOK
+            SetErrorLevel 1
+            Abort
+        ${EndIf}
+    !endif
 SectionEnd
 
 Section "创建桌面快捷方式" SEC_DESKTOP
@@ -123,8 +142,10 @@ Function .onInit
     ${EndIf}
     SetRegView 64
     !insertmacro ShellDirectories
+    StrCpy $ToolsDir "$LOCALAPPDATA\SerialStudio\tools"
     !ifdef TEST_ROOT
         StrCpy $INSTDIR "${TEST_ROOT}\App"
+        StrCpy $ToolsDir "${TEST_ROOT}\Tools"
     !endif
     ${GetParameters} $Options
     ${GetOptions} $Options "/UPDATEPID=" $2
@@ -161,10 +182,44 @@ FunctionEnd
 Function un.onInit
     SetRegView 64
     !insertmacro ShellDirectories
+    StrCpy $RemoveTools 0
+    StrCpy $ToolsDir "$LOCALAPPDATA\SerialStudio\tools"
+    !ifdef TEST_ROOT
+        StrCpy $ToolsDir "${TEST_ROOT}\Tools"
+    !endif
+    ${GetParameters} $Options
+    ${GetOptions} $Options "/REMOVETOOLS=" $0
+    ${If} $0 == "1"
+        StrCpy $RemoveTools 1
+    ${EndIf}
+FunctionEnd
+
+Function un.ToolOptions
+    nsDialogs::Create 1018
+    Pop $0
+    ${NSD_CreateLabel} 0 0 100% 36u "卸载应用时，可选择是否同时移除受管工具。默认保留，便于以后重新安装。"
+    Pop $0
+    ${NSD_CreateCheckbox} 0 48u 100% 18u "同时移除 SerialStudio 管理的工具链"
+    Pop $ToolsCheckbox
+    ${NSD_CreateLabel} 0 76u 100% 55u "只移除安装清单中未被修改的工具文件。自选路径、用户配置、未登记文件及修改过的文件均保留。升级时自动保留工具链。"
+    Pop $0
+    nsDialogs::Show
+FunctionEnd
+
+Function un.ToolOptionsLeave
+    ${NSD_GetState} $ToolsCheckbox $RemoveTools
 FunctionEnd
 
 Section "Uninstall"
     !include "${CHECK_FILES}"
+    ${If} $RemoveTools == 1
+        ClearErrors
+        ExecWait '"$INSTDIR\SerialStudio.exe" --remove-managed-tools "$ToolsDir"' $1
+        ${If} ${Errors}
+        ${OrIf} $1 != 0
+            MessageBox MB_ICONEXCLAMATION "部分受管工具无法移除，已保留；关闭相关终端后可重新处理。" /SD IDOK
+        ${EndIf}
+    ${EndIf}
     ClearErrors
     !include "${REMOVE_FILES}"
     ${If} ${Errors}

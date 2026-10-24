@@ -1,4 +1,5 @@
 #include "boardcontroller.h"
+#include "toolpaths.h"
 #include "bridgecodec.h"
 #include <QDir>
 #include <QFile>
@@ -13,11 +14,7 @@
 namespace {
 QString sshProgram()
 {
-#ifdef Q_OS_WIN
-    const auto path = QDir(qEnvironmentVariable("SystemRoot", "C:/Windows")).filePath("System32/OpenSSH/ssh.exe");
-    if (QFileInfo::exists(path)) return path;
-#endif
-    return QStandardPaths::findExecutable(QStringLiteral("ssh"));
+    return ToolPaths::resolve("ssh");
 }
 }
 QVariantList BoardController::terminalSessions() const

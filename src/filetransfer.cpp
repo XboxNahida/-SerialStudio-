@@ -1,4 +1,5 @@
 #include "filetransfer.h"
+#include "toolpaths.h"
 #include <QCryptographicHash>
 #include <QFile>
 #include <QSaveFile>
@@ -57,11 +58,7 @@ void CopyWorker::copy(const QString &source,const QString &directory)
 namespace {
 QString sftpProgram()
 {
-#ifdef Q_OS_WIN
-    const auto path=QDir(qEnvironmentVariable("SystemRoot","C:/Windows")).filePath("System32/OpenSSH/sftp.exe");
-    if(QFileInfo::exists(path))return path;
-#endif
-    return QStandardPaths::findExecutable("sftp");
+    return ToolPaths::resolve("sftp");
 }
 bool safePath(const QString &path)
 {if(path.isEmpty() || path.size()>2048)return false;for(auto c:path)if(c.unicode()<32 || c==QChar(127))return false;return true;}
@@ -117,6 +114,9 @@ bool FileTransfer::sftpCommands(int mode,const QString &local,const QString &tem
     }
     if(mode==1 && !o.value("overwrite").toBool()) {*error=QStringLiteral("上传前请明确勾选允许写入/覆盖远端文件");return false;}
     *arguments={"-b","-","-P",QString::number(port),"-o","BatchMode=yes","-o","StrictHostKeyChecking=yes","-o","ConnectTimeout=10"};
+    const auto ssh=ToolPaths::resolve("ssh");
+    if(!ssh.isEmpty())*arguments<<"-S"<<QDir::toNativeSeparators(ssh);
+    else if(ToolPaths::hasOverride("ssh")){*error=QStringLiteral("高级设置中的 SSH 路径不可用，请修正后重试");return false;}
     if(!key.isEmpty())*arguments<<"-i"<<QDir::toNativeSeparators(key);
     *arguments<<"--"<<user+"@"+host;
     if(mode==1) {

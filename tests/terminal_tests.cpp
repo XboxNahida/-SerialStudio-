@@ -4,6 +4,7 @@
 #include <QTemporaryDir>
 #include <QSettings>
 #include "terminalcontroller.h"
+#include "toolpaths.h"
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
@@ -60,6 +61,9 @@ private slots:
     void adbSdkFallback()
     {
         QTemporaryDir sdk;QVERIFY(sdk.isValid());QVERIFY(QDir().mkpath(sdk.filePath("platform-tools")));
+        // 此用例验证没有受管工具时的 SDK 回退，不读取用户已安装的工具。
+        ToolPaths::configure(sdk.filePath("managed"),{});
+        struct ResetTools {~ResetTools(){ToolPaths::configure("",{});}} resetTools;
         const auto adb=sdk.filePath("platform-tools/adb.exe");QVERIFY(QFile::copy(QCoreApplication::applicationFilePath(),adb));
         const auto oldPath=qgetenv("PATH"),oldSdk=qgetenv("ANDROID_SDK_ROOT");
         qputenv("PATH",QByteArray());qputenv("ANDROID_SDK_ROOT",sdk.path().toUtf8());

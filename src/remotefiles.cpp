@@ -1,4 +1,5 @@
 #include "remotefiles.h"
+#include "toolpaths.h"
 #include "portablefiles.h"
 #include <QDir>
 #include <QFileInfo>
@@ -30,11 +31,7 @@ void sortEntries(QVariantList &rows) {
     });
 }
 QString sftpPath() {
-#ifdef Q_OS_WIN
-    const auto program=QDir(qEnvironmentVariable("SystemRoot","C:/Windows")).filePath("System32/OpenSSH/sftp.exe");
-    if(QFileInfo::exists(program))return program;
-#endif
-    return QStandardPaths::findExecutable("sftp");
+    return ToolPaths::resolve("sftp");
 }
 QString sftpQuote(QString path) {
     path.replace('\\',"\\\\");path.replace('"',"\\\"");return '"'+path+'"';

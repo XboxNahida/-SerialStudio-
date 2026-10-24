@@ -1,4 +1,5 @@
 #include "networkworker.h"
+#include "systemproxy.h"
 #include <QTcpSocket>
 #include <QTcpServer>
 #include <QUdpSocket>
@@ -24,6 +25,12 @@ void NetworkWorker::open(const QVariantMap &c)
     m_targetPort = quint16(port); m_active = true;
     if (m_mode == 0) {
         attach(new QTcpSocket(this));
+        SystemProxy proxy;
+        const auto route=proxy.socketProxy(m_host,m_targetPort);
+        if(route.type()!=QNetworkProxy::NoProxy && !(route.capabilities() & QNetworkProxy::TunnelingCapability)) {
+            emit fault(QStringLiteral("系统为此 TCP 目标选择的代理不支持隧道，请调整系统规则"));close();return;
+        }
+        m_tcp->setProxy(route);
         m_timeout = new QTimer(this); m_timeout->setSingleShot(true);
         connect(m_timeout, &QTimer::timeout, this, [this] { emit fault(QStringLiteral("TCP 连接超时")); close(); });
         connect(m_tcp, &QTcpSocket::connected, this, [this] {

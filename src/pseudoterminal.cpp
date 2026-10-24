@@ -1,4 +1,5 @@
 #include "pseudoterminal.h"
+#include "toolpaths.h"
 #include <QDir>
 #include <QFileInfo>
 #include <QMutex>
@@ -105,8 +106,10 @@ bool PseudoTerminal::start(const QString &program,const QStringList &arguments,i
     // 避免把宿主的 NUL/日志管道传给 Shell；NULL 由 ConPTY 附着时补为控制台句柄。
     startup.StartupInfo.dwFlags=STARTF_USESTDHANDLES;
     PROCESS_INFORMATION process{};
+    const auto environment=ToolPaths::windowsEnvironmentBlock();
     const bool created=CreateProcessW(reinterpret_cast<LPCWSTR>(program.utf16()),native.data(),nullptr,nullptr,FALSE,
-        EXTENDED_STARTUPINFO_PRESENT|CREATE_SUSPENDED,nullptr,nullptr,&startup.StartupInfo,&process);
+        EXTENDED_STARTUPINFO_PRESENT|CREATE_SUSPENDED|CREATE_UNICODE_ENVIRONMENT,
+        const_cast<ushort *>(environment.utf16()),nullptr,&startup.StartupInfo,&process);
     const auto error=GetLastError();DeleteProcThreadAttributeList(attributes);
     if(!created){release(inputRead);release(outputWrite);m_error=QStringLiteral("终端进程启动失败：%1").arg(error);close();return false;}
     m_native->process=process.hProcess;m_native->job=CreateJobObjectW(nullptr,nullptr);

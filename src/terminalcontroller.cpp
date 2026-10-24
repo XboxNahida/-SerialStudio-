@@ -1,4 +1,5 @@
 #include "terminalcontroller.h"
+#include "toolpaths.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -127,7 +128,7 @@ bool TerminalController::launchSpec(int mode,const QVariantMap &config,QString *
         if(!QRegularExpression("^[A-Za-z0-9][A-Za-z0-9_.:-]{0,252}$").match(host).hasMatch()||
            !QRegularExpression("^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$").match(user).hasMatch()||port<1||port>65535){*error=QStringLiteral("SSH 主机、用户或端口格式无效");return false;}
         if(!key.isEmpty()&&!QFileInfo(key).isFile()){*error=QStringLiteral("SSH 私钥文件不存在");return false;}
-        *program=executable("System32/OpenSSH/ssh.exe","ssh.exe");
+        *program=ToolPaths::resolve("ssh");
         *arguments={"-p",QString::number(port),"-o","ConnectTimeout=8"};
         if(!key.isEmpty())*arguments<<"-i"<<key;
         *arguments<<"-t"<<"--"<<(user+"@"+host);
@@ -184,7 +185,7 @@ bool TerminalController::open(int mode,const QVariantMap &config)
     QString program,error;QStringList arguments;
     if(!launchSpec(mode,config,&program,&arguments,&error))return fail(error);
     QString summary;
-    if(transport=="ssh")summary=QStringLiteral("%1@%2:%3").arg(config.value("user","root").toString().trimmed(),
+    if(transport=="ssh")summary=QStringLiteral("%1@%2:%3 · 系统路由 / SSH 配置，未自动套用 HTTP 代理").arg(config.value("user","root").toString().trimmed(),
         config.value("host").toString().trimmed(),QString::number(config.value("port",22).toInt()));
     else if(transport=="adb")summary=QStringLiteral("ADB · %1").arg(config.value("serial").toString().trimmed().isEmpty()
         ?QStringLiteral("默认设备"):config.value("serial").toString().trimmed());
@@ -204,7 +205,9 @@ bool TerminalController::open(int mode,const QVariantMap &config)
     for(const auto &argument:arguments)command+=' '+quoteArgument(argument);
     auto native=command.toStdWString();STARTUPINFOW startup{};startup.cb=sizeof(startup);PROCESS_INFORMATION info{};
     if(config.value("hidden",false).toBool()){startup.dwFlags|=STARTF_USESHOWWINDOW;startup.wShowWindow=SW_HIDE;}
-    if(!CreateProcessW(reinterpret_cast<LPCWSTR>(program.utf16()),native.data(),nullptr,nullptr,FALSE,CREATE_NEW_CONSOLE,nullptr,nullptr,&startup,&info))
+    const auto environment=ToolPaths::windowsEnvironmentBlock();
+    if(!CreateProcessW(reinterpret_cast<LPCWSTR>(program.utf16()),native.data(),nullptr,nullptr,FALSE,CREATE_NEW_CONSOLE|CREATE_UNICODE_ENVIRONMENT,
+        const_cast<ushort *>(environment.utf16()),nullptr,&startup,&info))
         return fail(QStringLiteral("无法打开交互终端：Windows 错误 %1").arg(GetLastError()));
     CloseHandle(info.hThread);
     m_handle=info.hProcess;m_started=creationTime(info.hProcess);m_pid=info.dwProcessId;m_mode=mode;m_poll.start();

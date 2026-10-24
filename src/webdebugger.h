@@ -6,6 +6,7 @@
 #include <QVariant>
 
 class QNetworkReply;
+class SystemProxy;
 class WebDebugger : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool busy READ busy NOTIFY changed)
@@ -16,7 +17,7 @@ class WebDebugger : public QObject {
     Q_PROPERTY(QString responseBody READ responseBody NOTIFY changed)
     Q_PROPERTY(qint64 elapsed READ elapsed NOTIFY changed)
 public:
-    explicit WebDebugger(QObject *parent=nullptr);
+    explicit WebDebugger(SystemProxy *proxy=nullptr,QObject *parent=nullptr);
     bool busy() const { return !m_reply.isNull(); }
     QString status() const { return m_status; }
     QString error() const { return m_error; }
@@ -41,4 +42,5 @@ private:
     QString m_status=QStringLiteral("尚未发送 HTTP 请求"),m_error;
     int m_code=0;
     bool m_cancelled=false;
+    SystemProxy *m_proxy=nullptr;
 };

@@ -18,6 +18,8 @@ ApplicationWindow {
     property var discovery: null
     property var web: null
     property var mqtt: null
+    property var systemProxy: null
+    property var toolManager: null
     property bool detailed: false
     property string appVersion: ""
     property int parserSource: 0
@@ -205,7 +207,7 @@ ApplicationWindow {
                 Layout.fillWidth: true; Layout.fillHeight: true; currentIndex: root.pageIndex
                 Pages.TerminalPage { id:serialPage;backend: root.backend; settings:root.settings;quickCommands:root.quickCommands;discovery:root.discovery;detailed:root.detailed;onSaveRequested: saveDialog.open() }
                 Pages.ProtocolPage { id: protocolPage; backend: root.activeBackend;settings:root.settings;detailed:root.detailed;scope:root.parserSource===1?"network":"serial" }
-                Pages.SettingsPage { backend: root.backend; updater: root.updater;settings:root.settings;detailed:root.detailed; appVersion: root.appVersion;onThemeToggleRequested:{root.lightMode=C.Theme.dark;C.Theme.dark=!root.lightMode;root.backend.savePreference("dark",C.Theme.dark)} }
+                Pages.SettingsPage { backend: root.backend; updater: root.updater;settings:root.settings;systemProxy:root.systemProxy;toolManager:root.toolManager;detailed:root.detailed; appVersion: root.appVersion;onThemeToggleRequested:{root.lightMode=C.Theme.dark;C.Theme.dark=!root.lightMode;root.backend.savePreference("dark",C.Theme.dark)} }
                 Pages.TerminalPage {id:networkPage; backend: root.networkBackend; settings:root.settings;quickCommands:root.quickCommands;discovery:root.discovery;detailed:root.detailed;networkMode: true; onSaveRequested: saveDialog.open() }
                 Pages.BoardPage {id:boardPage; controller: root.board;discovery:root.discovery;settings:root.settings;quickCommands:root.quickCommands;detailed:root.detailed; serialBackend: root.backend; networkBackend: root.networkBackend }
                 Pages.TransferPage { id:transferPage;controller: root.transfer;files:root.files;settings:root.settings;detailed:root.detailed }

@@ -28,6 +28,9 @@ if ($cmake -notmatch 'set\(SERIALSTUDIO_VERSION "([0-9A-Za-z.-]+)"\)') { throw '
 $version = $Matches[1]
 # 每次使用新目录，避免递归清理或把旧文件带入安装包。
 $stage = Join-Path $buildRoot ('payload-' + [Guid]::NewGuid().ToString('N'))
+$toolStage = Join-Path $buildRoot ('tools-' + [Guid]::NewGuid().ToString('N'))
+& (Join-Path $project 'tools\准备工具链.ps1') -OutputDirectory $toolStage
+if(!$?){throw '必备工具准备失败'}
 New-Item -ItemType Directory -Path $stage | Out-Null
 Copy-Item -Path (Join-Path $release '*') -Destination $stage -Recurse
 Copy-Item -LiteralPath (Join-Path $project 'installer\图标.ico') -Destination (Join-Path $stage 'SerialStudio.ico')
@@ -48,6 +51,16 @@ $directories = @(Get-ChildItem -LiteralPath $stage -Recurse -Directory | Sort-Ob
 $removeFiles = Join-Path $buildRoot ([IO.Path]::GetFileName($stage)+'-files.nsh')
 $removeDirs = Join-Path $buildRoot ([IO.Path]::GetFileName($stage)+'-dirs.nsh')
 $checkFiles = Join-Path $buildRoot ([IO.Path]::GetFileName($stage)+'-check.nsh')
+$toolInstall = Join-Path $buildRoot ([IO.Path]::GetFileName($stage)+'-tools.nsh')
+$toolLines = @()
+$toolCatalog=Get-Content -Raw -Encoding UTF8 (Join-Path $project 'tools\toolchains.json')|ConvertFrom-Json
+foreach($component in $toolCatalog.components){
+    $relative=$component.id+'\'+$component.version
+    $source=Join-Path $toolStage $relative
+    $toolLines += 'SetOutPath "$PLUGINSDIR\ToolSeed\'+$relative+'"'
+    $toolLines += 'File /r "'+$source+'\*"'
+}
+[IO.File]::WriteAllLines($toolInstall,$toolLines,$utf8)
 $check = @($files | ForEach-Object {
     $relative = $_.FullName.Substring($stage.Length+1)
     '${If} ${FileExists} "$INSTDIR\' + $relative + '"'
@@ -67,7 +80,8 @@ $output = Join-Path $project '安装包'
 New-Item -ItemType Directory -Force -Path $output | Out-Null
 $suffix = if ($TestPackage) { '-隔离验证' } else { '' }
 $setup = Join-Path $output "SerialStudio-$version-Windows-x64-Setup$suffix.exe"
-$arguments = @('/V3','/INPUTCHARSET','UTF8','/OUTPUTCHARSET','UTF8',"/DAPP_VERSION=$version","/DAPP_NUMERIC_VERSION=$numericVersion","/DPAYLOAD=$stage","/DOUTPUT_FILE=$setup","/DREMOVE_FILES=$removeFiles","/DREMOVE_DIRS=$removeDirs","/DCHECK_FILES=$checkFiles",('/DINSTALLED_KIB='+[Math]::Ceiling(($files | Measure-Object Length -Sum).Sum/1KB)))
+$toolBytes=(Get-ChildItem -LiteralPath $toolStage -File -Recurse|Measure-Object Length -Sum).Sum
+$arguments = @('/V3','/INPUTCHARSET','UTF8','/OUTPUTCHARSET','UTF8',"/DAPP_VERSION=$version","/DAPP_NUMERIC_VERSION=$numericVersion","/DPAYLOAD=$stage","/DOUTPUT_FILE=$setup","/DREMOVE_FILES=$removeFiles","/DREMOVE_DIRS=$removeDirs","/DCHECK_FILES=$checkFiles","/DTOOL_INSTALL=$toolInstall",('/DINSTALLED_KIB='+[Math]::Ceiling((($files | Measure-Object Length -Sum).Sum+$toolBytes)/1KB)))
 if ($TestPackage) { $arguments += '/DTEST_ROOT='+(Join-Path $buildRoot "验证环境-$version") }
 $arguments += Join-Path $project 'installer\安装包.nsi'
 & $nsis @arguments
