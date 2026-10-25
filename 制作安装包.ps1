@@ -35,6 +35,7 @@ New-Item -ItemType Directory -Path $stage | Out-Null
 Copy-Item -Path (Join-Path $release '*') -Destination $stage -Recurse
 Copy-Item -LiteralPath (Join-Path $project 'installer\图标.ico') -Destination (Join-Path $stage 'SerialStudio.ico')
 Copy-Item -LiteralPath (Join-Path $project '安装与卸载说明.md') -Destination $stage
+Copy-Item -LiteralPath (Join-Path $project "release-notes-v$version.md") -Destination $stage
 Copy-Item -LiteralPath (Join-Path $toolRoot 'nsis-3.11\COPYING') -Destination (Join-Path $stage 'licenses\NSIS-COPYING.txt')
 $files = @(Get-ChildItem -LiteralPath $stage -Recurse -File | Sort-Object FullName)
 $manifest = @($files | ForEach-Object { [ordered]@{path=$_.FullName.Substring($stage.Length+1);sha256=(Get-FileHash -LiteralPath $_.FullName).Hash;bytes=$_.Length} })
