@@ -87,6 +87,20 @@ QVariantList ToolManager::components() const {
     }
     return result;
 }
+QVariantList ToolManager::missingTools(const QStringList &names,const QVariantMap &explicitPaths) const {
+    QVariantList missing;QSet<QString> seen;
+    for(const auto &name:names) {
+        if(seen.contains(name)||!ToolPaths::resolve(name,explicitPaths.value(name).toString()).isEmpty())continue;
+        seen.insert(name);
+        for(const auto &entry:m_catalog) {
+            const auto row=entry.toMap();
+            if(row.value("tools").toMap().contains(name)) {
+                missing.append(QVariantMap{{"tool",name},{"componentId",row.value("id")},{"componentName",row.value("name")}});break;
+            }
+        }
+    }
+    return missing;
+}
 bool ToolManager::setPath(const QString &name,const QString &path) {
     bool known=false;for(const auto &item:m_catalog)if(item.toMap().value("tools").toMap().contains(name))known=true;
     if(!known || busy())return false;

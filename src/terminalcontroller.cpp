@@ -46,9 +46,7 @@ QString quoteArgument(const QString &value)
 
 TerminalController::TerminalController(QObject *parent):QObject(parent)
 {
-    Q_INIT_RESOURCE(terminal_catalog);
-    QFile catalog(":/terminal/data/terminal_commands.json");
-    if(catalog.open(QIODevice::ReadOnly))m_commands=QJsonDocument::fromJson(catalog.readAll()).array().toVariantList();
+    setCatalog(new CommandCatalog(QCoreApplication::applicationVersion().isEmpty()?"1.3.0":QCoreApplication::applicationVersion(),QString(),QString(),this));
     connect(&m_pty,&PseudoTerminal::received,this,[this](const QByteArray &bytes){if(m_transport!="serial")m_screen.feed(bytes);});
     connect(&m_screen,&TerminalScreen::output,this,[this](const QByteArray &bytes){
         if(m_transport=="serial"){
@@ -284,10 +282,18 @@ bool TerminalController::dispatch(const QString &kind,const QString &value)
     m_input.write(request);m_input.closeWriteChannel();m_timeout.start();
     m_status=QStringLiteral("正在投递输入…");emit changed();return true;
 }
+void TerminalController::setCatalog(CommandCatalog *catalog)
+{
+    if(m_catalog==catalog)return;
+    if(m_catalog){disconnect(m_catalog,nullptr,this,nullptr);if(m_catalog->parent()==this)m_catalog->deleteLater();}
+    m_catalog=catalog;
+    if(m_catalog)connect(m_catalog,&CommandCatalog::commandsChanged,this,[this]{++m_catalogRevision;emit catalogChanged();});
+    ++m_catalogRevision;emit catalogChanged();
+}
 QVariantList TerminalController::commands(int mode,const QString &search,const QString &category) const
 {
     QVariantList result;if(mode<0||mode>=systems.size())return result;
-    for(const auto &entry:m_commands){
+    for(const auto &entry:m_catalog?m_catalog->entries():QVariantList{}){
         const auto map=entry.toMap();if(map.value("system").toString()!=systems.at(mode))continue;
         if(!category.isEmpty()&&category!="全部"&&category!=map.value("category").toString())continue;
         const QString searchable=QString::fromUtf8(QJsonDocument(QJsonObject::fromVariantMap(map)).toJson(QJsonDocument::Compact));

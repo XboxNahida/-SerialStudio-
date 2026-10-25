@@ -87,6 +87,13 @@ private slots:
         network.responses<<feed({release("1.0.1-beta.1"),release("1.0.1",false)});
         stable.check(true);QTRY_VERIFY(!stable.busy());QVERIFY(stable.updateAvailable());QCOMPARE(stable.latestVersion(),QString("1.0.1"));
     }
+    void independentCatalogReleaseIsNotAppUpdate() {
+        ProbeNetwork network;UpdateController app("1.2.0",&network);
+        auto catalog=release("99.0.0",false);catalog["tag_name"]="catalog-v99.0.0";
+        network.responses<<feed({catalog,release("1.2.0",false)});
+        app.check(true);QTRY_VERIFY(!app.busy());QVERIFY(!app.updateAvailable());
+        QCOMPARE(app.latestVersion(),QString("1.2.0"));
+    }
     void channelsAndIgnore() {
         ProbeNetwork network;UpdateController checker("0.4.2-beta.1",&network);
         network.responses<<feed({release("0.4.3-beta.1"),release("0.4.2",false)});

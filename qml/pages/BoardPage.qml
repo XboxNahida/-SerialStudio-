@@ -13,6 +13,8 @@ Item {
     property var settings: null
     property var quickCommands: null
     property var discovery: null
+    property var toolManager: null
+    signal toolSettingsRequested(string componentId)
     property bool detailed: false
     property bool advanced: false
     property string pendingAdbSerial: ""
@@ -341,6 +343,12 @@ Item {
     }
     ColumnLayout {
         anchors.fill:parent;spacing:6
+        C.ToolHint {
+            objectName:"terminalToolHint";Layout.fillWidth:true;manager:root.toolManager
+            tools:root.interactive?(root.terminalTransport==="ssh"?["ssh"]:root.terminalTransport==="adb"?["adb"]:[]):source.currentIndex===2?["ssh"]:[]
+            paths:({adb:root.adb && root.adb.resolvedPath?root.adb.resolvedPath:adbPath.text})
+            onSettingsRequested:function(componentId){root.toolSettingsRequested(componentId)}
+        }
         RowLayout {
             Layout.fillWidth:true;spacing:5
             C.ActionButton {objectName:"boardDrawerButton";text:"配置";implicitHeight:30;onClicked:boardDrawer.open()}

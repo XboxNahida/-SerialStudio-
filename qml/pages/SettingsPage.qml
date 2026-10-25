@@ -8,6 +8,8 @@ ScrollView {
     id: root
     required property var backend
     property var updater: null
+    property var catalog: null
+    property var catalogUpdater: null
     property string appVersion: ""
     property var settings: null
     property var systemProxy: null
@@ -15,10 +17,31 @@ ScrollView {
     property bool toolAdvanced: false
     property string selectedTool: ""
     property var pendingTool: ({})
+    property string focusedTool: ""
+    property bool canReturn: false
+    signal returnRequested()
     property bool detailed: false
     signal themeToggleRequested()
     clip: true
+    topPadding:canReturn?42:0
     contentWidth: availableWidth
+    C.ActionButton {
+        parent:root;z:10;anchors {right:parent.right;top:parent.top;rightMargin:12;topMargin:6}
+        objectName:"returnFromTools";visible:root.canReturn;text:"返回刚才页面";onClicked:root.returnRequested()
+    }
+    function showUpdates(){contentItem.contentY=0}
+    function showTools(componentId) {
+        focusedTool=componentId || ""
+        if(toolManager)toolManager.refresh()
+        Qt.callLater(function(){
+            let target=toolsPanel.y
+            for(let i=0;i<toolRows.count;i++) {
+                const row=toolRows.itemAt(i)
+                if(row && row.modelData.id===root.focusedTool){target+=row.y+12;break}
+            }
+            root.contentItem.contentY=Math.max(0,Math.min(target,root.contentItem.contentHeight-root.availableHeight))
+        })
+    }
     FileDialog {
         id: toolPicker; title: "选择工具可执行文件"; nameFilters: ["可执行程序 (*.exe)"]
         onAccepted: if(root.toolManager)root.toolManager.setPath(root.selectedTool,selectedFile.toString())
@@ -36,7 +59,9 @@ ScrollView {
     }
     ColumnLayout {
         width: root.availableWidth; spacing: 16
+        C.UpdateSettings {objectName:"updateSettingsPanel";Layout.fillWidth:true;updater:root.updater;catalog:root.catalog;catalogUpdater:root.catalogUpdater;appVersion:root.appVersion}
         C.Panel {
+            id:toolsPanel;objectName:"toolsSettingsPanel"
             Layout.fillWidth: true; implicitHeight: toolColumn.implicitHeight+32
             ColumnLayout {
                 id: toolColumn
@@ -53,11 +78,13 @@ ScrollView {
                 ProgressBar {Layout.fillWidth:true;visible:root.toolManager && root.toolManager.busy;value:root.toolManager?root.toolManager.progress:0}
                 C.ActionButton {text:"取消下载/解压";visible:root.toolManager && root.toolManager.busy;onClicked:root.toolManager.cancel()}
                 Repeater {
+                    id:toolRows
                     model:root.toolManager?root.toolManager.components:[]
                     delegate: ColumnLayout {
                         id: toolRow
                         required property var modelData
                         Layout.fillWidth:true;spacing:6
+                        Text {visible:root.focusedTool===toolRow.modelData.id;Layout.fillWidth:true;wrapMode:Text.Wrap;color:C.Theme.accent;text:"▼ 当前需要的组件 · "+toolRow.modelData.name}
                         RowLayout {
                             Layout.fillWidth:true
                             Text {Layout.fillWidth:true;wrapMode:Text.Wrap;color:C.Theme.text;text:toolRow.modelData.name+" · "+(toolRow.modelData.available?"可用":"未找到")+(toolRow.modelData.version?"\n提供版本："+toolRow.modelData.version:"")}
@@ -92,26 +119,6 @@ ScrollView {
                 Text { Layout.fillWidth: true; wrapMode: Text.Wrap; color: C.Theme.muted; text: root.systemProxy ? root.systemProxy.status : "代理服务未启用" }
                 Text { Layout.fillWidth: true; wrapMode: Text.Wrap; color: C.Theme.subtle; font.pixelSize: 12; text: "更新、工具下载、HTTP 和 MQTT 使用系统代理规则；失败时不擅自改为直连。SSH/SFTP、网络 ADB 使用系统路由和各自连接设置，不自动使用 HTTP 代理。USB ADB 为本机连接。代理变更对新请求/重连生效。" }
                 C.ActionButton { text: "刷新代理状态"; onClicked: if(root.systemProxy) root.systemProxy.refresh() }
-            }
-        }
-        C.Panel {
-            Layout.fillWidth: true; implicitHeight: updateColumn.implicitHeight + 40
-            ColumnLayout {
-                id: updateColumn
-                anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top; anchors.margins: 20; spacing: 12
-                Text { text: "版本与安装管理  ·  " + root.appVersion; color: C.Theme.text; font.pixelSize: 18; font.weight: Font.DemiBold }
-                Text { Layout.fillWidth: true; wrapMode: Text.Wrap; text: root.updater ? root.updater.status : "更新组件未启用"; color: root.updater && root.updater.updateAvailable ? C.Theme.accent : C.Theme.muted; font.pixelSize: 12 }
-                ProgressBar { Layout.fillWidth: true; visible: root.updater && (root.updater.busy || root.updater.downloadReady); value: root.updater ? root.updater.progress : 0 }
-                Flow {
-                    Layout.fillWidth: true; spacing: 8
-                    C.ActionButton { objectName: "checkUpdates"; text: "检查更新"; enabled: root.updater && !root.updater.busy; onClicked: root.updater.check(true) }
-                    C.ActionButton { objectName: "downloadUpdate"; text: "下载安装包"; enabled: root.updater && root.updater.canDownload && !root.updater.busy && !root.updater.downloadReady; onClicked: root.updater.download() }
-                    C.ActionButton { objectName: "installUpdate"; text: "退出并安装"; enabled: root.updater && root.updater.downloadReady && !root.updater.busy; onClicked: root.updater.install() }
-                    C.ActionButton { text: "忽略此版本"; enabled: root.updater && root.updater.updateAvailable && !root.updater.busy; onClicked: root.updater.ignore() }
-                    C.ActionButton { text: "打开 Release"; enabled: root.updater !== null; onClicked: root.updater.openRelease() }
-                    C.ActionButton { objectName: "uninstallApp"; text: "卸载应用…"; enabled: root.updater && root.updater.uninstallAvailable && !root.updater.busy; onClicked: root.updater.uninstall() }
-                }
-                Text { Layout.fillWidth: true; wrapMode: Text.Wrap; text: "启动后后台检查，不自动安装。安装时请保持原安装目录，新版将完整替换旧程序文件。\n卸载按钮打开系统卸载向导；便携运行时不可用。测试版接收测试和正式更新，正式版只接收正式更新。"; color: C.Theme.subtle; font.pixelSize: 11 }
             }
         }
         C.Panel {

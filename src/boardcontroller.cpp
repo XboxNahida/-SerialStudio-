@@ -25,10 +25,16 @@ QVariantList BoardController::terminalSessions() const
                                   {"active",m_terminals.at(i)->active()}});
     return result;
 }
+void BoardController::setCatalog(CommandCatalog *catalog)
+{
+    m_catalog=catalog;
+    for(auto *session:m_terminals)session->setCatalog(catalog);
+}
 void BoardController::newTerminal()
 {
     const bool persist=m_terminals.isEmpty() || terminal()->adb()->persistenceEnabled();
     auto *session=new TerminalController(this);
+    if(m_catalog)session->setCatalog(m_catalog);
     session->adb()->setPersistenceEnabled(persist);
     m_terminals.append(session);m_terminalIndex=int(m_terminals.size())-1;
     connect(session,&TerminalController::changed,this,&BoardController::terminalsChanged);

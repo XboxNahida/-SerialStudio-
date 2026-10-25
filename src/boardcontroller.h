@@ -22,6 +22,7 @@ public:
     TerminalController *terminal() { return m_terminals.at(m_terminalIndex); }
     QVariantList terminalSessions() const;
     int terminalIndex() const { return m_terminalIndex; }
+    void setCatalog(CommandCatalog *catalog);
     Q_INVOKABLE void newTerminal();
     Q_INVOKABLE void selectTerminal(int index);
     Q_INVOKABLE void closeTerminal(int index);
@@ -39,6 +40,7 @@ private:
     Session *m_serial, *m_network, *m_selected = nullptr;
     QProcess m_process;
     QList<TerminalController*> m_terminals;
+    QPointer<CommandCatalog> m_catalog;
     int m_terminalIndex = 0;
     QTimer m_timer;
     QByteArray m_stdout, m_stderr, m_head, m_tail;

@@ -16,7 +16,7 @@ if ((Get-FileHash -LiteralPath $archive).Hash -ne $toolHash) { throw 'NSIS 压�
 if (!(Test-Path -LiteralPath $nsis)) { Expand-Archive -LiteralPath $archive -DestinationPath $toolRoot }
 if (!$SkipBuild) { & (Join-Path $project '构建.ps1'); if (!$?) { throw '程序构建失败' } }
 $release = Join-Path $project 'release'
-foreach ($name in @('SerialStudio.exe','Qt6Core.dll','Qt6Quick.dll','Qt6SerialPort.dll','Qt6Multimedia.dll','platforms\qwindows.dll','qt.conf','终端指令辅助说明.md')) {
+foreach ($name in @('SerialStudio.exe','Qt6Core.dll','Qt6Quick.dll','Qt6SerialPort.dll','Qt6Multimedia.dll','platforms\qwindows.dll','qt.conf','终端指令辅助说明.md','catalog\terminal_commands.json','指令库更新说明.md')) {
     if (!(Test-Path -LiteralPath (Join-Path $release $name))) { throw "缺少发布文件：$name" }
 }
 if ((Get-FileHash (Join-Path $release 'SerialStudio.exe')).Hash -ne (Get-FileHash (Join-Path $project 'build\SerialStudio.exe')).Hash) { throw 'release 与最新构建 EXE 不一致' }

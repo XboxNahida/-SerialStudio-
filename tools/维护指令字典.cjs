@@ -307,6 +307,8 @@ for(const r of [
 function tokens(s){return s.match(/(?:"(?:[^"\\]|\\.)*"|'[^']*'|[^\s"'])+/g)||[]}
 for(const e of entries) {
  if(e.interaction!=='shell')continue;
+ // WSL 逐词说明与高级示例由数据源手工维护，不用通用推断覆盖。
+ if(e.category==='WSL/虚拟机')continue;
  const ts=tokens(e.example),toolIndex=ts[0]==='toybox'?1:0,tool=(ts[toolIndex]||'').replace(/\.exe$/i,'').toLowerCase();
  let r=refs[tool==='jlink'?'jlinkexe':tool];
  if(e.system==='cmd' && ['find','sort','mkdir','ping'].includes(tool)) {

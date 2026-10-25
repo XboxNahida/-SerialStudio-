@@ -3,12 +3,33 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 #include <QJsonDocument>
+#include <QJsonArray>
+#include <QTemporaryDir>
+#include <QFile>
+#include "commandcatalog.h"
 #include "boardcontroller.h"
 #include "bridgecodec.h"
 
 class BoardTests : public QObject {
     Q_OBJECT
 private slots:
+    void sharedExternalCatalogRefreshesEverySession() {
+        QTemporaryDir dir;CommandCatalog catalog("1.3.0",dir.path());
+        Session serial(nullptr,false),network(nullptr,false);BoardController board(&serial,&network);
+        board.setCatalog(&catalog);auto *first=board.terminal();
+        board.newTerminal();auto *second=board.terminal();
+        QSignalSpy firstChanged(first,&TerminalController::catalogChanged),secondChanged(second,&TerminalController::catalogChanged);
+        QFile seed(QCoreApplication::applicationDirPath()+"/catalog/terminal_commands.json");QVERIFY(seed.open(QIODevice::ReadOnly));
+        auto object=QJsonDocument::fromJson(seed.readAll()).object();auto entries=object["commands"].toArray();
+        auto entry=entries[0].toObject();entry["id"]="linux-catalog-shared-test";entry["example"]="echo catalog-updated";
+        object["commands"]=QJsonArray{entry};object["catalogVersion"]="1.1.0";
+        QVERIFY(catalog.apply(QJsonDocument(object).toJson()));
+        QCOMPARE(firstChanged.count(),1);QCOMPARE(secondChanged.count(),1);
+        QCOMPARE(first->commands(0,"","").size(),1);QCOMPARE(second->commands(0,"","").first().toMap().value("example").toString(),QString("echo catalog-updated"));
+        QVERIFY(first->commands(3,"","").isEmpty());
+        board.newTerminal();QCOMPARE(board.terminal()->commands(0,"","").size(),1);
+        QVERIFY(!first->active());QVERIFY(!second->active());QVERIFY(!board.terminal()->active());
+    }
     void terminalSessionsKeepIndependentScreens()
     {
         Session serial(nullptr,false),network(nullptr,false);BoardController board(&serial,&network);

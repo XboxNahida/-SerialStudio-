@@ -31,6 +31,17 @@ protected:
 class ToolManagerTests: public QObject {
     Q_OBJECT
 private slots:
+    void missingToolsRespectSelectedPaths() {
+        QTemporaryDir dir;SettingsStore settings(dir.filePath("config"));ToolManager manager(&settings,nullptr,dir.filePath("tools"));
+        const auto absent=dir.filePath("not-installed.exe");
+        const auto rows=manager.missingTools({"adb","sftp"},{{"adb",absent},{"sftp",absent}});
+        QCOMPARE(rows.size(),2);QCOMPARE(rows[0].toMap().value("componentId").toString(),QString("android-platform-tools"));
+        QCOMPARE(rows[1].toMap().value("componentId").toString(),QString("openssh"));
+        const auto program=QCoreApplication::applicationFilePath();
+        QVERIFY(manager.missingTools({"adb","sftp"},{{"adb",program},{"sftp",program}}).isEmpty());
+        QVERIFY(manager.missingTools({}).isEmpty());
+        QVERIFY(!manager.busy());
+    }
     void failedDigestSizeAndCancelNeverInstall() {
         for(const auto &scenario:{"hash","size","cancel"}) {
             QTemporaryDir d;SettingsStore settings(d.filePath("config"));ArchiveNetwork network;

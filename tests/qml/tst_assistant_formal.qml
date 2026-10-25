@@ -15,9 +15,13 @@ TestCase {
         property string lastFill: ""
         property var applied: ({})
         property bool realCatalog: false
+        property int catalogRevision: 0
+        property var catalogState: ({replaced:false})
+        signal catalogChanged()
         function fill(text) { lastFill=text; return true }
         function applyCommand(entry) { applied=entry; return true }
         function commands(mode, search, category) {
+            if(catalogState.replaced)return [{id:"new-entry",category:"新分类",title:"新指令",syntax:"whoami",example:"whoami",description:"只查询",interaction:"shell"}]
             if(realCatalog)return dictionaryEntries.filter(function(e){return e.system===["linux","powershell","cmd","android"][mode]})
             return [{id:"sample",category:"文件",title:"当前目录",syntax:"pwd",example:"pwd",description:"只查询",requires:"Linux Shell",interaction:"shell"},
                     {id:"key",category:"编辑器按键",title:"保存退出",syntax:":wq",example:":wq",description:"编辑器内部",requires:"Vi 编辑器",interaction:"editor-key",key:":wq",delivery:"先 Esc 再输入，最后手动 Enter"}]
@@ -43,11 +47,32 @@ TestCase {
     }
     Component { id: factory; App.CommandAssistant {controller:terminal;repository:repo} }
     function init() {
-        terminal.active=true;terminal.inputBusy=false;terminal.mode=0;terminal.lastFill="";terminal.applied=({});terminal.realCatalog=false
+        terminal.active=true;terminal.inputBusy=false;terminal.mode=0;terminal.lastFill="";terminal.applied=({});terminal.realCatalog=false;terminal.catalogState.replaced=false
         repo.saved=[];repo.lastScope="";repo.importUrl="";repo.exportUrl=""
         assistant=factory.createObject(null);verify(assistant!==null);assistant.showFor(0);wait(80)
     }
     function cleanup() {assistant.destroy();wait(20)}
+    function test_catalogUpdatePreservesDraftWhenEntryRemoved() {
+        const edit=findChild(assistant,"commandEdit")
+        edit.text="echo my-unfinished-input"
+        terminal.catalogState.replaced=true;terminal.catalogRevision++;terminal.catalogChanged();wait(100)
+        compare(edit.text,"echo my-unfinished-input")
+        verify(assistant.entries.some(function(e){return e.id==="new-entry"}))
+        compare(terminal.lastFill,"")
+    }
+    function test_catalogUpdatePreservesDraftWhenSearchBecomesEmpty() {
+        findChild(assistant,"commandSearch").text="pwd";wait(30)
+        const edit=findChild(assistant,"commandEdit");edit.text="pwd -P unfinished"
+        terminal.catalogState.replaced=true;terminal.catalogRevision++;terminal.catalogChanged();wait(100)
+        compare(assistant.entryCount,0);compare(edit.text,"pwd -P unfinished")
+    }
+    function test_catalogUpdatePreservesDraftWhenCategoryRemoved() {
+        const category=findChild(assistant,"commandCategory")
+        category.currentIndex=category.model.indexOf("文件");wait(30)
+        const edit=findChild(assistant,"commandEdit");edit.text="echo my category draft"
+        terminal.catalogState.replaced=true;terminal.catalogRevision++;terminal.catalogChanged();wait(100)
+        compare(edit.text,"echo my category draft")
+    }
     function test_windowAndGrouping() {
         compare(assistant.transientParent,null);compare(assistant.modality,Qt.NonModal)
         verify(!(assistant.flags & Qt.WindowStaysOnTopHint));compare(assistant.width,760);compare(assistant.height,580)

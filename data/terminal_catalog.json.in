@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "1.0.0",
+  "minAppVersion": "1.3.0",
+  "commands": @TERMINAL_COMMAND_DATA@
+}

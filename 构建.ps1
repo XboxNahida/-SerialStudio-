@@ -56,6 +56,9 @@ try {
     if (!$SkipDeploy) {
         New-Item -ItemType Directory -Force -Path $release | Out-Null
         Copy-Item -LiteralPath (Join-Path $build 'SerialStudio.exe') -Destination $release -Force
+        $catalogOutput = Join-Path $release 'catalog'
+        New-Item -ItemType Directory -Force -Path $catalogOutput | Out-Null
+        Copy-Item -LiteralPath (Join-Path $build 'catalog\terminal_commands.json') -Destination $catalogOutput -Force
         Copy-Item -LiteralPath (Join-Path $localQt 'bin\Qt6SerialPort.dll') -Destination $release -Force
         # 使用项目内的部署工具视图，将 Qt 主模块与本地 SerialPort 放在同一查询路径。
         # 只复制文件，不修改全局 Qt；部署工具仍正常检查所有依赖。
@@ -80,7 +83,7 @@ try {
         Copy-Item -LiteralPath (Join-Path $projectRoot '桥接协议说明.md') -Destination $release -Force
         Copy-Item -LiteralPath (Join-Path $projectRoot '数据解析与文件传输说明.md') -Destination $release -Force
         Copy-Item -LiteralPath (Join-Path $projectRoot '终端指令辅助说明.md') -Destination $release -Force
-        foreach ($document in @('正式版验收清单.md','指令任务覆盖矩阵.md','工具链与代理说明.md','安装与卸载说明.md')) {
+        foreach ($document in @('正式版验收清单.md','指令任务覆盖矩阵.md','工具链与代理说明.md','安装与卸载说明.md','指令库更新说明.md')) {
             if (Test-Path -LiteralPath (Join-Path $projectRoot $document)) { Copy-Item -LiteralPath (Join-Path $projectRoot $document) -Destination $release -Force }
         }
         $boardOutput = Join-Path $release 'board'

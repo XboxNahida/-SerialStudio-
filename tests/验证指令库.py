@@ -124,6 +124,25 @@ class 指令库验证(unittest.TestCase):
             self.assertGreaterEqual(covered / total, .85, system)
             print(f'任务覆盖：{system} {covered}/{total} = {covered / total:.1%}')
 
+    def test_WSL虚拟机指令覆盖(self):
+        """WSL 管理命令在 Windows 两种主机终端中都可搜索并带参数说明。"""
+        for system in ('powershell', 'cmd'):
+            entries = [c for c in self.commands if c['system'] == system and c['category'] == 'WSL/虚拟机']
+            self.assertGreaterEqual(len(entries), 18, system)
+            examples = {c['syntax'] for c in entries}
+            for command in ('wsl --status', 'wsl --list --verbose', 'wsl --shutdown',
+                            'wsl --terminate <发行版>', 'wsl --export <发行版> <文件.tar>',
+                            'wsl --import <发行版> <安装目录> <文件.tar>',
+                            'wsl --set-version <发行版> <版本>',
+                            'wsl --distribution <发行版> --exec <命令>'):
+                self.assertIn(command, examples, f'{system} 缺少 {command}')
+            for entry in entries:
+                self.assertTrue(entry['options'] or entry['parameters'], entry['id'])
+                self.assertTrue(entry['advanced'], entry['id'])
+                self.assertNotRegex(entry['example'], r'<[^>]+>', '示例应可逐项填空，不能整条退化为表达式')
+            version = next(c for c in entries if c['id'] == f'{system}-wsl-set-version')
+            self.assertEqual({p['value'] for p in version['parameters'][-1]['choices']}, {'1', '2'})
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

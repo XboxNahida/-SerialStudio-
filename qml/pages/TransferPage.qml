@@ -8,6 +8,8 @@ Item {
     id: root
     required property var controller
     property var files: null
+    property var toolManager: null
+    signal toolSettingsRequested(string componentId)
     property bool legacy: false
     property var settings: null
     property bool detailed: false
@@ -42,7 +44,8 @@ Item {
     FileBrowser {
         anchors.fill:parent;anchors.topMargin:44
         visible:root.files!==null && !root.legacy
-        files:root.files;settings:root.settings;transfer:root.controller
+        files:root.files;settings:root.settings;transfer:root.controller;toolManager:root.toolManager
+        onToolSettingsRequested:function(componentId){root.toolSettingsRequested(componentId)}
     }
     RowLayout {
         anchors.fill: parent; spacing: 16
@@ -55,6 +58,7 @@ Item {
                 ColumnLayout {
                     width: parent.width; spacing: 9
                     Text { text: "文件与通信方式"; color: C.Theme.text; font.pixelSize: 16; font.weight: Font.DemiBold }
+                    C.ToolHint {objectName:"transferToolHint";Layout.fillWidth:true;manager:root.toolManager;tools:mode.currentIndex>0?["sftp"]:[];onSettingsRequested:function(componentId){root.toolSettingsRequested(componentId)}}
                     C.SelectBox { id: mode; objectName: "transferMode"; Layout.fillWidth: true; model: ["USB / 本地磁盘复制","网络 · SFTP 上传","网络 · SFTP 下载"]; enabled: !root.controller || !root.controller.busy;onCurrentIndexChanged:if(overwrite)overwrite.checked=false }
                     Text {visible:form.error!=="";text:form.error;color:C.Theme.red;Layout.fillWidth:true;wrapMode:Text.Wrap;font.pixelSize:11}
                     Text { text: mode.currentIndex===2 ? "本地保存文件（不可已存在）":"来源文件（任意格式）"; color: C.Theme.muted; font.pixelSize: 11 }

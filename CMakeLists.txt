@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
-project(SerialStudio VERSION 1.2.0 LANGUAGES C CXX)
-set(SERIALSTUDIO_VERSION "1.2.0")
+project(SerialStudio VERSION 1.3.0 LANGUAGES C CXX)
+set(SERIALSTUDIO_VERSION "1.3.0")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/deps/qt/lib/cmake/Qt6SerialPort/Qt6SerialPortConfig.cmake")
@@ -17,6 +17,8 @@ qt_add_qml_module(SerialStudio
         qml/components/Theme.qml qml/components/ActionButton.qml
         qml/components/SelectBox.qml qml/components/InputBox.qml
         qml/components/CommandInput.qml qml/components/CommandGuide.js
+        qml/components/UpdateSettings.qml qml/components/UpdateNotice.qml
+        qml/components/ToolHint.qml
         qml/components/AdbNetwork.qml
         qml/components/Panel.qml qml/components/Metric.qml
         qml/components/QuickSendPanel.qml qml/components/PersistentForm.qml
@@ -46,6 +48,18 @@ add_library(updatecore STATIC src/updatecontroller.cpp src/updatecontroller.h)
 target_include_directories(updatecore PUBLIC src)
 target_link_libraries(updatecore PUBLIC proxycore Qt6::Gui)
 target_link_libraries(SerialStudio PRIVATE updatecore)
+add_library(catalogcore STATIC src/commandcatalog.cpp src/commandcatalog.h src/catalogupdater.cpp src/catalogupdater.h)
+target_include_directories(catalogcore PUBLIC src)
+target_link_libraries(catalogcore PUBLIC updatecore)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/data/terminal_commands.json" TERMINAL_COMMAND_DATA)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS data/terminal_commands.json)
+configure_file(data/terminal_catalog.json.in catalog/terminal_commands.json @ONLY)
+qt_add_executable(catalog_tests tests/catalog_tests.cpp)
+target_link_libraries(catalog_tests PRIVATE catalogcore Qt6::Test)
+add_test(NAME catalog_tests COMMAND catalog_tests)
+qt_add_executable(catalogupdate_tests tests/catalogupdate_tests.cpp)
+target_link_libraries(catalogupdate_tests PRIVATE catalogcore Qt6::Test)
+add_test(NAME catalogupdate_tests COMMAND catalogupdate_tests)
 target_compile_definitions(SerialStudio PRIVATE SERIALSTUDIO_VERSION="${SERIALSTUDIO_VERSION}")
 qt_add_executable(update_tests tests/update_tests.cpp)
 target_link_libraries(update_tests PRIVATE updatecore Qt6::Test)
@@ -81,7 +95,7 @@ add_test(NAME toolmanager_tests COMMAND toolmanager_tests)
 add_library(terminalcore STATIC src/terminalcontroller.cpp src/terminalcontroller.h src/adbdiscovery.cpp src/adbdiscovery.h
     src/terminalscreen.cpp src/terminalscreen.h src/pseudoterminal.cpp src/pseudoterminal.h)
 target_include_directories(terminalcore PUBLIC src)
-target_link_libraries(terminalcore PUBLIC Qt6::Gui Qt6::SerialPort vterm toolpathcore)
+target_link_libraries(terminalcore PUBLIC Qt6::Gui Qt6::SerialPort vterm toolpathcore catalogcore)
 add_library(terminalview STATIC src/terminalview.cpp src/terminalview.h)
 target_link_libraries(terminalview PUBLIC terminalcore Qt6::Quick)
 target_include_directories(terminalview PUBLIC src)
@@ -114,7 +128,6 @@ foreach(check settings terminalscreen pty discovery)
     target_link_libraries(${check}_tests PRIVATE settingscore discoverycore Qt6::Test)
     add_test(NAME ${check}_tests COMMAND ${check}_tests -o ${check}-results.txt,txt)
 endforeach()
-qt_add_resources(terminalcore terminal_catalog PREFIX "/terminal" FILES data/terminal_commands.json)
 qt_add_executable(terminal_tests tests/terminal_tests.cpp)
 target_link_libraries(terminal_tests PRIVATE terminalcore Qt6::Test)
 add_test(NAME terminal_tests COMMAND terminal_tests -o terminal-results.txt,txt)
@@ -194,7 +207,7 @@ set_tests_properties(ui_tests PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;
 add_test(NAME app_startup_tests COMMAND SerialStudio --smoke-test)
 set_tests_properties(app_startup_tests PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software;QT_QPA_FONTDIR=C:/Windows/Fonts")
 if(MINGW)
-    foreach(own_target settingscore discoverycore internetcore terminalview proxycore toolpathcore toolcore)
+    foreach(own_target settingscore discoverycore internetcore terminalview proxycore toolpathcore toolcore catalogcore)
         target_compile_options(${own_target} PRIVATE -Wall -Wextra -Wpedantic)
     endforeach()
     target_compile_options(terminalcore PRIVATE -Wall -Wextra -Wpedantic)

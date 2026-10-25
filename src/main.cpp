@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QFile>
 #include <QTemporaryDir>
+#include <QSettings>
 #include "session.h"
 #include "boardcontroller.h"
 #include "filetransfer.h"
@@ -22,6 +23,7 @@
 #include "remotefiles.h"
 #include "systemproxy.h"
 #include "toolmanager.h"
+#include "catalogupdater.h"
 
 int main(int argc, char *argv[])
 {
@@ -59,12 +61,18 @@ int main(int argc, char *argv[])
     QTemporaryDir previewConfig;
     const bool preview=cli.isSet("smoke-test")||cli.isSet("capture");
     SettingsStore settings(cli.isSet("config-dir")?cli.value("config-dir"):preview?previewConfig.path():QString());
+    if(preview||cli.isSet("config-dir")) {
+        QSettings::setDefaultFormat(QSettings::IniFormat);
+        QSettings::setPath(QSettings::IniFormat,QSettings::UserScope,settings.directory());
+    }
     SystemProxy systemProxy;
     ToolManager toolManager(&settings,&systemProxy,(preview||cli.isSet("config-dir"))?QDir(settings.directory()).filePath("tools"):QString());
     QuickCommands quickCommands(&settings);
     Session session(nullptr, !preview&&!cli.isSet("config-dir"));
     Session network(nullptr, false);
+    CommandCatalog catalog(QCoreApplication::applicationVersion(),(preview||cli.isSet("config-dir"))?QDir(settings.directory()).filePath("catalog"):QString());
     BoardController board(&session, &network);
+    board.setCatalog(&catalog);
     DeviceDiscovery discovery(nullptr,!preview);
     const bool persistLegacy=!preview && !cli.isSet("config-dir");
     board.terminal()->adb()->setPersistenceEnabled(persistLegacy);
@@ -76,8 +84,10 @@ int main(int argc, char *argv[])
     RemoteFiles files;
     files.adb()->setPersistenceEnabled(false);
     UpdateController updater(QCoreApplication::applicationVersion());
+    CatalogUpdater catalogUpdater(&catalog,QCoreApplication::applicationVersion());
     QObject::connect(&updater,&UpdateController::exitRequested,&app,&QCoreApplication::quit);
     if(!cli.isSet("smoke-test")&&!cli.isSet("capture"))QTimer::singleShot(2500,&updater,[&updater]{updater.check(false);});
+    if(!preview)QTimer::singleShot(3500,&catalogUpdater,[&catalogUpdater]{catalogUpdater.check(false);});
     QQmlApplicationEngine engine;
     engine.setInitialProperties({{"backend", QVariant::fromValue(&session)},
                                  {"networkBackend", QVariant::fromValue(&network)},
@@ -85,6 +95,8 @@ int main(int argc, char *argv[])
                                  {"transfer", QVariant::fromValue(&transfer)},
                                  {"files", QVariant::fromValue(&files)},
                                  {"updater", QVariant::fromValue(&updater)},
+                                 {"catalog", QVariant::fromValue(&catalog)},
+                                 {"catalogUpdater", QVariant::fromValue(&catalogUpdater)},
                                  {"settings", QVariant::fromValue(&settings)},
                                  {"quickCommands", QVariant::fromValue(&quickCommands)},
                                  {"discovery", QVariant::fromValue(&discovery)},

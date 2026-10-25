@@ -13,6 +13,9 @@ ApplicationWindow {
     property var transfer: null
     property var files: null
     property var updater: null
+    property var catalog: null
+    property var catalogUpdater: null
+    readonly property bool hasUpdates: !!((updater && updater.updateAvailable) || (catalogUpdater && catalogUpdater.updateAvailable))
     property var settings: null
     property var quickCommands: null
     property var discovery: null
@@ -20,6 +23,12 @@ ApplicationWindow {
     property var mqtt: null
     property var systemProxy: null
     property var toolManager: null
+    property int toolsReturnPage: -1
+    function showToolSettings(componentId) {
+        if(pageIndex!==2)toolsReturnPage=pageIndex
+        pageIndex=2
+        settingsPage.showTools(componentId)
+    }
     property bool detailed: false
     property string appVersion: ""
     property int parserSource: 0
@@ -61,6 +70,7 @@ ApplicationWindow {
     }
     Component.onCompleted: C.Theme.dark = lightMode ? false : backend.preferences.dark !== false
     onLightModeChanged: C.Theme.dark = !lightMode
+    C.UpdateNotice {updater:root.updater;catalogUpdater:root.catalogUpdater;onOpenUpdates:{root.pageIndex=2;settingsPage.showUpdates()}}
     FileDialog {
         id: saveDialog; title: "保存当前终端记录"; fileMode: FileDialog.SaveFile
         nameFilters: ["JSON 行日志 (*.jsonl)", "所有文件 (*)"]
@@ -119,7 +129,12 @@ ApplicationWindow {
                                 Text { text: nav.modelData.sub; color: C.Theme.subtle; font.family: "Consolas"; font.pixelSize: 8; font.letterSpacing: 1 }
                             }
                             Item { Layout.fillWidth: true }
-                            Rectangle { visible: (nav.page === 2 && root.updater && root.updater.updateAvailable) || root.pageIndex === nav.page; width: 3; height: 18; radius: 1; color: nav.page === 2 && root.updater && root.updater.updateAvailable ? C.Theme.red : C.Theme.accent; Layout.rightMargin: 8 }
+                            Row {
+                                visible:nav.page===2 && root.hasUpdates;spacing:4;Layout.rightMargin:8
+                                Rectangle {objectName:"appUpdateDot";visible:root.updater && root.updater.updateAvailable;width:6;height:6;radius:3;color:C.Theme.red}
+                                Rectangle {objectName:"catalogUpdateDot";visible:root.catalogUpdater && root.catalogUpdater.updateAvailable;width:6;height:6;radius:3;color:C.Theme.red}
+                            }
+                            Rectangle {visible:root.pageIndex===nav.page && !(nav.page===2 && root.hasUpdates);width:3;height:18;radius:1;color:C.Theme.accent;Layout.rightMargin:8}
                         }
                         MouseArea { id: navMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: {root.pageIndex = nav.page;navigation.close()} }
                     }
@@ -152,7 +167,10 @@ ApplicationWindow {
             anchors.fill:parent;anchors.margins:10;spacing:8
             RowLayout {
                 Layout.fillWidth: true; Layout.preferredHeight: 34;spacing:8
-                C.ActionButton {objectName:"navigationButton";text:"☰";implicitWidth:36;implicitHeight:32;onClicked:navigation.open();ToolTip.visible:hovered;ToolTip.text:"切换页面"}
+                C.ActionButton {
+                    objectName:"navigationButton";text:"☰";implicitWidth:36;implicitHeight:32;onClicked:navigation.open();ToolTip.visible:hovered;ToolTip.text:root.hasUpdates?"切换页面 · 设置中有更新":"切换页面"
+                    Rectangle {objectName:"pendingUpdateDot";visible:root.hasUpdates;anchors.right:parent.right;anchors.top:parent.top;width:7;height:7;radius:4;color:C.Theme.red}
+                }
                 Column {
                     spacing: 2
                     Text { text: ["串口工作台","协议解析","设置与扩展","网络调试","开发板终端","文件传输","","HTTP / MQTT"][root.pageIndex]; color: C.Theme.text; font.pixelSize: 18; font.weight: Font.DemiBold }
@@ -207,10 +225,10 @@ ApplicationWindow {
                 Layout.fillWidth: true; Layout.fillHeight: true; currentIndex: root.pageIndex
                 Pages.TerminalPage { id:serialPage;backend: root.backend; settings:root.settings;quickCommands:root.quickCommands;discovery:root.discovery;detailed:root.detailed;onSaveRequested: saveDialog.open() }
                 Pages.ProtocolPage { id: protocolPage; backend: root.activeBackend;settings:root.settings;detailed:root.detailed;scope:root.parserSource===1?"network":"serial" }
-                Pages.SettingsPage { backend: root.backend; updater: root.updater;settings:root.settings;systemProxy:root.systemProxy;toolManager:root.toolManager;detailed:root.detailed; appVersion: root.appVersion;onThemeToggleRequested:{root.lightMode=C.Theme.dark;C.Theme.dark=!root.lightMode;root.backend.savePreference("dark",C.Theme.dark)} }
+                Pages.SettingsPage {id:settingsPage;backend:root.backend;updater:root.updater;catalog:root.catalog;catalogUpdater:root.catalogUpdater;settings:root.settings;systemProxy:root.systemProxy;toolManager:root.toolManager;canReturn:root.toolsReturnPage>=0;detailed:root.detailed;appVersion:root.appVersion;onReturnRequested:{root.pageIndex=root.toolsReturnPage;root.toolsReturnPage=-1} onThemeToggleRequested:{root.lightMode=C.Theme.dark;C.Theme.dark=!root.lightMode;root.backend.savePreference("dark",C.Theme.dark)}}
                 Pages.TerminalPage {id:networkPage; backend: root.networkBackend; settings:root.settings;quickCommands:root.quickCommands;discovery:root.discovery;detailed:root.detailed;networkMode: true; onSaveRequested: saveDialog.open() }
-                Pages.BoardPage {id:boardPage; controller: root.board;discovery:root.discovery;settings:root.settings;quickCommands:root.quickCommands;detailed:root.detailed; serialBackend: root.backend; networkBackend: root.networkBackend }
-                Pages.TransferPage { id:transferPage;controller: root.transfer;files:root.files;settings:root.settings;detailed:root.detailed }
+                Pages.BoardPage {id:boardPage;controller:root.board;discovery:root.discovery;settings:root.settings;quickCommands:root.quickCommands;detailed:root.detailed;serialBackend:root.backend;networkBackend:root.networkBackend;toolManager:root.toolManager;onToolSettingsRequested:function(componentId){root.showToolSettings(componentId)}}
+                Pages.TransferPage {id:transferPage;controller:root.transfer;files:root.files;settings:root.settings;detailed:root.detailed;toolManager:root.toolManager;onToolSettingsRequested:function(componentId){root.showToolSettings(componentId)}}
                 Item {}
                 Pages.InternetPage {web:root.web;mqtt:root.mqtt;settings:root.settings;quickCommands:root.quickCommands;detailed:root.detailed}
             }

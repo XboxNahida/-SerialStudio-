@@ -9,6 +9,8 @@ Item {
     required property var files
     property var settings: null
     property var transfer: null
+    property var toolManager: null
+    signal toolSettingsRequested(string componentId)
     property bool updating: false
     property bool awaitingBrowse: false
     property bool invalidateAfterBusy: false
@@ -216,6 +218,12 @@ Item {
             Layout.fillWidth:true;Layout.fillHeight:true
             ColumnLayout {
                 anchors.fill:parent;anchors.margins:14;spacing:9
+                C.ToolHint {
+                    objectName:"fileToolHint";Layout.fillWidth:true;manager:root.toolManager
+                    tools:root.kind==="sftp"?["sftp"]:root.kind==="adb"?["adb"]:[]
+                    paths:({adb:root.adb && root.adb.resolvedPath?root.adb.resolvedPath:adbTool.text})
+                    onSettingsRequested:function(componentId){root.toolSettingsRequested(componentId)}
+                }
                 RowLayout {
                     Layout.fillWidth:true
                     C.ActionButton {objectName:"browserParent";text:"上级";implicitWidth:52;enabled:!root.busy;onClicked:root.goParent()}

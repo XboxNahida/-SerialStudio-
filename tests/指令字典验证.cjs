@@ -31,3 +31,20 @@ assert(candidates('gdb -ex ').some(c=>c.result==='gdb -ex run'),'高级模板的
 const host=entries.filter(e=>e.system==='powershell');
 assert(ctx.complete('adb -s SERIAL ',14,host).some(c=>c.insert==='tcpip'),'显式目标的高级ADB语法');
 console.log('指令字典数据、执行位置、参数替换、复杂语法补全：通过，共 '+entries.length+' 条');
+for(const system of ['powershell','cmd']) {
+    const wsl=entries.filter(e=>e.system===system && e.category==='WSL/虚拟机');
+    assert(ctx.complete('wsl --',6,wsl).some(c=>c.insert==='--shutdown'));
+    assert(ctx.complete('wsl --list ',11,wsl).some(c=>c.insert==='--verbose'));
+    assert(ctx.complete('wsl --distribution ',19,wsl).some(c=>c.insert==='Ubuntu'));
+    assert(ctx.complete('wsl --set-version Ubuntu ',25,wsl).some(c=>c.insert==='2'));
+    const example=wsl.find(e=>e.id===system+'-wsl-import');
+    assert(ctx.parts(example).length>=5,'导入指令应逐项填写名称、目录和归档');
+}
+// 隔离模拟文件系统，确认旧维护工具不会覆盖手工整理的 WSL 参数说明。
+let maintained='';
+vm.runInNewContext(fs.readFileSync(path.join(root,'tools/维护指令字典.cjs'),'utf8'),{
+    __dirname:path.join(root,'tools'),console:{log(){}},
+    require(name){return name==='fs'?{readFileSync(){return JSON.stringify(entries)},writeFileSync(file,data){maintained=data}}:require(name)}
+});
+const wslEntries=list=>list.filter(e=>e.category==='WSL/虚拟机');
+assert.deepStrictEqual(wslEntries(JSON.parse(maintained)),wslEntries(entries),'维护工具必须保留WSL手工元数据');

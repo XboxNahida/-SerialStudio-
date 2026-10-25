@@ -7,6 +7,8 @@
 #include "adbdiscovery.h"
 #include "terminalscreen.h"
 #include "pseudoterminal.h"
+#include "commandcatalog.h"
+#include <QPointer>
 
 class TerminalController : public QObject {
     Q_OBJECT
@@ -20,6 +22,7 @@ class TerminalController : public QObject {
     Q_PROPERTY(bool embedded READ embedded NOTIFY changed)
     Q_PROPERTY(QString connectionSummary READ connectionSummary NOTIFY changed)
     Q_PROPERTY(QString transport READ transport NOTIFY changed)
+    Q_PROPERTY(int catalogRevision READ catalogRevision NOTIFY catalogChanged)
 public:
     explicit TerminalController(QObject *parent=nullptr);
     ~TerminalController() override;
@@ -33,6 +36,8 @@ public:
     bool embedded() const {return m_embedded;}
     QString connectionSummary() const {return m_connectionSummary;}
     QString transport() const {return m_transport;}
+    int catalogRevision() const {return m_catalogRevision;}
+    void setCatalog(CommandCatalog *catalog);
     Q_INVOKABLE void close();
     Q_INVOKABLE void clearDisplay() { m_screen.clearDisplay(); }
     Q_INVOKABLE bool applyCommand(const QVariantMap &command);
@@ -45,6 +50,7 @@ public:
     static int inputHelper(const QByteArray &request);
 signals:
     void changed();
+    void catalogChanged();
 private:
     bool fail(const QString &message);
     bool dispatch(const QString &kind,const QString &value);
@@ -57,7 +63,8 @@ private:
     bool m_embedded=false;
     bool m_writeRejected=false;
     QTimer m_poll,m_timeout;
-    QVariantList m_commands;
+    QPointer<CommandCatalog> m_catalog;
+    int m_catalogRevision=0;
     void *m_handle=nullptr;
     qint64 m_pid=0;
     quint64 m_started=0;

@@ -29,6 +29,7 @@ public:
     double progress() const {return m_progress;}
     Q_INVOKABLE bool setPath(const QString &name,const QString &path);
     Q_INVOKABLE void refresh();
+    Q_INVOKABLE QVariantList missingTools(const QStringList &names,const QVariantMap &explicitPaths={}) const;
     Q_INVOKABLE bool install(const QString &id);
     Q_INVOKABLE void cancel();
     Q_INVOKABLE void openOfficial(const QString &id);

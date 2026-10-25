@@ -14,6 +14,7 @@ Window {
     property var entries: []
     property int selectedIndex: -1
     property int repositoryRevision: 0
+    property int seenCatalogRevision: -1
     property string customError: ""
     property string editingId: ""
     property bool favoritesOnly: false
@@ -37,6 +38,7 @@ Window {
     }
     function allEntries() {
         const revision=repositoryRevision
+        const catalogRevision=controller ? controller.catalogRevision : 0
         const result=controller ? controller.commands(system.currentIndex,"","").slice() : []
         if(repository)for(const saved of repository.entries(commandScope)) {
             if(saved.builtinId) {
@@ -105,6 +107,9 @@ Window {
     function reload() {
         if(!system || !search || !category || !edit)return
         const previousId=selectedEntry.id, draft=edit.text, previousGuide=guideParts
+        const revision=controller ? Number(controller.catalogRevision) || 0 : 0
+        const catalogUpdated=seenCatalogRevision>=0 && revision!==seenCatalogRevision
+        seenCatalogRevision=revision
         const needle=search.text.trim().toLowerCase()
         const chosen=category.currentText
         entries=allEntries().filter(function(item) {
@@ -114,7 +119,7 @@ Window {
         }).sort(function(a,b) {return a.category===b.category ? 0 : a.category<b.category ? -1 : 1})
         const previousIndex=entries.findIndex(function(item){return item.id===previousId})
         select(previousIndex>=0?previousIndex:entries.length>0?0:-1)
-        if(previousIndex>=0){edit.text=draft;guideParts=previousGuide}
+        if(previousIndex>=0 || catalogUpdated){edit.text=draft;guideParts=previousGuide}
     }
     function showFor(mode) {
         system.currentIndex=mode;search.text="";category.currentIndex=0;reload()
@@ -171,6 +176,10 @@ Window {
         const ok=repository.exportFile(commandScope,url)
         customError=ok ? "" : repository.error || "导出失败"
         return ok
+    }
+    Connections {
+        target: root.controller; ignoreUnknownSignals: true
+        function onCatalogChanged() {root.repositoryRevision++;root.reload()}
     }
     Connections {
         target: root.repository
